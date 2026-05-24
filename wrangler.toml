@@ -29,3 +29,5 @@ enabled = true
 # 2. npx wrangler secret put STREAMING_API_KEY
 # 3. npx wrangler secret put TURNSTILE_SECRET
 # ============================================================
+
+pages_build_output_dir = "public"
