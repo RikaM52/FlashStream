@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Service — FlashStream</title>
+  <meta name="description" content="Review the official FlashStream Terms of Service, structural operating rules, user guidelines, and liability limitation frameworks.">
+  <link rel="canonical" href="https://flashstream.pages.dev/terms.html">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#e50914">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#e50914'}}}};</script>
+  <style>
+    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+    .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+    #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+    [hidden]{display:none!important}
+    :focus-visible{outline:2px solid #e50914;outline-offset:3px;border-radius:4px}
+    .prose h2{font-size:1.25rem;font-weight:600;color:#f3f4f6;margin:2rem 0 .75rem}
+    .prose p{color:#9ca3af;line-height:1.75;margin-bottom:.875rem}
+    .prose ul{list-style:disc;padding-left:1.5rem;margin-bottom:.875rem}
+    .prose ul li{color:#9ca3af;line-height:1.7;margin-bottom:.375rem}
+    .prose a{color:#e50914;text-decoration:underline;text-underline-offset:2px}
+  </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+  <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+  <!-- ══ NAVBAR (identical to all pages) ══ -->
+  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+      <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+        <span class="hidden sm:block">FlashStream</span>
+      </a>
+      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
+        </div>
+        <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+        <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+        <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+        <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+        <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+        <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+          <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+        </a>
+        <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+      <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+      <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+      <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+      <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+      <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+      <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+    </div>
+  </nav>
+
+  <main id="main-content" class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-4xl font-bold text-white mb-2">Terms of Service</h1>
+    <p class="text-gray-500 text-sm mb-10">Last updated: May 2026</p>
+
+    <div class="prose">
+
+      <h2>Acceptance of Terms</h2>
+      <p>By accessing or using FlashStream, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use FlashStream.</p>
+
+      <h2>What FlashStream Is</h2>
+      <p>FlashStream is a <strong class="text-white">movie and TV show discovery platform</strong>. We help you find content to watch by aggregating metadata from third-party databases, showing streaming availability, and providing personalised recommendations.</p>
+      <p><strong class="text-white">FlashStream is not a streaming service.</strong> We do not host, stream, or distribute any video content. All viewing happens on third-party platforms (Netflix, Amazon Prime Video, etc.) to which FlashStream links. You must have your own active subscriptions or accounts with those services.</p>
+
+      <h2>Service Provided As-Is</h2>
+      <p>FlashStream is provided "as is" and "as available" without warranties of any kind, either express or implied. We do not warrant that:</p>
+      <ul>
+        <li>The service will be uninterrupted or error-free</li>
+        <li>Streaming availability information is accurate or current</li>
+        <li>Recommendations will meet your specific requirements</li>
+        <li>Any third-party content links will remain active</li>
+      </ul>
+
+      <h2>Streaming Availability Disclaimer</h2>
+      <p>Streaming availability information shown on FlashStream is sourced from The Movie Database (TMDB) and manually curated data. This information may be inaccurate, outdated, or vary by region.</p>
+      <p><strong class="text-white">Always confirm availability on the streaming platform before subscribing to a service based on information shown on FlashStream.</strong> FlashStream accepts no liability for decisions made based on availability information.</p>
+
+      <h2>TMDB Data Attribution</h2>
+      <p>Movie and TV metadata displayed on FlashStream is provided by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">The Movie Database (TMDB)</a> under their terms of use. This product uses the TMDB API but is not endorsed, certified, or otherwise approved by TMDB.</p>
+
+      <h2>User Content</h2>
+      <p>FlashStream allows you to save personal ratings, reviews, and notes (collectively "User Content"). All User Content is stored locally on your device and is not transmitted to FlashStream servers.</p>
+      <p>You retain full ownership of your User Content. FlashStream does not claim any rights over your watchlist, ratings, or personal notes.</p>
+      <p>User Content is stored at your own risk. FlashStream is not liable for loss of User Content due to browser data clearing, device failure, or any other cause. We recommend regular exports via the watchlist export function.</p>
+
+      <h2>Intellectual Property</h2>
+      <p>Movie posters, backdrop images, cast photos, and other media displayed on FlashStream are the property of their respective copyright holders and are displayed for informational purposes via the TMDB API under TMDB's terms of service.</p>
+      <p>The FlashStream name, logo, and application code are the property of FlashStream. You may not copy, reproduce, or redistribute the FlashStream application without written permission.</p>
+
+      <h2>Prohibited Use</h2>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Use FlashStream to facilitate access to pirated or unlicensed content</li>
+        <li>Attempt to scrape, reverse-engineer, or systematically extract data from FlashStream</li>
+        <li>Use FlashStream in any way that violates applicable laws or regulations</li>
+        <li>Attempt to circumvent rate limits or abuse the TMDB API via FlashStream</li>
+        <li>Use automated tools to bulk-access the FlashStream API without permission</li>
+      </ul>
+
+      <h2>Third-Party Services</h2>
+      <p>FlashStream links to third-party streaming platforms, TMDB, OpenSubtitles, IMDb, Rotten Tomatoes, Letterboxd, Metacritic, and other services. These services are governed by their own terms and privacy policies. FlashStream is not responsible for the content, availability, or practices of any third-party service.</p>
+
+      <h2>Analytics and Advertising</h2>
+      <p>FlashStream uses Google Analytics 4 and may display advertisements via Google AdSense and/or Adcash. These services are only activated after you provide explicit consent. You can withdraw consent at any time in Settings → Privacy.</p>
+      <p>FlashStream does not sell personal data to third parties under any circumstances.</p>
+
+      <h2>Limitation of Liability</h2>
+      <p>To the fullest extent permitted by applicable law, FlashStream and its operators shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service, including but not limited to:</p>
+      <ul>
+        <li>Loss of data (watchlist, preferences, ratings)</li>
+        <li>Incorrect streaming availability information</li>
+        <li>Failure to access third-party streaming platforms</li>
+        <li>Any content viewed on third-party platforms accessed via FlashStream links</li>
+      </ul>
+
+      <h2>Changes to Service</h2>
+      <p>FlashStream reserves the right to modify, suspend, or discontinue the service at any time without notice. We are not liable to you or any third party for any modification, suspension, or discontinuation.</p>
+
+      <h2>Changes to Terms</h2>
+      <p>We may update these Terms at any time. Continued use of FlashStream after changes are posted constitutes acceptance of the revised Terms. The "Last updated" date above indicates when these Terms were last revised.</p>
+
+      <h2>Governing Law</h2>
+      <p>These Terms are governed by applicable law. Any disputes shall be resolved through good-faith negotiation first, then binding arbitration if necessary.</p>
+
+      <h2>Contact</h2>
+      <p>For terms enquiries: <a href="mailto:legal@flashstream.app">legal@flashstream.app</a></p>
+
+    </div>
+
+    <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
+      <a href="/index.html" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">← Back to FlashStream</a>
+      <a href="/privacy.html" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">Privacy Policy</a>
+    </div>
+  </main>
+
+  <footer class="border-t border-white/10 py-8 px-4 mt-4" role="contentinfo">
+    <div class="max-w-4xl mx-auto text-center text-xs text-gray-600">
+      <p>FlashStream v1.0.0 · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a> · Streaming availability sourced from public platform APIs.</p>
+    </div>
+  </footer>
+
+  <script>
+    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+
+    function initTheme() {
+      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+    }
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
+    });
+    initTheme();
+
+    function updateRegionBadge() {
+      const region = localStorage.getItem('user_region') || 'US';
+      const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭' };
+      document.getElementById('region-flag').textContent = flags[region] || '🌐';
+      document.getElementById('region-code').textContent = region;
+    }
+    updateRegionBadge();
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      const m = document.getElementById('mobile-menu');
+      if (m) { const hidden = m.hidden; m.hidden = !hidden; document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', String(hidden)); }
+    });
+
+    let searchDebounce = null;
+    const searchInput = document.getElementById('nav-search-input');
+    const searchDropdown = document.getElementById('search-dropdown');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchDebounce);
+        const q = searchInput.value.trim();
+        if (q.length < 2) { if (searchDropdown) searchDropdown.hidden = true; return; }
+        searchDebounce = setTimeout(() => doSearch(q), 300);
+      });
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover.html?q=${encodeURIComponent(q)}`; }
+        if (e.key === 'Escape' && searchDropdown) searchDropdown.hidden = true;
+      });
+    }
+    document.addEventListener('click', e => { if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true; });
+
+    async function doSearch(q) {
+      try {
+        const data = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`).then(r => r.json());
+        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+        if (!results.length || !searchDropdown) { if (searchDropdown) searchDropdown.hidden = true; return; }
+        searchDropdown.innerHTML = results.map(item => {
+          const title = item.title || item.name || '';
+          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+          return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors" onclick="searchDropdown.hidden=true">
+            ${poster ? `<img src="${poster}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0">` : '<div class="w-7 h-10 bg-gray-800 rounded flex-shrink-0"></div>'}
+            <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
+          </a>`;
+        }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 transition-colors" onclick="searchDropdown.hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
+        searchDropdown.hidden = false;
+      } catch(e) { if (searchDropdown) searchDropdown.hidden = true; }
+    }
+
+    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  </script>
+</body>
+</html>

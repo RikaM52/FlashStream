@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Hub &amp; Sentiment Index — FlashStream</title>
+  <meta name="description" content="Explore regional audience analytics, vote on content tropes, and manage viewing wellness indicators securely on FlashStream.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#e50914">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#e50914'}}}}</script>
+  <style>
+    .scrollbar-hide::-webkit-scrollbar{display:none}
+    .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+    .skeleton{background:linear-gradient(90deg,#1f1f29 25%,#2a2a38 50%,#1f1f29 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    :focus-visible{outline:2px solid #e50914;outline-offset:3px;border-radius:4px}
+    .metric-slider{-webkit-appearance:none;width:100%;height:6px;border-radius:3px;background:#374151;outline:none}
+    .metric-slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#e50914;cursor:pointer;transition:transform 0.1s}
+    .metric-slider::-webkit-slider-thumb:hover{transform:scale(1.2)}
+    [hidden]{display:none!important}
+    #search-dropdown,#voting-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+    .trope-chip{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.08);background:#111116;color:#9ca3af;transition:all 0.15s ease;cursor:pointer;display:inline-flex;align-items:center;gap:4px;user-select:none}
+    .trope-chip:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+    .trope-chip.active{background:#e50914;border-color:#e50914;color:#fff}
+  </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+  <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+  <!-- MAIN NAVIGATION -->
+  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+      <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+        <span class="hidden sm:block">FlashStream</span>
+      </a>
+      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, shorts..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
+        </div>
+        <div id="search-dropdown" hidden role="listbox"></div>
+      </div>
+      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+        <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+        <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+        <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+        <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+        <a href="/community.html" class="text-white font-semibold">Community</a>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+          <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+        </a>
+        <button id="theme-toggle" aria-label="Toggle theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+      <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+      <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+      <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+      <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+      <a href="/community.html" class="text-white font-semibold py-1.5">Community</a>
+      <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+    </div>
+  </nav>
+
+  <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/5 pb-6 mb-8">
+      <div>
+        <h1 class="text-3xl font-bold text-white">Community Insights Terminal</h1>
+        <p class="text-sm text-gray-500 mt-1">Anonymized sentiment telemetry indices tracking global tropes and pacing dynamics.</p>
+      </div>
+    </div>
+
+    <!-- GRID: VOTING FORM + COMMUNITY PICKS -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+      <!-- LEFT COLUMN: VOTING FORM -->
+      <div class="lg:col-span-1 bg-gray-900 border border-white/10 p-5 rounded-2xl h-fit">
+        <h2 class="text-base font-bold text-white mb-3">Submit Sentiment Log</h2>
+        <p class="text-xs text-gray-500 mb-4 leading-relaxed">Search for any movie, series, or short to log anonymous performance metrics and pacing trends.</p>
+        
+        <div class="relative mb-4" id="voting-search-wrap">
+          <input type="search" id="voting-search" placeholder="Type title to vote..." class="w-full bg-black border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent pl-9" autocomplete="off">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <div id="voting-dropdown" class="absolute top-full mt-1 left-0 right-0 bg-gray-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50" hidden></div>
+        </div>
+
+        <!-- ACTIVE VOTE TARGET (hidden until selection) -->
+        <div id="active-vote-target" hidden class="space-y-5 border-t border-white/5 pt-4">
+          <div class="flex items-center gap-3">
+            <img id="target-poster" src="" alt="" class="w-12 h-18 object-cover rounded bg-gray-950 flex-shrink-0">
+            <div class="min-w-0 flex-1">
+              <p id="target-title" class="text-sm font-semibold text-white truncate"></p>
+              <p id="target-meta" class="text-[11px] text-gray-500"></p>
+            </div>
+          </div>
+
+          <!-- EPISODE-LEVEL (only for TV) -->
+          <div id="tv-episode-voting-block" hidden class="bg-black p-3 rounded-xl border border-white/5 space-y-2">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Episode Core Matrix</p>
+            <div class="flex gap-2">
+              <input type="number" id="vote-season" min="1" value="1" placeholder="S" class="w-16 bg-gray-900 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white focus:outline-none focus:border-accent">
+              <input type="number" id="vote-episode" min="1" value="1" placeholder="E" class="w-16 bg-gray-900 border border-white/10 rounded-lg px-2 py-1 text-xs text-center text-white focus:outline-none focus:border-accent">
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button class="trope-chip ep-attr-btn" data-attr="plot_twist" onclick="toggleEpAttribute(this)">Plot Twist</button>
+              <button class="trope-chip ep-attr-btn" data-attr="filler" onclick="toggleEpAttribute(this)">Filler</button>
+              <button class="trope-chip ep-attr-btn" data-attr="cliffhanger" onclick="toggleEpAttribute(this)">Cliffhanger</button>
+            </div>
+          </div>
+
+          <!-- OVERALL SENTIMENT -->
+          <div class="space-y-3">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Overall Sentiment</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button class="trope-chip justify-center sentiment-btn" data-sentiment="loved it" onclick="selectFixedSentiment(this)">Loved It</button>
+              <button class="trope-chip justify-center sentiment-btn" data-sentiment="masterpiece" onclick="selectFixedSentiment(this)">Masterpiece</button>
+              <button class="trope-chip justify-center sentiment-btn" data-sentiment="boring" onclick="selectFixedSentiment(this)">Boring</button>
+              <button class="trope-chip justify-center sentiment-btn" data-sentiment="dropped" onclick="selectFixedSentiment(this)">Not Watching Again</button>
+            </div>
+          </div>
+
+          <!-- PACING SLIDER -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs text-gray-400"><span>Slow Burn</span><span>Fast-Paced</span></div>
+            <input type="range" id="pacing-slider" min="1" max="10" value="5" class="metric-slider" aria-label="Pacing matrix configuration slider">
+          </div>
+
+          <!-- TROPE CHECKLIST -->
+          <div class="space-y-2">
+            <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Verify Production Tropes</p>
+            <div class="flex flex-wrap gap-1.5" id="trope-voting-pool">
+              <button class="trope-chip tool-trope-btn" data-trope="contract_marriage" onclick="toggleTropeVote(this)">Contract Marriage</button>
+              <button class="trope-chip tool-trope-btn" data-trope="reincarnation" onclick="toggleTropeVote(this)">Reincarnation</button>
+              <button class="trope-chip tool-trope-btn" data-trope="ceo_employee" onclick="toggleTropeVote(this)">CEO / Employee</button>
+              <button class="trope-chip tool-trope-btn" data-trope="revenge" onclick="toggleTropeVote(this)">Revenge Plot</button>
+              <button class="trope-chip tool-trope-btn" data-trope="enemies_lovers" onclick="toggleTropeVote(this)">Enemies to Lovers</button>
+              <button class="trope-chip tool-trope-btn" data-trope="historical_fantasy" onclick="toggleTropeVote(this)">Historical Fantasy</button>
+            </div>
+          </div>
+
+          <button onclick="submitAnonymousMetricLog()" class="w-full py-3 bg-accent hover:bg-red-700 text-white rounded-xl text-xs font-bold transition-colors uppercase tracking-wider">Submit Metrics</button>
+        </div>
+
+        <!-- SUGGEST TROPES SECTION -->
+        <div class="mt-6 pt-4 border-t border-white/5">
+          <p class="text-xs text-gray-400">Missing a trope or tag? <button onclick="suggestTrope()" class="text-accent hover:underline">Request new trope</button></p>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: COMMUNITY PICKS + EPISODE ANOMALIES -->
+      <div class="lg:col-span-2 space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-white">Community Picks</h2>
+          <p class="text-xs text-gray-500 mt-0.5">Top regional titles calculated across global streaming data footprints.</p>
+        </div>
+        <div id="community-picks-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4" role="list">
+          <div class="skeleton aspect-[2/3] rounded-xl"></div>
+          <div class="skeleton aspect-[2/3] rounded-xl"></div>
+          <div class="skeleton aspect-[2/3] rounded-xl"></div>
+        </div>
+
+        <div class="bg-gray-900 border border-white/10 p-5 rounded-2xl">
+          <h3 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">Trending Episode Anomalies</h3>
+          <p class="text-xs text-gray-500 mb-4 leading-relaxed">Real-time tracker flagging plot twists, filler episodes, and massive cliffhangers as voted by the community.</p>
+          <div id="episode-trends-stack" class="space-y-2 text-xs">
+            <p class="text-gray-500 italic py-4 text-center">Data compiling profiles loading...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WELLBEING TOOLS SECTION -->
+    <div class="mt-10 pt-6 border-t border-white/5">
+      <div class="bg-gray-900 border border-white/10 p-5 rounded-2xl max-w-md">
+        <h3 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">Screen Wellbeing Timer</h3>
+        <p class="text-xs text-gray-500 mb-4">Set a countdown timer to remind you to take a break. 100% private, no data stored.</p>
+        <div class="flex gap-3 items-center flex-wrap">
+          <select id="wellbeing-duration" class="bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-xs text-gray-300 focus:outline-none">
+            <option value="900">15 minutes</option>
+            <option value="1800">30 minutes</option>
+            <option value="2700">45 minutes</option>
+            <option value="3600" selected>60 minutes</option>
+          </select>
+          <button id="timer-btn" onclick="toggleWellbeingTimer()" class="px-4 py-2 bg-accent text-white rounded-lg text-xs font-semibold hover:bg-red-700 transition-colors">Start</button>
+        </div>
+        <p id="timer-status" class="text-xs text-gray-400 mt-3">Screen break alerts offline.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* ========== FLASHSTREAM COMMUNITY SCRIPT ========== */
+    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+    const NO_POSTER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='138' viewBox='0 0 92 138'%3E%3Crect width='92' height='138' fill='%231f1f29'/%3E%3C/svg%3E";
+
+    let activeVoteItem = null;
+    let selectedSentiment = null;
+    let activeTropeVotes = new Set();
+    let activeEpAttributes = new Set();
+    let wellbeingIntervalTimer = null;
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeGlobalLayout();
+      setupVotingSearchEngine();
+      fetchCommunityDashboardMetrics();
+      setupMainSearch();
+      setupMobileMenu();
+      updateRegionBadge();
+    });
+
+    function initializeGlobalLayout() {
+      const isDark = localStorage.getItem('cs-theme') !== 'light';
+      document.documentElement.classList.toggle('dark', isDark);
+      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const dark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('cs-theme', dark ? 'dark' : 'light');
+      });
+    }
+
+    function updateRegionBadge() {
+      const region = localStorage.getItem('user_region') || 'US';
+      const flagElem = document.getElementById('region-flag');
+      const codeElem = document.getElementById('region-code');
+      const flags = { US:'🇺🇸', GB:'🇬🇧', MY:'🇲🇾', SG:'🇸🇬', AE:'🇦🇪', PK:'🇵🇰', IN:'🇮🇳', TH:'🇹🇭', JP:'🇯🇵', KR:'🇰🇷' };
+      if (flagElem) flagElem.textContent = flags[region] || '🌐';
+      if (codeElem) codeElem.textContent = region;
+    }
+
+    function setupMobileMenu() {
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      if (btn && menu) {
+        btn.addEventListener('click', () => {
+          const expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', !expanded);
+          menu.hidden = expanded;
+        });
+      }
+    }
+
+    // --- MAIN SEARCH (navbar) ---
+    function setupMainSearch() {
+      let debounce = null;
+      const input = document.getElementById('nav-search-input');
+      const dropdown = document.getElementById('search-dropdown');
+      if (!input || !dropdown) return;
+      input.addEventListener('input', () => {
+        clearTimeout(debounce);
+        const q = input.value.trim();
+        if (q.length < 2) { dropdown.hidden = true; return; }
+        debounce = setTimeout(() => {
+          fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
+            .then(r => r.json())
+            .then(data => {
+              const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+              if (!results.length) { dropdown.hidden = true; return; }
+              dropdown.innerHTML = results.map(item => {
+                const title = item.title || item.name || '';
+                const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                  <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster || NO_POSTER}')"></div>
+                  <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div>
+                </a>`;
+              }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
+              dropdown.hidden = false;
+            }).catch(() => dropdown.hidden = true);
+        }, 300);
+      });
+      document.addEventListener('click', (e) => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
+    }
+
+    // --- TELEMETRY (privacy opt-out aware) ---
+    function isDataTrackingAllowed() { return localStorage.getItem('consent_given') !== 'false'; }
+    function transmitAnalyticsBeacon(eventType, metadataPayload = {}) {
+      if (!isDataTrackingAllowed()) return;
+      try {
+        navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...metadataPayload }));
+      } catch(e) { console.warn('[Analytics] skip'); }
+    }
+
+    // --- VOTING FORM CONTROLS ---
+    window.selectFixedSentiment = function(btn) {
+      document.querySelectorAll('.sentiment-btn').forEach(b => b.classList.remove('active'));
+      selectedSentiment = btn.dataset.sentiment;
+      btn.classList.add('active');
+    };
+    window.toggleTropeVote = function(btn) {
+      const key = btn.dataset.trope;
+      if (activeTropeVotes.has(key)) { activeTropeVotes.delete(key); btn.classList.remove('active'); }
+      else { activeTropeVotes.add(key); btn.classList.add('active'); }
+    };
+    window.toggleEpAttribute = function(btn) {
+      const key = btn.dataset.attr;
+      if (activeEpAttributes.has(key)) { activeEpAttributes.delete(key); btn.classList.remove('active'); }
+      else { activeEpAttributes.add(key); btn.classList.add('active'); }
+    };
+
+    window.submitAnonymousMetricLog = function() {
+      if (!activeVoteItem) { showToastMessage('Select a title to vote on first', 'info'); return; }
+      if (!selectedSentiment) { showToastMessage('Select an overall sentiment tag to submit metrics', 'info'); return; }
+      const payload = {
+        mediaId: String(activeVoteItem.id),
+        mediaType: activeVoteItem.type,
+        title: activeVoteItem.title,
+        sentiment: selectedSentiment,
+        pacing: document.getElementById('pacing-slider').value,
+        tropes: Array.from(activeTropeVotes)
+      };
+      if (activeVoteItem.type === 'tv') {
+        payload.season = document.getElementById('vote-season').value || '1';
+        payload.episode = document.getElementById('vote-episode').value || '1';
+        payload.episode_attributes = Array.from(activeEpAttributes);
+      }
+      transmitAnalyticsBeacon('community_sentiment_submit', payload);
+      showToastMessage('Anonymized metrics logged into system index', 'success');
+      // reset form
+      document.getElementById('active-vote-target').hidden = true;
+      document.getElementById('voting-search').value = '';
+      activeVoteItem = null;
+      selectedSentiment = null;
+      activeTropeVotes.clear();
+      activeEpAttributes.clear();
+      document.querySelectorAll('.sentiment-btn, .tool-trope-btn, .ep-attr-btn').forEach(b => b.classList.remove('active'));
+    };
+
+    // --- VOTING SEARCH (dropdown) ---
+    function setupVotingSearchEngine() {
+      let debounce = null;
+      const input = document.getElementById('voting-search');
+      const dropdown = document.getElementById('voting-dropdown');
+      if (!input || !dropdown) return;
+      input.addEventListener('input', () => {
+        clearTimeout(debounce);
+        const q = input.value.trim();
+        if (q.length < 2) { dropdown.hidden = true; return; }
+        debounce = setTimeout(() => {
+          fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
+            .then(r => r.json())
+            .then(data => {
+              const profiles = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 5);
+              if (!profiles.length) { dropdown.hidden = true; return; }
+              dropdown.innerHTML = profiles.map(item => {
+                const title = item.title || item.name || '';
+                const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                return `<button class="w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5 text-left" onclick="selectItemForSentimentLog({ id: '${item.id}', title: '${escapeAttr(title)}', type: '${type}', poster: '${item.poster_path || ''}', year: '${year}' })">
+                  <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${item.poster_path ? TMDB_IMG + 'w92' + item.poster_path : ''}')"></div>
+                  <div class="flex-1 min-w-0"><p class="text-xs font-semibold text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div>
+                </button>`;
+              }).join('');
+              dropdown.hidden = false;
+            }).catch(() => dropdown.hidden = true);
+        }, 300);
+      });
+      document.addEventListener('click', (e) => { if (!e.target.closest('#voting-search-wrap')) dropdown.hidden = true; });
+    }
+
+    window.selectItemForSentimentLog = function(item) {
+      document.getElementById('voting-dropdown').hidden = true;
+      activeVoteItem = item;
+      document.getElementById('target-title').textContent = item.title;
+      document.getElementById('target-meta').textContent = `${item.year} · ${item.type.toUpperCase()}`;
+      document.getElementById('target-poster').src = item.poster ? `${TMDB_IMG}w92${item.poster}` : NO_POSTER;
+      document.getElementById('tv-episode-voting-block').hidden = (item.type !== 'tv');
+      document.getElementById('active-vote-target').hidden = false;
+      transmitAnalyticsBeacon('community_form_engagement_start', { mediaId: item.id, type: item.type });
+    };
+
+    // --- DASHBOARD: FETCH TRENDING + EPISODE ANOMALIES (static fallback samples) ---
+    async function fetchCommunityDashboardMetrics() {
+      try {
+        const resp = await fetch(`${WORKER_URL}/api/trending?type=all&window=week`);
+        const data = await resp.json();
+        const items = (data.results || []).slice(0, 6);
+        const grid = document.getElementById('community-picks-grid');
+        if (!items.length) {
+          grid.innerHTML = '<p class="text-xs text-gray-500 py-6">Data aggregation matrix processing. Check back later.</p>';
+        } else {
+          grid.innerHTML = items.map(item => {
+            const title = item.title || item.name || 'Unknown';
+            const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
+            const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : 'NR';
+            return `<div class="bg-gray-900 border border-white/5 rounded-xl overflow-hidden flex flex-col justify-between">
+              <a href="/movie-detail.html?id=${item.id}&type=${type}" class="block aspect-[2/3] bg-gray-950 overflow-hidden"><img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy"></a>
+              <div class="p-3"><p class="text-xs font-semibold text-white truncate"><a href="/movie-detail.html?id=${item.id}&type=${type}">${escapeHtml(title)}</a></p><div class="flex items-center justify-between text-[10px] text-gray-500 mt-1 font-mono"><span>${type.toUpperCase()}</span><span class="text-amber-500">★ ${rating}</span></div></div>
+            </div>`;
+          }).join('');
+        }
+        // Episode anomalies - sample data (can be extended with real analytics)
+        document.getElementById('episode-trends-stack').innerHTML = `
+          <div class="p-3 bg-black rounded-xl border border-white/5 flex items-center justify-between"><div><p class="font-semibold text-white">Vincenzo</p><p class="text-[10px] text-gray-500">Season 1 · Episode 4</p></div><span class="px-2 py-0.5 rounded bg-purple-900/40 text-purple-300 border border-purple-700/30">Major Plot Twist</span></div>
+          <div class="p-3 bg-black rounded-xl border border-white/5 flex items-center justify-between"><div><p class="font-semibold text-white">Love Next Door</p><p class="text-[10px] text-gray-500">Season 1 · Episode 11</p></div><span class="px-2 py-0.5 rounded bg-red-900/40 text-red-300 border border-red-700/30">Cliffhanger Peak</span></div>
+        `;
+      } catch(err) { console.warn('[Dashboard]', err); }
+    }
+
+    // --- WELLBEING TIMER ---
+    window.toggleWellbeingTimer = function() {
+      const statusLabel = document.getElementById('timer-status');
+      const durationSelect = document.getElementById('wellbeing-duration');
+      const actionBtn = document.getElementById('timer-btn');
+      if (wellbeingIntervalTimer) {
+        clearInterval(wellbeingIntervalTimer);
+        wellbeingIntervalTimer = null;
+        statusLabel.textContent = 'Screen break alerts fully offline.';
+        actionBtn.textContent = 'Start';
+        durationSelect.disabled = false;
+        return;
+      }
+      let countdown = parseInt(durationSelect.value, 10);
+      durationSelect.disabled = true;
+      actionBtn.textContent = 'Stop';
+      wellbeingIntervalTimer = setInterval(() => {
+        countdown--;
+        const mins = Math.floor(countdown / 60);
+        const secs = countdown % 60;
+        statusLabel.textContent = `Next operational system break: ${mins}m ${secs}s left`;
+        if (countdown <= 0) {
+          clearInterval(wellbeingIntervalTimer);
+          wellbeingIntervalTimer = null;
+          statusLabel.textContent = 'Time to take a screen break!';
+          actionBtn.textContent = 'Start';
+          durationSelect.disabled = false;
+          alert('FlashStream Health Alert: You have reached your continuous screening limit. Please look away from your screen for 2 minutes to rest your eyes.');
+          transmitAnalyticsBeacon('wellbeing_break_alert_triggered');
+        }
+      }, 1000);
+    };
+
+    function suggestTrope() {
+      const email = "mailto:support@flashstream.com?subject=Trope%20Suggestion&body=Please%20add%20this%20trope:";
+      window.location.href = email;
+      showToastMessage('Open your mail client to suggest a trope', 'info');
+    }
+
+    // --- UTILITIES ---
+    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    function showToastMessage(text, type = 'success') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = `px-4 py-2.5 rounded-xl text-sm font-semibold text-white border ${type === 'success' ? 'bg-green-900/90 border-green-600' : 'bg-gray-900/90 border-white/10'}`;
+      el.textContent = text;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+name: Deploy FlashStream Serverless Edge Core
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'worker/**'
+      - 'schema.sql'
+      - 'wrangler.toml'
+      - 'package.json'
+  workflow_dispatch:
+
+jobs:
+  deploy-worker:
+    name: Deploy API Worker to Cloudflare Edge Nodes
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout FlashStream repository source
+        uses: actions/checkout@v4
+
+      - name: Configure Node.js environment layer
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler CLI compiler tools
+        run: npm install -g wrangler@3
+
+      - name: Compile and deploy FlashStream Worker logic
+        run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN:  ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+# ============================================================
+# REQUIRED SECURITY CONFIGURATION SETTINGS
+# ============================================================
+# Before activating this automated build pipeline, navigate to your
+# GitHub Repository → Settings → Secrets and variables → Actions.
+# Add these two required repository secrets:
+#
+# 1. CLOUDFLARE_API_TOKEN  — Generated via dash.cloudflare.com > My Profile > API Tokens (Use Edit Workers template)
+# 2. CLOUDFLARE_ACCOUNT_ID — Located on your primary Cloudflare Dashboard overview right sidebar menu
+# ============================================================

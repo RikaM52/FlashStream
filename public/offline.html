@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Offline — FlashStream</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#e50914">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#e50914'}}}};</script>
+  <style>
+    :focus-visible{outline:2px solid #e50914;outline-offset:3px;border-radius:4px}
+    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+    @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .breathe{animation:breathe 3s ease-in-out infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .animate-spin{animation:spin 1s linear infinite}
+  </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen flex flex-col">
+
+  <!-- Simplified navbar (no search, region badge – offline) -->
+  <nav class="border-b border-white/5 px-4 h-16 flex items-center" role="navigation" aria-label="Main navigation">
+    <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white" aria-label="FlashStream home">
+      <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+      <span>FlashStream</span>
+    </a>
+  </nav>
+
+  <main class="flex-1 flex items-center justify-center px-4 py-16" role="main">
+    <div class="text-center max-w-md">
+      <!-- Signal icon (SVG, no emoji) -->
+      <div class="breathe text-7xl mb-6" aria-hidden="true">
+        <svg class="w-20 h-20 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0m-7.424 0a5.25 5.25 0 0 0-7.424 0m14.848 0a5.25 5.25 0 0 0-7.424 0m-7.424 0L3 16.5l2.25-2.25M12 19.5v-4.5m-4.5 4.5h9" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-white mb-3">You're Offline</h1>
+      <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+        FlashStream needs an internet connection to browse and discover titles.
+        Your watchlist and saved preferences are still available below.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center mb-12">
+        <button onclick="tryReconnect()" id="retry-btn"
+                class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+          <svg id="retry-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Try Again
+        </button>
+        <a href="/watchlist.html" class="px-6 py-3 bg-gray-800 border border-white/10 text-gray-300 font-semibold rounded-xl hover:bg-gray-700 transition-colors">
+          View My Watchlist
+        </a>
+      </div>
+
+      <!-- Offline watchlist section -->
+      <div id="offline-watchlist" class="text-left">
+        <h2 class="text-lg font-semibold text-white mb-3">Your Watchlist (offline)</h2>
+        <div id="offline-wl-items" class="space-y-2"></div>
+        <p id="offline-wl-empty" class="text-sm text-gray-500 hidden">Your watchlist is empty. Start adding titles when you're back online.</p>
+      </div>
+
+      <!-- Info box -->
+      <div class="mt-10 p-5 bg-gray-900 border border-white/10 rounded-2xl text-left">
+        <h3 class="font-semibold text-white mb-3 text-sm">While you're offline</h3>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li class="flex items-start gap-2"><span class="text-green-400 flex-shrink-0 mt-0.5">✓</span>Your watchlist and ratings are saved locally</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 flex-shrink-0 mt-0.5">✓</span>Your preferences and settings are preserved</li>
+          <li class="flex items-start gap-2"><span class="text-gray-600 flex-shrink-0 mt-0.5">✗</span>Browsing and search require a connection</li>
+          <li class="flex items-start gap-2"><span class="text-gray-600 flex-shrink-0 mt-0.5">✗</span>Streaming availability cannot be checked offline</li>
+        </ul>
+      </div>
+
+      <p id="connection-status" class="mt-6 text-xs text-gray-600" aria-live="polite" role="status"></p>
+    </div>
+  </main>
+
+  <footer class="border-t border-white/5 py-4 text-center text-xs text-gray-600" role="contentinfo">
+    <p>FlashStream · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a></p>
+  </footer>
+
+  <script>
+    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+    const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Crect width='40' height='60' fill='%231f1f29'/%3E%3Ctext x='20' y='30' text-anchor='middle' dominant-baseline='middle' font-size='16' fill='%23444'%3E🎬%3C/text%3E%3C/svg%3E`;
+
+    function initTheme() {
+      if (localStorage.getItem('cs-theme') !== 'light') {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    initTheme();
+
+    function renderOfflineWatchlist() {
+      let list = [];
+      try {
+        list = JSON.parse(localStorage.getItem('watchlist') || '[]');
+      } catch(e) { list = []; }
+
+      const container = document.getElementById('offline-wl-items');
+      const emptyMsg = document.getElementById('offline-wl-empty');
+      if (!list.length) {
+        emptyMsg.classList.remove('hidden');
+        return;
+      }
+      emptyMsg.classList.add('hidden');
+
+      const STATUS_LABELS = {
+        want_to_watch: 'Want to Watch',
+        watching: 'Watching',
+        finished: 'Finished',
+        dropped: 'Dropped',
+        rewatch: 'Rewatch',
+        favorites: 'Favourites'
+      };
+
+      const STATUS_ICONS = {
+        want_to_watch: '🕒',
+        watching: '▶️',
+        finished: '✅',
+        dropped: '🚫',
+        rewatch: '🔁',
+        favorites: '❤️'
+      };
+
+      const show = list.slice(0, 8);
+      container.innerHTML = show.map(item => {
+        const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+        const icon = STATUS_ICONS[item.status] || '🕒';
+        const label = STATUS_LABELS[item.status] || item.status;
+        const title = escapeHtml(item.title || 'Unknown');
+        return `
+          <div class="flex items-center gap-3 p-3 bg-gray-900 border border-white/10 rounded-xl">
+            <img src="${escapeAttr(poster)}" alt="${title}" loading="lazy" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-white line-clamp-1">${title}</p>
+              <p class="text-xs text-gray-500">${icon} ${escapeHtml(label)}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (list.length > 8) {
+        container.insertAdjacentHTML('beforeend', `<p class="text-xs text-gray-500 text-center py-2">+${list.length - 8} more in your <a href="/watchlist.html" class="text-accent hover:underline">watchlist</a></p>`);
+      }
+    }
+
+    function tryReconnect() {
+      const btn = document.getElementById('retry-btn');
+      const icon = document.getElementById('retry-icon');
+      const st = document.getElementById('connection-status');
+      btn.disabled = true;
+      icon.classList.add('animate-spin');
+      st.textContent = 'Checking connection…';
+      setTimeout(() => {
+        if (navigator.onLine) {
+          st.textContent = 'Connection restored! Redirecting…';
+          setTimeout(() => { window.location.href = '/index.html'; }, 800);
+        } else {
+          st.textContent = 'Still offline. Please check your connection.';
+          btn.disabled = false;
+          icon.classList.remove('animate-spin');
+        }
+      }, 1200);
+    }
+
+    window.addEventListener('online', () => {
+      document.getElementById('connection-status').textContent = 'You are back online! Redirecting…';
+      setTimeout(() => { window.location.href = '/index.html'; }, 1000);
+    });
+    window.addEventListener('offline', () => {
+      document.getElementById('connection-status').textContent = 'Connection lost.';
+    });
+
+    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOfflineWatchlist();
+      document.getElementById('connection-status').textContent = navigator.onLine ? 'You appear to be online — try refreshing the page.' : 'No internet connection detected.';
+    });
+  </script>
+</body>
+</html>

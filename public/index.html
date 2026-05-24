@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlashStream — Discover Movies &amp; Shows Worldwide | Free Streaming Guide</title>
+    <meta name="description" content="Find where to watch any movie or show worldwide. Filter by mood, genre, platform, language and more. Free streaming discovery with global availability.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://flashstream.pages.dev/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="FlashStream — Discover Movies &amp; Shows Worldwide">
+    <meta property="og:description" content="Find where to watch any movie or show worldwide.">
+    <meta property="og:url" content="https://flashstream.pages.dev/">
+    <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "FlashStream",
+        "url": "https://flashstream.pages.dev/",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://flashstream.pages.dev/discover.html?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton {
+            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        [hidden] { display: none !important; }
+        .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
+        @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    
+    <!-- MAIN NAVIGATION -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
+                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
+                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag"> </span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <!-- CONSENT BANNER -->
+    <div id="consent-banner" class="fixed bottom-0 left-0 right-0 z-[9000] bg-gray-900 border-t border-white/10 p-4" role="dialog" aria-label="Cookie consent" hidden>
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <p class="text-sm text-gray-300 flex-1">FlashStream uses anonymized telemetry trends to optimize availability indexes. We never lease personal tracking identifiers. <a href="/privacy.html" class="text-accent underline ml-1">Privacy Protocol</a></p>
+            <div class="flex gap-3 flex-shrink-0">
+                <button id="consent-decline" class="px-4 py-2 text-sm rounded-lg border border-white/20 text-gray-300 hover:bg-white/10">Decline</button>
+                <button id="consent-accept" class="px-4 py-2 text-sm rounded-lg bg-accent text-white font-semibold hover:bg-red-700">Accept</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <main id="main-content">
+        <!-- HERO SECTION -->
+        <section class="relative py-20 px-4 overflow-hidden" aria-labelledby="hero-heading">
+            <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-black/60 to-black pointer-events-none" aria-hidden="true"></div>
+            <div class="relative max-w-4xl mx-auto text-center">
+                <h1 id="hero-heading" class="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-5 leading-tight">
+                    Discover What to<br><span class="text-accent">Watch Tonight</span>
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">Filter by mood, platform, language, and micro-tropes. Find exactly what fits right now — across global streaming services worldwide.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/discover.html" class="px-8 py-4 bg-accent text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-lg">Browse Everything</a>
+                    <a href="/watchlist.html" class="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors text-lg border border-white/20">My Watchlist</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- MOOD FILTERS -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="mood-heading">
+            <h2 id="mood-heading" class="text-lg font-semibold text-white mb-3">What are you in the mood for?</h2>
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 flex-wrap" role="group" aria-label="Mood quick filters">
+                <a href="/discover.html?with_genres=35&vote_average.gte=6" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Feel Good</a>
+                <a href="/discover.html?with_genres=27" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Horror</a>
+                <a href="/discover.html?with_genres=10749,35" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Date Night</a>
+                <a href="/discover.html?content_type=tv&with_status=0" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Binge TV</a>
+                <a href="/discover.html?with_original_language=ko" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">K‑Drama</a>
+                <a href="/discover.html?with_original_language=ja&with_genres=16" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Anime</a>
+                <a href="/discover.html?with_original_language=th" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Thai Drama</a>
+                <a href="/discover.html?with_genres=10751,16" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Family</a>
+                <a href="/discover.html?with_genres=99" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Documentary</a>
+                <a href="/discover.html?vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Hidden Gems</a>
+            </div>
+        </section>
+
+        <!-- CONTINUE WATCHING (dynamic) -->
+        <section id="continue-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="continue-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="continue-heading" class="text-xl font-bold text-white">Continue Watching</h2></div>
+            <div id="continue-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+        </section>
+
+        <!-- PERSONALIZED RECS -->
+        <section id="recs-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="recs-heading">
+            <div class="flex items-center justify-between mb-3">
+                <div><h2 id="recs-heading" class="text-xl font-bold text-white">Picked for You</h2><p class="text-xs text-gray-500 mt-0.5">Based on your watchlist taste</p></div>
+            </div>
+            <div id="recs-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+        </section>
+
+        <!-- TRENDING -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="trending-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="trending-heading" class="text-xl font-bold text-white">Trending This Week</h2><a href="/discover.html?sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- LEAVING SOON -->
+        <section id="leaving-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon.html" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+        </section>
+
+        <!-- KOREAN & ASIAN DRAMA -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="asian-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="asian-heading" class="text-xl font-bold text-white">Korean &amp; Asian Drama</h2><a href="/discover.html?with_original_language=ko&content_type=tv" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="kdrama-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- ANIME -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="anime-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="anime-heading" class="text-xl font-bold text-white">Anime</h2><a href="/discover.html?with_original_language=ja&with_genres=16" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="anime-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- BOLLYWOOD -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="bollywood-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="bollywood-heading" class="text-xl font-bold text-white">Bollywood &amp; Indian Cinema</h2><a href="/discover.html?with_original_language=hi" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="bollywood-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- NOW PLAYING -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="nowplaying-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="nowplaying-heading" class="text-xl font-bold text-white">Now Playing in Cinemas</h2><a href="/discover.html?content_type=movie&sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="nowplaying-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- POPULAR TV -->
+        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="populartv-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="populartv-heading" class="text-xl font-bold text-white">Popular TV Shows</h2><a href="/discover.html?content_type=tv&sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="populartv-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+
+        <!-- HIDDEN GEMS -->
+        <section class="max-w-7xl mx-auto px-4 mb-16" aria-labelledby="gems-heading">
+            <div class="flex items-center justify-between mb-3"><h2 id="gems-heading" class="text-xl font-bold text-white">Hidden Gems</h2><a href="/discover.html?vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc" class="text-sm text-accent hover:underline">See all</a></div>
+            <div id="gems-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+        </section>
+    </main>
+
+    <footer class="border-t border-white/10 py-10 px-4 bg-black" role="contentinfo">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div><a href="/index.html" class="flex items-center gap-2 text-lg font-bold text-white mb-2"><img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6"><span>FlashStream</span></a><p class="text-sm text-gray-500">Global movie &amp; TV discovery. Free forever.</p></div>
+            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover.html" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist.html" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon.html" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon.html" class="text-gray-400 hover:text-white">Coming Soon</a></li></ul></div>
+            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/about.html" class="text-gray-400 hover:text-white">About</a></li><li><a href="/privacy.html" class="text-gray-400 hover:text-white">Privacy</a></li><li><a href="/terms.html" class="text-gray-400 hover:text-white">Terms</a></li><li><a href="/settings.html" class="text-gray-400 hover:text-white">Settings</a></li></ul><p class="text-xs text-gray-600 mt-4">Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a></p></div>
+        </div>
+    </footer>
+
+    <script>
+        /* ========== FLASHSTREAM INDEX SCRIPT ========== */
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        const NO_POSTER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E";
+
+        const PREFS = {
+            getRegion: () => localStorage.getItem('user_region') || 'US',
+            setRegion: (r) => localStorage.setItem('user_region', r),
+            getTheme: () => localStorage.getItem('cs-theme') || 'dark',
+            setTheme: (t) => localStorage.setItem('cs-theme', t),
+            getTaste: () => { try { return JSON.parse(localStorage.getItem('taste_profile') || '{}'); } catch { return {}; } }
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            updateRegionBadge();
+            setupMobileMenu();
+            initConsent();
+            setupMainSearchEngine();
+            loadAllRows();
+        });
+
+        function initTheme() {
+            if (PREFS.getTheme() === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            document.getElementById('theme-toggle')?.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                PREFS.setTheme(isDark ? 'dark' : 'light');
+            });
+        }
+
+        function updateRegionBadge() {
+            const r = PREFS.getRegion();
+            const flagElem = document.getElementById('region-flag');
+            const codeElem = document.getElementById('region-code');
+            const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
+            if (flagElem) flagElem.textContent = flags[r] || '🌐';
+            if (codeElem) codeElem.textContent = r;
+        }
+
+        function setupMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const open = !menu.hidden;
+                    menu.hidden = open;
+                    btn.setAttribute('aria-expanded', String(!open));
+                });
+            }
+        }
+
+        // --- CONSENT & TELEMETRY ---
+        function isDataTrackingAllowed() { return localStorage.getItem('consent_given') !== 'false'; }
+        function transmitAnalyticsBeacon(eventType, metadataPayload = {}) {
+            if (!isDataTrackingAllowed()) return;
+            try {
+                navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...metadataPayload }));
+            } catch(e) { console.warn('[Analytics] skip'); }
+        }
+
+        function initConsent() {
+            const consent = localStorage.getItem('consent_given');
+            const banner = document.getElementById('consent-banner');
+            if (consent === null) { if (banner) banner.hidden = false; }
+            else if (consent === 'true') { transmitAnalyticsBeacon('homepage_session_start'); }
+            document.getElementById('consent-accept')?.addEventListener('click', () => {
+                localStorage.setItem('consent_given', 'true');
+                if (banner) banner.hidden = true;
+                transmitAnalyticsBeacon('homepage_session_start');
+                showToast('Telemetry diagnostics enabled', 'success');
+            });
+            document.getElementById('consent-decline')?.addEventListener('click', () => {
+                localStorage.setItem('consent_given', 'false');
+                if (banner) banner.hidden = true;
+                showToast('Data footprint minimized', 'info');
+            });
+        }
+
+        // --- SEARCH DROPDOWN ---
+        function setupMainSearchEngine() {
+            let debounce = null;
+            const input = document.getElementById('nav-search-input');
+            const dropdown = document.getElementById('search-dropdown');
+            if (!input || !dropdown) return;
+            input.addEventListener('input', () => {
+                clearTimeout(debounce);
+                const q = input.value.trim();
+                if (q.length < 2) { dropdown.hidden = true; return; }
+                debounce = setTimeout(() => executeQueryFetch(q), 300);
+            });
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    const q = input.value.trim();
+                    if (q) { transmitAnalyticsBeacon('search_enter_submit', { query: q }); window.location.href = `/discover.html?q=${encodeURIComponent(q)}`; }
+                }
+                if (e.key === 'Escape') dropdown.hidden = true;
+            });
+            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
+        }
+
+        async function executeQueryFetch(q) {
+            const dropdown = document.getElementById('search-dropdown');
+            if (!dropdown) return;
+            try {
+                const res = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`);
+                const data = await res.json();
+                const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+                if (!results.length) { dropdown.hidden = true; return; }
+                dropdown.innerHTML = results.map(item => {
+                    const title = item.title || item.name || '';
+                    const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                    const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                    const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+                    return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" role="option" onclick="document.getElementById('search-dropdown').hidden=true">
+                        <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+                        <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year}${year ? ' · ' : ''}${type === 'tv' ? 'TV Show' : 'Movie'}</p></div>
+                    </a>`;
+                }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
+                dropdown.hidden = false;
+            } catch { dropdown.hidden = true; }
+        }
+
+        // --- WATCHLIST HELPERS ---
+        function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
+        function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
+        function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
+        function toggleWL(item) {
+            const list = getWL();
+            const idx = list.findIndex(i => String(i.tmdb_id) === String(item.tmdb_id));
+            if (idx > -1) { list.splice(idx, 1); saveWL(list); showToast('Removed from watchlist', 'info'); return false; }
+            list.unshift({ tmdb_id: String(item.tmdb_id), type: item.type || 'movie', title: item.title, poster_path: item.poster_path || null, genre_ids: item.genre_ids || [], status: 'want_to_watch', date_added: Date.now() });
+            saveWL(list); transmitAnalyticsBeacon('watchlist_addition_click', { mediaId: item.tmdb_id, type: item.type }); showToast('Added to watchlist ✓', 'success'); return true;
+        }
+        window.handleWLBtn = function(event, btn) {
+            event.preventDefault(); event.stopPropagation();
+            let parsedGenres = []; try { parsedGenres = JSON.parse(btn.dataset.genres || '[]'); } catch(e) {}
+            const added = toggleWL({ tmdb_id: btn.dataset.id, type: btn.dataset.type, title: btn.dataset.title, poster_path: btn.dataset.poster, genre_ids: parsedGenres });
+            const svg = btn.querySelector('svg');
+            if (svg) { svg.setAttribute('fill', added ? '#e50914' : 'none'); svg.setAttribute('stroke', added ? '#e50914' : 'white'); }
+            btn.setAttribute('aria-pressed', String(added));
+        };
+
+        // --- BADGE (leaving soon / upcoming / new) ---
+        function getLifecycleBadge(item) {
+            const today = new Date();
+            let lc = []; try { lc = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); } catch(e) {}
+            const le = lc.find(l => String(l.tmdb_id) === String(item.id));
+            if (le) {
+                const days = Math.ceil((new Date(le.leaving_date) - today) / 86400000);
+                if (days > 0 && days <= 3) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white badge-pulse uppercase">Leaving ${days}d</span>`;
+                if (days > 0 && days <= 7) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white uppercase">Leaving ${days}d</span>`;
+                if (days > 0 && days <= 30) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-black uppercase">Leaving ${days}d</span>`;
+            }
+            const rel = item.release_date || item.first_air_date;
+            if (rel) {
+                const d = new Date(rel);
+                if (d > today) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-500 text-white uppercase">Upcoming</span>`;
+                if ((today - d) / 86400000 <= 30) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-500 text-white uppercase">New</span>`;
+            }
+            return '';
+        }
+
+        // --- CARD RENDERING ---
+        function renderCard(item) {
+            const id = item.id;
+            const title = item.title || item.name || 'Unknown';
+            const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+            const year = (item.release_date || item.first_air_date || '').slice(0, 4) || 'TBA';
+            const score = item.vote_average ? item.vote_average.toFixed(1) : null;
+            const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER;
+            const href = `/movie-detail.html?id=${id}&type=${type}`;
+            const inWL = isInWL(id);
+            const badge = getLifecycleBadge(item);
+            const hideRatings = localStorage.getItem('hide_ratings') === 'true';
+            return `<article class="flex-shrink-0 w-36 group" role="listitem">
+                <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">${badge}
+                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>
+                    <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" aria-label="${inWL ? 'Remove from' : 'Add to'} watchlist" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleWLBtn(event,this)">
+                        <svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </button>
+                </div>
+                <a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(title)}</h3><div class="flex items-center gap-1 mt-0.5 text-xs text-gray-400 font-medium"><span>${year}</span>${!hideRatings && score ? `<span class="text-yellow-400">★ ${score}</span>` : ''}</div></a>
+            </article>`;
+        }
+
+        function renderRow(id, items) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (!items || !items.length) { el.innerHTML = '<p class="text-sm text-gray-500 py-4">No data available.</p>'; return; }
+            el.innerHTML = items.map(renderCard).join('');
+        }
+
+        // --- CONTINUE WATCHING ---
+        function loadContinue() {
+            let history = []; try { history = JSON.parse(localStorage.getItem('viewing_history') || '[]'); } catch(e) {}
+            const unfinished = history.filter(i => i.type === 'tv' && !i.completed);
+            if (!unfinished.length) return;
+            const contSec = document.getElementById('continue-section'); if (contSec) contSec.hidden = false;
+            const row = document.getElementById('continue-row');
+            if (row) {
+                row.innerHTML = unfinished.slice(0,6).map(item => {
+                    const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER;
+                    return `<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>${item.progress_season ? `<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">S${item.progress_season} E${item.progress_episode || 1}</span>` : ''}</div><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p><span class="text-[11px] text-blue-400 font-semibold font-mono">Continue</span></a></article>`;
+                }).join('');
+            }
+        }
+
+        // --- LEAVING SOON (static JSON fallback) ---
+        async function loadLeavingSoon() {
+            try {
+                const res = await fetch('/data/leaving-soon.json');
+                if (!res.ok) return;
+                const data = await res.json();
+                const items = data.items || [];
+                localStorage.setItem('leaving_soon_cache', JSON.stringify(items));
+                const today = new Date();
+                const urgent = items.filter(i => { const days = Math.ceil((new Date(i.leaving_date) - today) / 86400000); return days > 0 && days <= 30; }).sort((a,b) => new Date(a.leaving_date) - new Date(b.leaving_date)).slice(0,8);
+                if (!urgent.length) return;
+                const leaveSec = document.getElementById('leaving-section'); if (leaveSec) leaveSec.hidden = false;
+                const row = document.getElementById('leaving-row');
+                if (row) {
+                    row.innerHTML = urgent.map(item => {
+                        const days = Math.ceil((new Date(item.leaving_date) - today) / 86400000);
+                        const bc = days <= 3 ? 'bg-red-600 badge-pulse' : days <= 7 ? 'bg-red-600' : 'bg-amber-500 text-black';
+                        const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER;
+                        return `<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${bc} text-white uppercase">${days}d left</span><a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a></div><a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p><p class="text-[11px] text-red-400 font-semibold uppercase">${escapeHtml(item.platform || '')}</p></a></article>`;
+                    }).join('');
+                }
+            } catch {}
+        }
+
+        // --- RECOMMENDATIONS (based on finished watchlist genres) ---
+        async function loadRecs() {
+            const wl = getWL();
+            const finished = wl.filter(i => i.status === 'finished' || i.status === 'favorites' || i.status === 'rewatch');
+            if (finished.length < 2) return;
+            const freq = {};
+            finished.forEach(item => { (item.genre_ids || []).forEach(g => { freq[g] = (freq[g] || 0) + 1; }); });
+            const topGenre = Object.entries(freq).sort((a,b) => b[1] - a[1])[0]?.[0];
+            if (!topGenre) return;
+            const taste = PREFS.getTaste();
+            const vetoed = new Set(Object.entries(taste.genres || {}).filter(([,v]) => v === 'veto').map(([id]) => id));
+            const wlIds = new Set(wl.map(i => String(i.tmdb_id)));
+            try {
+                const res = await fetch(`${WORKER_URL}/api/discover?content_type=movie&with_genres=${topGenre}&sort_by=vote_average.desc&vote_count.gte=300`);
+                const data = await res.json();
+                const filtered = (data.results || []).filter(item => !wlIds.has(String(item.id)) && !(item.genre_ids || []).some(g => vetoed.has(String(g)))).slice(0,12);
+                if (!filtered.length) return;
+                const recsSec = document.getElementById('recs-section'); if (recsSec) recsSec.hidden = false;
+                renderRow('recs-row', filtered);
+            } catch {}
+        }
+
+        // --- LOAD ALL ROWS ---
+        async function loadAllRows() {
+            loadContinue(); loadLeavingSoon(); loadRecs();
+            const rowMap = [
+                { id: 'trending-row', path: '/api/trending?type=all&window=week' },
+                { id: 'kdrama-row', path: '/api/discover?content_type=tv&with_original_language=ko&sort_by=popularity.desc' },
+                { id: 'anime-row', path: '/api/discover?content_type=tv&with_original_language=ja&with_genres=16&sort_by=popularity.desc' },
+                { id: 'bollywood-row', path: '/api/discover?content_type=movie&with_original_language=hi&sort_by=popularity.desc' },
+                { id: 'nowplaying-row', path: '/api/discover?content_type=movie&sort_by=popularity.desc' },
+                { id: 'populartv-row', path: '/api/trending?type=tv&window=week' },
+                { id: 'gems-row', path: '/api/discover?content_type=movie&vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc' }
+            ];
+            await Promise.allSettled(rowMap.map(async ({ id, path }) => {
+                try { const res = await fetch(`${WORKER_URL}${path}`); const data = await res.json(); renderRow(id, (data.results || []).slice(0,14)); } catch { const el = document.getElementById(id); if (el) el.innerHTML = '<p class="text-sm text-gray-500 py-4">Failed to load content.</p>'; }
+            }));
+        }
+
+        // --- UTILITIES ---
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToast(msg, type = 'success') {
+            const c = { success:'bg-green-900/90 border-green-600 text-green-100', error:'bg-red-900/90 border-red-700 text-red-100', info:'bg-gray-900/90 border-white/10 text-gray-300' };
+            const el = document.createElement('div');
+            el.className = `pointer-events-auto max-w-sm w-full px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-xl ${c[type] || c.info} transform transition-all duration-300 translate-x-full opacity-0`;
+            el.setAttribute('role', 'status'); el.textContent = msg;
+            const container = document.getElementById('toast-container');
+            if (container) container.appendChild(el);
+            requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.remove('translate-x-full', 'opacity-0'); }));
+            setTimeout(() => { el.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => el.remove(), 350); }, 3000);
+        }
+
+        // SERVICE WORKER
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {})); }
+    </script>
+</body>
+</html>

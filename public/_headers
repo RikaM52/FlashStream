@@ -1,0 +1,48 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-XSS-Protection: 1; mode=block
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://tally.so https://*.tally.so https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://fonts.googleapis.com; img-src 'self' https: data: blob: https://image.tmdb.org https://www.themoviedb.org https://img.youtube.com https://i.ytimg.com https://secure.gravatar.com https://cdn.myanimelist.net; frame-src 'self' https://www.youtube.com https://tally.so https://*.tally.so https://challenges.cloudflare.com; connect-src 'self' https://flashstream-worker.arirweb.workers.dev https://api.themoviedb.org https://image.tmdb.org https://cdn.tailwindcss.com https://challenges.cloudflare.com https://img.youtube.com https://cdn.myanimelist.net https://api.jikan.moe https://kuryana.tbdh.app; font-src 'self' https: data: https://fonts.gstatic.com; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate
+  Access-Control-Allow-Origin: *
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, X-Privacy-Opt-Out
+
+/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/manifest.json
+  Cache-Control: public, max-age=86400
+  Content-Type: application/manifest+json
+
+/sw.js
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Content-Type: application/javascript
+
+/sitemap.xml
+  Cache-Control: public, max-age=86400
+  Content-Type: application/xml
+
+/robots.txt
+  Cache-Control: public, max-age=86400
+  Content-Type: text/plain
+
+/offline.html
+  Cache-Control: public, max-age=3600
+  Content-Type: text/html
+
+/data/*.json
+  Cache-Control: public, max-age=3600, stale-while-revalidate=600
+  Content-Type: application/json
+
+/blog/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=3600
+  Content-Type: text/html
+
+/insights
+  Cache-Control: public, max-age=86400
+  Content-Type: text/html

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Dashboard — FlashStream</title>
+    <meta name="description" content="Manage your data footprint, configure localized streaming regions, handle content triggers, and update privacy parameters on FlashStream.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        details>summary { list-style: none; cursor: pointer; }
+        details>summary::-webkit-details-marker { display: none; }
+        [hidden] { display: none !important; }
+        .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+        .setting-row:last-child { border-bottom: none; }
+        .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .toggle-track { position: absolute; inset: 0; border-radius: 12px; background: #374151; transition: background 0.2s; cursor: pointer; }
+        .toggle-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+        input:checked + .toggle-track { background: #e50914; }
+        input:checked + .toggle-track::after { transform: translateX(20px); }
+        .pref-btn-active { background-color: #e50914 !important; color: #ffffff !important; border-color: #e50914 !important; }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <!-- MAIN APP NAVIGATION LAYER -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, shorts..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off" aria-label="Search metadata catalogs">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/settings.html" class="text-white font-semibold">Settings</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle interface theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/settings.html" class="text-white font-semibold py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <!-- MAIN SHEET LAYOUT PANELS -->
+    <main id="main-content" class="max-w-3xl mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Control Dashboard</h1>
+        <p class="text-sm text-gray-500 mb-8">Configure your global platform layout behaviors, streaming regions, local access controls, and data privacy options.</p>
+        
+        <div class="space-y-4">
+            <!-- SECTION 1: ACCOUNT INFRASTRUCTURE -->
+            <details class="bg-gray-900 border border-white/10 rounded-2xl" open>
+                <summary class="flex items-center justify-between p-5 hover:bg-white/5 rounded-2xl transition-colors select-none">
+                    <div class="flex items-center gap-3"><h2 class="font-semibold text-white text-base">Account Management</h2></div>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-5 pb-5 border-t border-white/5 pt-4 space-y-4">
+                    <div id="account-logged-out" class="space-y-3">
+                        <p class="text-xs text-gray-400">Create a secure profile to backup data across locations. Data optimization fields will remain active natively.</p>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="email" id="auth-email" placeholder="Email address" class="bg-gray-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-accent flex-1">
+                            <input type="password" id="auth-password" placeholder="Password" class="bg-gray-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-accent flex-1">
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="handleUserAuth('login')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-accent text-white hover:bg-red-700 transition-all">Sign In</button>
+                            <button onclick="handleUserAuth('register')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-gray-800 text-gray-300 border border-white/10 hover:bg-gray-700">Create Account</button>
+                        </div>
+                    </div>
+                    <div id="account-logged-in" hidden class="space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-gray-400">Authenticated Profile:</span>
+                            <span id="user-display-email" class="font-mono text-white font-semibold"></span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <input type="password" id="auth-password-new" placeholder="New Password (Reset)" class="bg-gray-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-gray-300 focus:outline-none focus:border-accent flex-1">
+                            <button onclick="resetUserPassword()" class="px-3 py-2 bg-gray-800 border border-white/10 text-gray-300 rounded-xl text-xs font-semibold hover:bg-gray-700">Update Password</button>
+                        </div>
+                        <div class="flex gap-2 pt-2 border-t border-white/5">
+                            <button onclick="handleUserAuth('logout')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-gray-800 text-gray-300 hover:bg-gray-700">Sign Out</button>
+                            <button onclick="deleteAccountPermanent()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-red-950/40 border border-red-700/40 text-red-400 hover:bg-red-900/50">Delete Account</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- SECTION 2: APPEARANCE & SYSTEM CONTROL -->
+            <details class="bg-gray-900 border border-white/10 rounded-2xl" open>
+                <summary class="flex items-center justify-between p-5 hover:bg-white/5 rounded-2xl transition-colors select-none">
+                    <div class="flex items-center gap-3"><h2 class="font-semibold text-white text-base">Appearance &amp; Performance</h2></div>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-5 pb-5 border-t border-white/5 pt-4 space-y-4">
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Interface Theme</p><p class="text-xs text-gray-500">Select your preferred color template context.</p></div>
+                        <div class="flex gap-2">
+                            <button id="theme-btn-dark" onclick="applySystemTheme('dark')" class="px-4 py-2 rounded-xl text-xs font-medium bg-gray-800 border border-white/5 text-gray-300">Dark</button>
+                            <button id="theme-btn-light" onclick="applySystemTheme('light')" class="px-4 py-2 rounded-xl text-xs font-medium bg-gray-800 border border-white/5 text-gray-300">Light</button>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Global Typography Scaling</p><p class="text-xs text-gray-500">Adjust scaling metrics across your layouts.</p></div>
+                        <div class="flex gap-2">
+                            <button onclick="updateTextScaling('normal')" class="px-3 py-1.5 rounded-lg text-xs border transition-colors size-btn bg-gray-800 border-white/5 text-gray-400 hover:bg-gray-700" data-size="normal">A</button>
+                            <button onclick="updateTextScaling('large')" class="px-3 py-1.5 rounded-lg text-sm border transition-colors size-btn bg-gray-800 border-white/5 text-gray-400 hover:bg-gray-700" data-size="large">A</button>
+                            <button onclick="updateTextScaling('xlarge')" class="px-3 py-1.5 rounded-lg text-base border transition-colors size-btn bg-gray-800 border-white/5 text-gray-400 hover:bg-gray-700" data-size="xlarge">A</button>
+                        </div>
+                    </div>
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Hide System Evaluation Scores</p><p class="text-xs text-gray-500">Spoiler-safe layout configurations across dashboard carousels.</p></div>
+                        <label class="toggle-switch" aria-label="Global score suppressor switch">
+                            <input type="checkbox" id="hide-ratings-toggle" onchange="persistBooleanPreference('hide_ratings', this.checked)">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+            </details>
+
+            <!-- SECTION 3: GEOPOLITICAL LANGUAGE & STREAM RE-ROUTING -->
+            <details class="bg-gray-900 border border-white/10 rounded-2xl" open>
+                <summary class="flex items-center justify-between p-5 hover:bg-white/5 rounded-2xl transition-colors select-none">
+                    <div class="flex items-center gap-3"><h2 class="font-semibold text-white text-base">Language &amp; Region Maps</h2></div>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-5 pb-5 border-t border-white/5 pt-4 space-y-4">
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Interface Translations</p><p class="text-xs text-gray-500">Localization options scheduled for Phase 2 deployments.</p></div>
+                        <select class="bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-xs text-gray-400 focus:outline-none" disabled aria-label="Interface translation select"><option>English</option></select>
+                    </div>
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Target Content Region</p><p class="text-xs text-gray-500">Maps localized streaming, rental, and short-form app nodes.</p></div>
+                        <div class="flex items-center gap-3">
+                            <select id="region-select" onchange="updateSystemRegion(this.value)" class="bg-gray-800 border border-white/10 rounded-lg px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-accent" aria-label="Content catalog watch region select">
+                                <option value="US">🇺🇸 United States</option>
+                                <option value="GB">🇬🇧 United Kingdom</option>
+                                <option value="MY">🇲🇾 Malaysia</option>
+                                <option value="SG">🇸🇬 Singapore</option>
+                                <option value="AE">🇦🇪 United Arab Emirates</option>
+                                <option value="PK">🇵🇰 Pakistan</option>
+                                <option value="IN">🇮🇳 India</option>
+                                <option value="TH">🇹🇭 Thailand</option>
+                                <option value="JP">🇯🇵 Japan</option>
+                                <option value="KR">🇰🇷 South Korea</option>
+                                <option value="CN">🇨🇳 China</option>
+                                <option value="CA">🇨🇦 Canada</option>
+                                <option value="AU">🇦🇺 Australia</option>
+                                <option value="DE">🇩🇪 Germany</option>
+                                <option value="FR">🇫🇷 France</option>
+                                <option value="BR">🇧🇷 Brazil</option>
+                            </select>
+                            <button onclick="autoDetectGeographicLocation()" class="text-xs text-accent font-semibold hover:underline whitespace-nowrap" aria-label="Auto detect local region maps via client window context">Auto-detect</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- SECTION 4: PLATFORM INTERACTIVE CURATION OVERRIDES -->
+            <details class="bg-gray-900 border border-white/10 rounded-2xl">
+                <summary class="flex items-center justify-between p-5 hover:bg-white/5 rounded-2xl transition-colors select-none">
+                    <div class="flex items-center gap-3"><h2 class="font-semibold text-white text-base">Curation Filters &amp; Trigger Safeties</h2></div>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-5 pb-5 border-t border-white/5 pt-4 space-y-4">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Vetoed Genres (Suppress from Recommendations)</p>
+                        <div id="veto-genre-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2" role="group" aria-label="Vetoed genres checkboxes"></div>
+                    </div>
+                    <div class="pt-2 border-t border-white/5">
+                        <p class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Active Content Advisory Alerts</p>
+                        <div id="trigger-safety-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2" role="group" aria-label="Active advisory warning checkboxes"></div>
+                    </div>
+                    <div class="pt-2 border-t border-white/5">
+                        <p class="text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Prioritized Local Providers</p>
+                        <div id="priority-provider-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2" role="group" aria-label="Prioritized streaming platforms selections"></div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- SECTION 5: DATA PURGE AND SYSTEM PRIVACY TRANSITIONS -->
+            <details class="bg-gray-900 border border-white/10 rounded-2xl">
+                <summary class="flex items-center justify-between p-5 hover:bg-white/5 rounded-2xl transition-colors select-none">
+                    <div class="flex items-center gap-3"><h2 class="font-semibold text-white text-base">Privacy &amp; Decentralized Data Ledger</h2></div>
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </summary>
+                <div class="px-5 pb-5 border-t border-white/5 pt-4 space-y-4">
+                    <div class="setting-row">
+                        <div>
+                            <p class="text-sm font-medium text-white">Anonymized Stream Diagnostics &amp; Trend Optimization</p>
+                            <p class="text-xs text-gray-500 leading-relaxed max-w-xl">Enables the platform core to dynamically synchronize regional content availability metrics and compile popularity indices across distribution hubs. No identity attributes or static hardware addresses are ever written to our analytics array grids. 100% compliant with global privacy protocol standards.</p>
+                        </div>
+                        <label class="toggle-switch" aria-label="Anonymized diagnostics sharing consent toggle">
+                            <input type="checkbox" id="analytics-consent-toggle" onchange="updateAnalyticalDataSharingConsent(this.checked)">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-row">
+                        <div><p class="text-sm font-medium text-white">Data Portability Ledger Options</p></div>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="exportComprehensiveUserDataBundle()" class="px-3 py-2 bg-gray-800 border border-white/10 rounded-lg text-xs text-gray-300 hover:bg-gray-700 font-semibold transition-colors">Export Complete Data Profile (JSON)</button>
+                            <label class="px-3 py-2 bg-gray-800 border border-white/10 rounded-lg text-xs text-gray-300 hover:bg-gray-700 cursor-pointer font-semibold transition-colors">
+                                Import Profile Bundle <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="importComprehensiveUserDataBundle(event)">
+                            </label>
+                            <button onclick="clearSystemBacklogCache()" class="px-3 py-2 bg-gray-800 border border-white/10 rounded-lg text-xs text-gray-300 hover:bg-gray-700 font-semibold transition-colors">Clear Local Backlog</button>
+                            <button onclick="purgeSystemApplicationCaches()" class="px-3 py-2 bg-gray-800 border border-white/10 rounded-lg text-xs text-gray-300 hover:bg-gray-700 font-semibold transition-colors">Purge System Caches</button>
+                            <button onclick="resetAllApplicationPreferencesPermanent()" class="px-3 py-2 bg-gray-800 border border-white/10 rounded-lg text-xs text-gray-300 hover:bg-gray-700 font-semibold transition-colors">Reset All System Preferences</button>
+                        </div>
+                    </div>
+                </div>
+            </details>
+        </div>
+    </main>
+
+    <script>
+        /* ── GLOBAL APPLICATION CONFIGURATION VARIABLES ──────────────────────── */
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        
+        const SELECTION_GENRES = [
+            { id: 28, name: 'Action' }, { id: 12, name: 'Adventure' }, { id: 16, name: 'Animation' },
+            { id: 35, name: 'Comedy' }, { id: 80, name: 'Crime' }, { id: 99, name: 'Documentary' },
+            { id: 18, name: 'Drama' }, { id: 10751, name: 'Family' }, { id: 14, name: 'Fantasy' },
+            { id: 36, name: 'History' }, { id: 27, name: 'Horror' }, { id: 10402, name: 'Music' },
+            { id: 9648, name: 'Mystery' }, { id: 10749, name: 'Romance' }, { id: 878, name: 'Sci-Fi' },
+            { id: 53, name: 'Thriller' }, { id: 10752, name: 'War' }, { id: 37, name: 'Western' }
+        ];
+
+        const RECOGNIZED_TRIGGERS = [
+            'Violence', 'Mature Themes', 'Substance Use', 'Psychological Distress', 
+            'Jump Scares', 'Gore', 'Suicide/Self-Harm', 'Eating Disorders', 'Abuse'
+        ];
+
+        const TRACKED_PROVIDERS = [
+            { id: 8, name: 'Netflix' }, { id: 9, name: 'Amazon Prime' }, { id: 337, name: 'Disney+' },
+            { id: 70, name: 'Viki' }, { id: 118, name: 'iQIYI' }, { id: 122, name: 'Hotstar' },
+            { id: 192, name: 'YouTube' }, { id: 1001, name: 'Viu' }, { id: 1002, name: 'Zee5' },
+            { id: 1003, name: 'SonyLIV' }
+        ];
+
+        /* ── SYSTEM CYCLES INITIALIZATION CONTROLLER ────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLayoutState();
+            renderDynamicPreferenceGrids();
+            evaluateUserAuthenticationState();
+            setupSearchEngine();
+            updateRegionBadge();
+            setupMobileMenu();
+        });
+
+        function initializeLayoutState() {
+            const currentTheme = localStorage.getItem('cs-theme') || 'dark';
+            applySystemTheme(currentTheme, false);
+
+            const textScale = localStorage.getItem('cs-font-size') || 'normal';
+            updateTextScaling(textScale, false);
+
+            document.getElementById('hide-ratings-toggle').checked = localStorage.getItem('hide_ratings') === 'true';
+            document.getElementById('analytics-consent-toggle').checked = localStorage.getItem('consent_given') !== 'false';
+
+            const activeRegion = localStorage.getItem('user_region') || 'US';
+            document.getElementById('region-select').value = activeRegion;
+        }
+
+        function updateRegionBadge() {
+            const region = localStorage.getItem('user_region') || 'US';
+            const flagMap = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
+            
+            const flagElement = document.getElementById('region-flag');
+            const codeElement = document.getElementById('region-code');
+            const navFlagElement = document.getElementById('region-badge')?.firstElementChild;
+            const navCodeElement = document.getElementById('region-badge')?.lastElementChild;
+
+            if (flagElement) flagElement.textContent = flagMap[region] || '🌐';
+            if (codeElement) codeElement.textContent = region;
+            if (navFlagElement && navCodeElement) {
+                navFlagElement.textContent = flagMap[region] || '🌐';
+                navCodeElement.textContent = region;
+            }
+        }
+
+        function setupMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    const expanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', !expanded);
+                    menu.hidden = expanded;
+                });
+            }
+        }
+
+        /* ── DYNAMIC PREFERENCE ENGINE SUB-RENDERERS ─────────────────────────── */
+        function renderDynamicPreferenceGrids() {
+            let tasteProfile = {}; try { tasteProfile = JSON.parse(localStorage.getItem('taste_profile') || '{}'); } catch(e) {}
+            const vetoedGenres = tasteProfile.genres || {};
+            
+            document.getElementById('veto-genre-grid').innerHTML = SELECTION_GENRES.map(g => {
+                const checked = vetoedGenres[g.id] === 'veto' ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-2 text-xs bg-gray-950 px-3 py-2 rounded-xl border border-white/5 cursor-pointer hover:border-white/10 select-none">
+                        <input type="checkbox" value="${g.id}" ${checked} class="accent-red-600 rounded genre-veto-cb" onchange="persistGenreVetoBlock()"> ${g.name}
+                    </label>
+                `;
+            }).join('');
+
+            let activeTriggers = []; try { activeTriggers = JSON.parse(localStorage.getItem('pref_triggers') || '[]'); } catch(e) {}
+            const triggerSet = new Set(activeTriggers);
+            
+            document.getElementById('trigger-safety-grid').innerHTML = RECOGNIZED_TRIGGERS.map(t => {
+                const checked = triggerSet.has(t) ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-2 text-xs bg-gray-950 px-3 py-2 rounded-xl border border-white/5 cursor-pointer hover:border-white/10 select-none">
+                        <input type="checkbox" value="${t}" ${checked} class="accent-red-600 rounded trigger-cb" onchange="persistTriggerPreferences()"> ${t}
+                    </label>
+                `;
+            }).join('');
+
+            let savedPlatforms = []; try { savedPlatforms = JSON.parse(localStorage.getItem('pref_platforms') || '[]'); } catch(e) {}
+            const platformSet = new Set(savedPlatforms.map(String));
+            
+            document.getElementById('priority-provider-grid').innerHTML = TRACKED_PROVIDERS.map(p => {
+                const checked = platformSet.has(String(p.id)) ? 'checked' : '';
+                return `
+                    <label class="flex items-center gap-2 text-xs bg-gray-950 px-3 py-2 rounded-xl border border-white/5 cursor-pointer hover:border-white/10 select-none">
+                        <input type="checkbox" value="${p.id}" ${checked} class="accent-red-600 rounded provider-cb" onchange="persistPlatformPreferences()"> ${p.name}
+                    </label>
+                `;
+            }).join('');
+        }
+
+        /* ── LOCAL STORAGE ENGINE INTERACTION OVERRIDES ──────────────────────── */
+        function applySystemTheme(targetTheme, triggerAlert = true) {
+            localStorage.setItem('cs-theme', targetTheme);
+            document.documentElement.classList.toggle('dark', targetTheme === 'dark');
+            
+            const darkBtn = document.getElementById('theme-btn-dark');
+            const lightBtn = document.getElementById('theme-btn-light');
+            if (darkBtn) darkBtn.className = `px-4 py-2 rounded-xl text-xs font-medium ${targetTheme === 'dark' ? 'bg-accent text-white font-semibold' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`;
+            if (lightBtn) lightBtn.className = `px-4 py-2 rounded-xl text-xs font-medium ${targetTheme === 'light' ? 'bg-accent text-white font-semibold' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'}`;
+            
+            if (triggerAlert) showToastNotification(`${targetTheme === 'dark' ? 'Dark' : 'Light'} layout template options activated`, 'success');
+        }
+
+        function updateTextScaling(sizeOption, triggerAlert = true) {
+            localStorage.setItem('cs-font-size', sizeOption);
+            document.documentElement.style.fontSize = sizeOption === 'large' ? '18px' : sizeOption === 'xlarge' ? '20px' : '16px';
+            
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                const isActive = btn.dataset.size === sizeOption;
+                btn.className = `px-3 py-1.5 rounded-lg text-xs border transition-colors size-btn ${isActive ? 'bg-accent border-accent text-white font-semibold' : 'bg-gray-800 border-white/5 text-gray-400 hover:bg-gray-700'}`;
+            });
+            
+            if (triggerAlert) showToastNotification('Typography matrices cleanly re-scaled', 'success');
+        }
+
+        function persistBooleanPreference(key, stateValue) {
+            localStorage.setItem(key, stateValue ? 'true' : 'false');
+            showToastNotification('Global system visibility configurations updated', 'info');
+        }
+
+        function updateSystemRegion(regionCode) {
+            localStorage.setItem('user_region', regionCode);
+            updateRegionBadge();
+            showToastNotification(`Target content availability maps routed to ${regionCode}`, 'success');
+        }
+
+        function autoDetectGeographicLocation() {
+            try {
+                const resolvedTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const zoneMappingMatrix = {
+                    'America/New_York': 'US', 'America/Los_Angeles': 'US', 'Europe/London': 'GB',
+                    'Asia/Kuala_Lumpur': 'MY', 'Asia/Singapore': 'SG', 'Asia/Dubai': 'AE',
+                    'Asia/Karachi': 'PK', 'Asia/Kolkata': 'IN', 'Asia/Bangkok': 'TH',
+                    'Asia/Tokyo': 'JP', 'Asia/Seoul': 'KR', 'Asia/Shanghai': 'CN', 'America/Sao_Paulo': 'BR'
+                };
+                const inferredRegion = zoneMappingMatrix[resolvedTimeZone] || 'US';
+                document.getElementById('region-select').value = inferredRegion;
+                updateSystemRegion(inferredRegion);
+            } catch(err) {
+                showToastNotification('Geopolitical telemetry localization lookup timeout', 'error');
+            }
+        }
+
+        function persistGenreVetoBlock() {
+            const vetoObj = { genres: {} };
+            document.querySelectorAll('.genre-veto-cb:checked').forEach(cb => {
+                vetoObj.genres[cb.value] = 'veto';
+            });
+            localStorage.setItem('taste_profile', JSON.stringify(vetoObj));
+            showToastNotification('Taste profile genre exclusions successfully saved', 'success');
+        }
+
+        function persistTriggerPreferences() {
+            const triggerArr = Array.from(document.querySelectorAll('.trigger-cb:checked')).map(cb => cb.value);
+            localStorage.setItem('pref_triggers', JSON.stringify(triggerArr));
+            showToastNotification('Content advisory warning filters synchronized', 'success');
+        }
+
+        function persistPlatformPreferences() {
+            const providerArr = Array.from(document.querySelectorAll('.provider-cb:checked')).map(cb => Number(cb.value));
+            localStorage.setItem('pref_platforms', JSON.stringify(providerArr));
+            showToastNotification('Prioritized tracking visibility parameters updated', 'success');
+        }
+
+        function updateAnalyticalDataSharingConsent(isConsented) {
+            localStorage.setItem('consent_given', isConsented ? 'true' : 'false');
+            showToastNotification(isConsented ? 'Telemetry optimization parameter streams active' : 'Telemetry logging data footprint completely minimized', 'info');
+        }
+
+        /* ── BACKEND USER MANAGEMENT PROFILE SIMULATIONS ───────────────────────── */
+        function evaluateUserAuthenticationState() {
+            const simulatedUserToken = localStorage.getItem('cs_user_session');
+            const loggedOutWrap = document.getElementById('account-logged-out');
+            const loggedInWrap = document.getElementById('account-logged-in');
+            if (loggedOutWrap && loggedInWrap) {
+                if (simulatedUserToken) {
+                    loggedOutWrap.hidden = true;
+                    loggedInWrap.hidden = false;
+                    document.getElementById('user-display-email').textContent = simulatedUserToken;
+                } else {
+                    loggedOutWrap.hidden = false;
+                    loggedInWrap.hidden = true;
+                }
+            }
+        }
+
+        function handleUserAuth(actionType) {
+            if (actionType === 'logout') {
+                localStorage.removeItem('cs_user_session');
+                showToastNotification('Secure connection session cleared from device memory', 'info');
+                evaluateUserAuthenticationState();
+                return;
+            }
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-password').value.trim();
+            if (!email || pass.length < 5) {
+                showToastNotification('Provide a valid email destination and 5+ character password profile token', 'error');
+                return;
+            }
+            localStorage.setItem('cs_user_session', email);
+            showToastNotification(actionType === 'register' ? 'Authenticated credentials initialized inside secure ledger' : 'Secure profile tracking handshake activated', 'success');
+            evaluateUserAuthenticationState();
+        }
+
+        function resetUserPassword() {
+            const newPass = document.getElementById('auth-password-new').value.trim();
+            if (newPass.length < 5) {
+                showToastNotification('Target security validation key password token length must exceed 5 indices', 'error');
+                return;
+            }
+            document.getElementById('auth-password-new').value = '';
+            showToastNotification('Cloud authorization key phrase updated completely', 'success');
+        }
+
+        function deleteAccountPermanent() {
+            if (!confirm('Are you absolutely sure you want to permanently delete your account profile? All serverless synchronization routes will be terminated.')) return;
+            localStorage.removeItem('cs_user_session');
+            showToastNotification('User account infrastructure mappings cleanly revoked', 'info');
+            evaluateUserAuthenticationState();
+        }
+
+        /* ── DATA PORTABILITY SYSTEM BACKUP INTERFACES ─────────────────────────── */
+        function exportComprehensiveUserDataBundle() {
+            const dataProfileDump = {
+                watchlist: (() => { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } })(),
+                viewing_history: (() => { try { return JSON.parse(localStorage.getItem('viewing_history') || '[]'); } catch { return []; } })(),
+                taste_profile: (() => { try { return JSON.parse(localStorage.getItem('taste_profile') || '{}'); } catch { return {}; } })(),
+                pref_triggers: (() => { try { return JSON.parse(localStorage.getItem('pref_triggers') || '[]'); } catch { return []; } })(),
+                pref_platforms: (() => { try { return JSON.parse(localStorage.getItem('pref_platforms') || '[]'); } catch { return []; } })(),
+                settings: {
+                    theme: localStorage.getItem('cs-theme') || 'dark',
+                    region: localStorage.getItem('user_region') || 'US',
+                    fontSize: localStorage.getItem('cs-font-size') || 'normal',
+                    hideRatings: localStorage.getItem('hide_ratings') === 'true',
+                    consentGiven: localStorage.getItem('consent_given') !== 'false'
+                },
+                export_timestamp: Date.now()
+            };
+            const dataStr = JSON.stringify(dataProfileDump, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'flashstream_master_profile.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToastNotification('Master system backup data profile downloaded successfully', 'success');
+        }
+
+        function importComprehensiveUserDataBundle(event) {
+            const fileList = event.target.files;
+            if (!fileList || fileList.length === 0) return;
+            const fileRef = fileList[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsedBundle = JSON.parse(e.target.result);
+                    if (parsedBundle.watchlist) localStorage.setItem('watchlist', JSON.stringify(parsedBundle.watchlist));
+                    if (parsedBundle.viewing_history) localStorage.setItem('viewing_history', JSON.stringify(parsedBundle.viewing_history));
+                    if (parsedBundle.taste_profile) localStorage.setItem('taste_profile', JSON.stringify(parsedBundle.taste_profile));
+                    if (parsedBundle.pref_triggers) localStorage.setItem('pref_triggers', JSON.stringify(parsedBundle.pref_triggers));
+                    if (parsedBundle.pref_platforms) localStorage.setItem('pref_platforms', JSON.stringify(parsedBundle.pref_platforms));
+                    if (parsedBundle.settings) {
+                        const s = parsedBundle.settings;
+                        localStorage.setItem('cs-theme', s.theme || 'dark');
+                        localStorage.setItem('user_region', s.region || 'US');
+                        localStorage.setItem('cs-font-size', s.fontSize || 'normal');
+                        localStorage.setItem('hide_ratings', s.hideRatings ? 'true' : 'false');
+                        localStorage.setItem('consent_given', s.consentGiven ? 'true' : 'false');
+                    }
+                    showToastNotification('Configuration parameters master profile compiled and hot-swapped', 'success');
+                    setTimeout(() => window.location.reload(), 1000);
+                } catch(err) {
+                    showToastNotification('Corrupt preference bundle structure dataset format signature', 'error');
+                }
+            };
+            reader.readAsText(fileRef);
+            event.target.value = '';
+        }
+
+        /* ── SYSTEM DATA PURGES & CLEANUP SCRUB PROCEDURES ─────────────────────── */
+        function clearSystemBacklogCache() {
+            if (!confirm('Scrub all matching watchlist entries and history logs from this device?')) return;
+            localStorage.setItem('watchlist', '[]');
+            localStorage.setItem('viewing_history', '[]');
+            showToastNotification('Local user backlog files cleanly scrubbed from storage keys', 'info');
+        }
+
+        function purgeSystemApplicationCaches() {
+            ['cs_api_cache', 'leaving_soon_cache'].forEach(k => localStorage.removeItem(k));
+            if ('caches' in window) {
+                caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+            }
+            showToastNotification('Edge router cache partitions fully flushed', 'success');
+        }
+
+        function resetAllApplicationPreferencesPermanent() {
+            if (!confirm('This action will restore all platform layout variables back to original defaults. Continue?')) return;
+            localStorage.clear();
+            showToastNotification('System data variables and layout profiles completely restored', 'info');
+            setTimeout(() => window.location.reload(), 800);
+        }
+
+        /* ── NAVBAR LAYOUT AUTO-SUGGEST DROPDOWN ENGINE ───────────────────────── */
+        function setupSearchEngine() {
+            let queryDebounce = null;
+            const searchInput = document.getElementById('nav-search-input');
+            const dropdownMenu = document.getElementById('search-dropdown');
+            if (!searchInput || !dropdownMenu) return;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(queryDebounce);
+                const queryStr = searchInput.value.trim();
+                if (queryStr.length < 2) { dropdownMenu.hidden = true; return; }
+                queryDebounce = setTimeout(() => {
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(queryStr)}&type=multi`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const entries = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 5);
+                            if (!entries.length) { dropdownMenu.hidden = true; return; }
+                            dropdownMenu.innerHTML = entries.map(item => {
+                                const title = item.title || item.name || '';
+                                const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                                return `
+                                    <a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                        <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p>
+                                            <p class="text-[10px] text-gray-500">${year}</p>
+                                        </div>
+                                    </a>
+                                `;
+                            }).join('');
+                            dropdownMenu.hidden = false;
+                        })
+                        .catch(() => { dropdownMenu.hidden = true; });
+                }, 300);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#nav-search-wrap')) dropdownMenu.hidden = true;
+            });
+        }
+
+        /* ── DATA SECURITY ESCAPE SANITIZATION UTILITIES ───────────────────────── */
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+        function showToastNotification(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const el = document.createElement('div');
+            el.className = `px-4 py-2.5 rounded-xl text-sm font-semibold text-white border ${type === 'success' ? 'bg-green-900/90 border-green-600' : 'bg-gray-900/90 border-white/10'}`;
+            el.textContent = message;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

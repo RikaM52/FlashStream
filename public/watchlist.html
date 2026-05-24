@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Watchlist — Track Movies, TV &amp; Episodes | FlashStream</title>
+    <meta name="description" content="Manage your personal tracking watchlist with episodic counters, custom notes, and smart layout curation filters on FlashStream.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton {
+            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+        [hidden] { display: none !important; }
+        .star-filled { color: #facc15; } .star-empty { color: #4b5563; }
+        .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
+        @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        .progress-bar { height: 4px; border-radius: 2px; background: #374151; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 2px; background: #e50914; width: 0%; transition: width 0.3s ease; }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+
+    <!-- MAIN NAVIGATION -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off" aria-label="Search metadata catalogs">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist.html" class="text-white font-semibold">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-white font-semibold py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-white/5 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-white">My Watchlist</h1>
+                <p class="text-sm text-gray-500 mt-1">Stored locally on your device – secure decentralized layout controls active natively.</p>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <button onclick="exportCSV()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Export CSV</button>
+                <button onclick="exportJSON()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Export JSON</button>
+                <label class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors cursor-pointer select-none">
+                    Import JSON <input type="file" id="import-input" accept=".json" class="hidden" onchange="importJSON(event)">
+                </label>
+                <button onclick="copyShareLink()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Share Link</button>
+                <button onclick="clearWatchlist()" class="px-4 py-2 text-sm rounded-xl bg-red-900/30 border border-red-800/50 hover:bg-red-900/50 text-red-400 transition-colors">Clear All</button>
+            </div>
+        </div>
+
+        <!-- STATS BAR -->
+        <div id="stats-bar" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6"></div>
+
+        <!-- FILTERS & SORTING -->
+        <div class="flex flex-col lg:flex-row gap-3 mb-6">
+            <div class="relative flex-1 max-w-sm" id="wl-search-wrap">
+                <input type="search" id="wl-search" placeholder="Search your watchlist…" class="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent pl-9" oninput="debounceRender()" aria-label="Search watchlist items">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            </div>
+            <div class="flex gap-2 flex-wrap items-center">
+                <select id="filter-status" aria-label="Filter by status" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
+                    <option value="all">All statuses</option>
+                    <option value="want_to_watch">Want to Watch</option>
+                    <option value="watching">Watching</option>
+                    <option value="finished">Finished</option>
+                    <option value="dropped">Dropped</option>
+                    <option value="rewatch">Rewatch</option>
+                    <option value="favorites">Favorites</option>
+                </select>
+                <select id="filter-type" aria-label="Filter by type" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
+                    <option value="all">All types</option>
+                    <option value="movie">Movies</option>
+                    <option value="tv">TV Shows</option>
+                </select>
+                <select id="filter-genre" aria-label="Filter by genre" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
+                    <option value="all">All genres</option>
+                </select>
+                <select id="filter-platform" aria-label="Filter by streaming platform" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
+                    <option value="all">All platforms</option>
+                </select>
+                <select id="sort-by" aria-label="Sort by" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
+                    <option value="date_added">Date Added (newest)</option>
+                    <option value="title">Title A-Z</option>
+                    <option value="rating">My Rating</option>
+                    <option value="date_watched">Date Watched</option>
+                    <option value="time_remaining">Remaining Time (TV)</option>
+                </select>
+                <label class="flex items-center gap-2 text-xs text-gray-400 font-medium cursor-pointer ml-2 select-none">
+                    <input type="checkbox" id="toggle-urgent" class="accent-red-600 rounded" onchange="renderWatchlist()"> Expiring Soon Only
+                </label>
+            </div>
+        </div>
+
+        <!-- BULK ACTION BAR -->
+        <div id="bulk-bar" hidden class="flex items-center gap-3 mb-4 p-3 rounded-xl bg-gray-900 border border-white/10 flex-wrap">
+            <span id="bulk-count" class="text-sm text-gray-400"></span>
+            <select id="bulk-status-select" aria-label="Bulk change status" class="bg-gray-800 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-gray-300 focus:outline-none">
+                <option value="">Change status…</option>
+                <option value="want_to_watch">Want to Watch</option>
+                <option value="watching">Watching</option>
+                <option value="finished">Finished</option>
+                <option value="dropped">Dropped</option>
+                <option value="rewatch">Rewatch</option>
+                <option value="favorites">Favorites</option>
+            </select>
+            <button onclick="applyBulkStatus()" class="px-3 py-1.5 text-xs rounded-lg bg-accent text-white hover:bg-red-700 transition-colors">Apply</button>
+            <button onclick="deleteBulkSelected()" class="px-3 py-1.5 text-xs rounded-lg bg-red-900/40 border border-red-700/40 text-red-400 hover:bg-red-900/60 transition-colors">Delete Selected</button>
+            <button onclick="clearSelection()" class="px-3 py-1.5 text-xs rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors">Clear</button>
+        </div>
+
+        <!-- CONTINUE WATCHING SECTION -->
+        <div id="continue-section" hidden class="mb-10">
+            <h2 class="text-xl font-bold text-white mb-4">Continue Watching</h2>
+            <div id="continue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- MAIN GRID -->
+        <p id="results-info" class="text-sm text-gray-500 mb-4"></p>
+        <div id="watchlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" role="list"></div>
+
+        <!-- EMPTY STATE -->
+        <div id="empty-state" hidden class="text-center py-24">
+            <div class="text-6xl mb-4">📋</div>
+            <h2 class="text-xl font-semibold text-white mb-2">Your watchlist is empty</h2>
+            <p class="text-gray-400 mb-6">Start adding movies and TV shows to track what you want to watch.</p>
+            <a href="/discover.html" class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors">Browse titles</a>
+        </div>
+
+        <!-- SMART LISTS -->
+        <div id="smart-lists-section" class="mt-12">
+            <h2 class="text-xl font-bold text-white mb-4">Smart Lists</h2>
+            <div id="smart-lists-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+    </main>
+
+    <!-- NOTE MODAL -->
+    <div id="note-modal" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" role="dialog">
+        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Notes</h3>
+            <textarea id="note-textarea" rows="4" placeholder="Add your notes…" class="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-accent resize-none mb-4"></textarea>
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeNoteModal()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Cancel</button>
+                <button onclick="saveNote()" class="px-4 py-2 text-sm rounded-xl bg-accent text-white hover:bg-red-700 transition-colors">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURATION ====================
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='180' viewBox='0 0 120 180'%3E%3Crect width='120' height='180' fill='%231f1f29'/%3E%3C/svg%3E`;
+        const STATUS_LABELS = { want_to_watch:'Want to Watch', watching:'Watching', finished:'Finished', dropped:'Dropped', rewatch:'Rewatch', favorites:'Favorites' };
+        const STATUS_COLOURS = { want_to_watch:'bg-blue-900/40 text-blue-300', watching:'bg-yellow-900/40 text-yellow-300', finished:'bg-green-900/40 text-green-300', dropped:'bg-red-900/40 text-red-300', rewatch:'bg-purple-900/40 text-purple-300', favorites:'bg-pink-900/40 text-pink-300' };
+
+        let selectedIds = new Set();
+        let editingNoteId = null;
+        let renderDebounce = null;
+
+        function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
+        function saveWL(list) { localStorage.setItem('watchlist', JSON.stringify(list)); }
+
+        // ==================== STATS ====================
+        function renderStats() {
+            const list = getWL();
+            const counts = { all: list.length, want_to_watch:0, watching:0, finished:0, dropped:0, rewatch:0, favorites:0 };
+            list.forEach(i => { if (counts[i.status] !== undefined) counts[i.status]++; });
+            const items = [
+                { key:'all', label:'Total', colour:'text-white' },
+                { key:'want_to_watch', label:'Want', colour:'text-blue-400' },
+                { key:'watching', label:'Watching', colour:'text-yellow-400' },
+                { key:'finished', label:'Finished', colour:'text-green-400' },
+                { key:'favorites', label:'Favs', colour:'text-pink-400' },
+                { key:'dropped', label:'Dropped', colour:'text-red-400' }
+            ];
+            const bar = document.getElementById('stats-bar');
+            if (bar) bar.innerHTML = items.map(it => `<button onclick="filterByStatus('${it.key}')" class="text-center p-3 rounded-xl bg-gray-900 border border-white/10 hover:border-white/25 transition-all cursor-pointer"><p class="text-2xl font-bold ${it.colour}">${counts[it.key]}</p><p class="text-[11px] text-gray-500 font-medium mt-0.5">${it.label}</p></button>`).join('');
+        }
+        function filterByStatus(statusKey) { document.getElementById('filter-status').value = statusKey; renderWatchlist(); }
+        function debounceRender() { clearTimeout(renderDebounce); renderDebounce = setTimeout(renderWatchlist, 250); }
+
+        // ==================== POPULATE FILTERS ====================
+        function populateFilters() {
+            const list = getWL();
+            const region = localStorage.getItem('user_region') || 'US';
+            const genresSet = new Map();
+            const platformsSet = new Map();
+            list.forEach(item => {
+                (item.genre_ids || []).forEach(gid => { if (!genresSet.has(gid)) genresSet.set(gid, item.genres?.find(g=>g.id===gid)?.name || gid); });
+                const providers = item.watch_providers?.[region]?.flatrate || [];
+                providers.forEach(p => { if (!platformsSet.has(p.provider_id)) platformsSet.set(p.provider_id, p.provider_name); });
+            });
+            const genreSelect = document.getElementById('filter-genre');
+            if (genreSelect) {
+                genreSelect.innerHTML = '<option value="all">All genres</option>';
+                genresSet.forEach((name, id) => { genreSelect.innerHTML += `<option value="${id}">${escapeHtml(name)}</option>`; });
+            }
+            const platformSelect = document.getElementById('filter-platform');
+            if (platformSelect) {
+                platformSelect.innerHTML = '<option value="all">All platforms</option>';
+                platformsSet.forEach((name, id) => { platformSelect.innerHTML += `<option value="${id}">${escapeHtml(name)}</option>`; });
+            }
+        }
+
+        // ==================== VIEWING HISTORY SYNC ====================
+        function updateViewingHistory(item) {
+            if (item.type !== 'tv') return;
+            const history = (() => { try { return JSON.parse(localStorage.getItem('viewing_history') || '[]'); } catch { return []; } })();
+            const idx = history.findIndex(h => String(h.tmdb_id) === String(item.tmdb_id));
+            const entry = { tmdb_id: item.tmdb_id, type: 'tv', title: item.title, poster_path: item.poster_path, progress_season: item.progress_season || 1, progress_episode: item.progress_episode || 0, completed: item.status === 'finished', last_updated: Date.now() };
+            if (idx > -1) history[idx] = entry; else history.push(entry);
+            localStorage.setItem('viewing_history', JSON.stringify(history));
+        }
+
+        // ==================== EPISODE TRACKING ====================
+        function incrementEpisode(id, offset) {
+            const list = getWL();
+            const idx = list.findIndex(i => String(i.tmdb_id) === String(id));
+            if (idx === -1) return;
+            const item = list[idx];
+            if (item.type !== 'tv') return;
+            let currentEp = item.progress_episode || 0;
+            const totalEp = item.number_of_episodes || 0;
+            let newEp = Math.max(0, currentEp + offset);
+            if (totalEp > 0 && newEp > totalEp) newEp = totalEp;
+            item.progress_episode = newEp;
+            if (newEp === totalEp && totalEp > 0) { item.status = 'finished'; item.date_watched = Date.now(); showToastNotification('Series completed!', 'success'); }
+            else if (item.status !== 'watching' && newEp > 0) { item.status = 'watching'; }
+            saveWL(list);
+            updateViewingHistory(item);
+            renderStats();
+            renderWatchlist();
+            showToastNotification(`Episode ${newEp} of ${totalEp || '?'} logged`, 'info');
+        }
+        function updateProgressBar(item) { const total = item.number_of_episodes || 0; const current = item.progress_episode || 0; return total > 0 ? (current / total) * 100 : 0; }
+
+        // ==================== CARD RENDER ====================
+        function renderCard(item) {
+            const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
+            const sc = STATUS_COLOURS[item.status] || 'bg-gray-700 text-gray-300';
+            const label = STATUS_LABELS[item.status] || item.status;
+            const href = `/movie-detail.html?id=${item.tmdb_id}&type=${item.type || 'movie'}`;
+            const stars = renderStars(item.user_rating || 0, item.tmdb_id);
+            const isSelected = selectedIds.has(String(item.tmdb_id));
+            let leavingBadge = '';
+            try { const cache = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); if (cache.some(c => String(c.tmdb_id) === String(item.tmdb_id))) leavingBadge = `<span class="absolute top-2 right-2 bg-red-600 text-white text-[9px] px-1.5 py-0.5 font-bold rounded badge-pulse z-10 uppercase">URGENT</span>`; } catch(e) {}
+            const episodeControls = (item.type === 'tv') ? `<div class="border-t border-white/5 px-3 py-2 flex items-center justify-between gap-2"><span class="text-xs text-gray-400 font-mono">Progress: S${item.progress_season || 1} E${item.progress_episode || 0}</span><div class="flex gap-1"><button onclick="incrementEpisode('${item.tmdb_id}', -1)" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-xs flex items-center justify-center font-bold text-gray-300">-</button><button onclick="incrementEpisode('${item.tmdb_id}', 1)" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-xs flex items-center justify-center font-bold text-gray-300">+</button></div></div>` : '';
+            const progressBar = (item.type === 'tv' && item.number_of_episodes > 0) ? `<div class="progress-bar mt-2"><div class="progress-fill" style="width: ${updateProgressBar(item)}%"></div></div>` : '';
+            return `<article class="rounded-2xl bg-gray-900 border border-white/10 overflow-hidden flex flex-col relative ${isSelected ? 'ring-2 ring-accent' : ''}" data-id="${item.tmdb_id}" role="listitem">${leavingBadge}<div class="flex gap-3 p-3"><label class="flex-shrink-0 mt-1 select-none"><input type="checkbox" class="item-checkbox accent-red-600 w-4 h-4 mt-0.5 cursor-pointer" data-id="${item.tmdb_id}" ${isSelected ? 'checked' : ''} onchange="toggleSelect('${item.tmdb_id}')" aria-label="Select title for batch actions"></label><a href="${href}" class="flex-shrink-0"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="60" height="90" class="w-14 h-20 object-cover rounded-lg bg-black/40" onerror="this.src='${NO_POSTER}'"></a><div class="flex-1 min-w-0"><a href="${href}" class="font-semibold text-white hover:text-accent transition-colors line-clamp-2 text-sm leading-snug block">${escapeHtml(item.title)}</a><p class="text-xs text-gray-500 mt-0.5">${item.type === 'tv' ? 'TV Series' : 'Movie'}${item.date_added ? ' · Added ' + relativeDate(item.date_added) : ''}</p><span class="status-pill ${sc} mt-1.5">${escapeHtml(label)}</span></div></div>${progressBar}<div class="px-3 pb-2 flex-1 flex flex-col justify-end"><div class="flex items-center justify-between gap-2">${stars}<div class="flex gap-1"><button onclick="openNoteModal('${item.tmdb_id}')" class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors" title="Edit manual annotation logs">${item.notes ? 'Note' : '+ Note'}</button><button onclick="removeItem('${item.tmdb_id}')" class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-red-400 hover:bg-red-950/40 transition-colors" title="Scrub title from dashboard tracking">✕</button></div></div>${item.notes ? `<p class="text-xs text-gray-500 mt-1.5 line-clamp-2 italic leading-relaxed">"${escapeHtml(item.notes)}"</p>` : ''}</div><div class="border-t border-white/5 px-3 py-2"><select onchange="changeStatus('${item.tmdb_id}', this.value)" class="w-full bg-gray-800 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-accent">${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}" ${k===item.status?'selected':''}>${v}</option>`).join('')}</select></div>${episodeControls}</article>`;
+        }
+        function renderStars(rating, id) { return `<div class="flex gap-0.5 items-center">${[1,2,3,4,5].map(n => `<button onclick="setRating('${id}',${n})" class="text-lg leading-none ${rating>=n ? 'star-filled' : 'star-empty'} hover:text-yellow-400 transition-all focus:outline-none" aria-label="${n} star${n>1?'s':''}">★</button>`).join('')}</div>`; }
+        function setRating(id, rating) { const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].user_rating = list[idx].user_rating === rating ? 0 : rating; saveWL(list); renderWatchlist(); } }
+        function changeStatus(id, status) { const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].status = status; if (status === 'finished') list[idx].date_watched = Date.now(); saveWL(list); if (list[idx].type === 'tv') updateViewingHistory(list[idx]); renderStats(); renderWatchlist(); showToastNotification(`Status: ${STATUS_LABELS[status]} updated`, 'success'); } }
+        function removeItem(id) { const list = getWL().filter(i => String(i.tmdb_id) !== String(id)); saveWL(list); selectedIds.delete(String(id)); renderStats(); renderWatchlist(); showToastNotification('Removed from tracking profile dashboard', 'info'); }
+
+        // ==================== CONTINUE WATCHING ROW ====================
+        function renderContinueWatching() {
+            const list = getWL();
+            const inProgress = list.filter(i => i.type === 'tv' && i.status === 'watching');
+            const section = document.getElementById('continue-section');
+            const grid = document.getElementById('continue-grid');
+            if (!inProgress.length) { if (section) section.hidden = true; return; }
+            if (section) section.hidden = false;
+            if (grid) {
+                grid.innerHTML = inProgress.slice(0,6).map(item => {
+                    const totalEp = item.number_of_episodes || 0;
+                    const currentEp = item.progress_episode || 0;
+                    const pct = totalEp > 0 ? (currentEp / totalEp) * 100 : 0;
+                    const remaining = totalEp > 0 ? (totalEp - currentEp) * 45 : '?';
+                    const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
+                    return `<div class="p-4 rounded-xl bg-gray-900 border border-white/10 flex gap-4 items-center"><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv" class="flex-shrink-0"><img src="${escapeAttr(poster)}" class="w-12 h-18 object-cover rounded-lg bg-black" alt="" onerror="this.src='${NO_POSTER}'"></a><div class="flex-1 min-w-0"><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv" class="font-semibold text-white hover:text-accent text-sm block truncate">${escapeHtml(item.title)}</a><p class="text-xs text-gray-500 mt-0.5">Next up: S${item.progress_season || 1} E${currentEp+1}</p><div class="w-full bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-accent h-full rounded-full transition-all" style="width: ${pct}%"></div></div><div class="flex justify-between text-[10px] text-gray-400 mt-1"><span>${Math.round(pct)}% complete</span><span>~${remaining} min left</span></div></div></div>`;
+                }).join('');
+            }
+        }
+
+        // ==================== MAIN RENDER ====================
+        function renderWatchlist() {
+            let list = getWL();
+            const search = document.getElementById('wl-search').value.trim().toLowerCase();
+            const status = document.getElementById('filter-status').value;
+            const type = document.getElementById('filter-type').value;
+            const genre = document.getElementById('filter-genre').value;
+            const platform = document.getElementById('filter-platform').value;
+            const sortBy = document.getElementById('sort-by').value;
+            const urgentOnly = document.getElementById('toggle-urgent').checked;
+            if (search) list = list.filter(i => i.title?.toLowerCase().includes(search));
+            if (status !== 'all') list = list.filter(i => i.status === status);
+            if (type !== 'all') list = list.filter(i => i.type === type);
+            if (genre !== 'all') list = list.filter(i => (i.genre_ids || []).map(String).includes(genre));
+            if (platform !== 'all') { const region = localStorage.getItem('user_region') || 'US'; list = list.filter(i => (i.watch_providers?.[region]?.flatrate || []).some(p => String(p.provider_id) === platform)); }
+            if (urgentOnly) { try { const cache = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); const urgentIds = new Set(cache.map(c => String(c.tmdb_id))); list = list.filter(i => urgentIds.has(String(i.tmdb_id))); } catch(e) { list = []; } }
+            list.sort((a,b) => {
+                if (sortBy === 'title') return (a.title || '').localeCompare(b.title || '');
+                if (sortBy === 'rating') return (b.user_rating || 0) - (a.user_rating || 0);
+                if (sortBy === 'date_watched') return (b.date_watched || 0) - (a.date_watched || 0);
+                if (sortBy === 'time_remaining') { const remA = a.type === 'tv' ? ((a.number_of_episodes || 12) - (a.progress_episode || 0)) * 45 : 0; const remB = b.type === 'tv' ? ((b.number_of_episodes || 12) - (b.progress_episode || 0)) * 45 : 0; return remB - remA; }
+                return (b.date_added || 0) - (a.date_added || 0);
+            });
+            const info = document.getElementById('results-info'); if (info) info.textContent = `${list.length} title${list.length !== 1 ? 's' : ''} tracked`;
+            const grid = document.getElementById('watchlist-grid'); const empty = document.getElementById('empty-state');
+            if (!list.length) { if (grid) grid.innerHTML = ''; if (empty) empty.hidden = false; renderSmartLists(); renderContinueWatching(); return; }
+            if (empty) empty.hidden = true; if (grid) grid.innerHTML = list.map(renderCard).join('');
+            updateBulkBar(); renderSmartLists(); renderContinueWatching();
+        }
+
+        // ==================== SMART LISTS ====================
+        function renderSmartLists() {
+            const list = getWL();
+            const smarts = [
+                { title: 'Quick Watch (Under 90 min)', items: list.filter(i => i.status === 'want_to_watch' && i.type === 'movie').slice(0,8), desc: 'Short movies from your Want to Watch backlog' },
+                { title: 'Recently Finished', items: list.filter(i => i.status === 'finished').sort((a,b)=>(b.date_watched||0)-(a.date_watched||0)).slice(0,8), desc: 'Titles you completed most recently' },
+                { title: 'Favorites Portfolio', items: list.filter(i => i.status === 'favorites').slice(0,8), desc: 'Your highly favored entertainment assets' },
+                { title: 'Oldest in Backlog', items: list.filter(i => i.status === 'want_to_watch').sort((a,b)=>(a.date_added||0)-(b.date_added||0)).slice(0,8), desc: 'Curation rows added longest ago' },
+                { title: 'Top Rated by You', items: list.filter(i => i.user_rating).sort((a,b)=>(b.user_rating||0)-(a.user_rating||0)).slice(0,8), desc: 'Your highest evaluated rating indicators' },
+                { title: 'Ready to Rewatch', items: list.filter(i => i.status === 'rewatch').slice(0,8), desc: 'Titles flagged for rewatch cycles' }
+            ].filter(s => s.items.length > 0);
+            const container = document.getElementById('smart-lists-grid');
+            if (!smarts.length) { document.getElementById('smart-lists-section').hidden = true; return; }
+            document.getElementById('smart-lists-section').hidden = false;
+            if (container) container.innerHTML = smarts.map(s => `<div class="p-4 rounded-2xl bg-gray-900 border border-white/10"><h3 class="font-semibold text-white mb-1">${escapeHtml(s.title)}</h3><p class="text-xs text-gray-500 mb-3">${escapeHtml(s.desc)}</p><div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">${s.items.map(item => { const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER; return `<a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.type||'movie'}" aria-label="${escapeAttr(item.title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="40" height="60" class="w-10 h-14 object-cover rounded-lg hover:scale-105 transition-transform flex-shrink-0" onerror="this.src='${NO_POSTER}'"></a>`; }).join('')}</div></div>`).join('');
+        }
+
+        // ==================== BULK ACTIONS ====================
+        function toggleSelect(id) { if (selectedIds.has(String(id))) selectedIds.delete(String(id)); else selectedIds.add(String(id)); updateBulkBar(); const article = document.querySelector(`[data-id="${id}"]`); if (article) article.classList.toggle('ring-2', selectedIds.has(String(id))); }
+        function updateBulkBar() { const bar = document.getElementById('bulk-bar'); const cnt = document.getElementById('bulk-count'); if (bar && cnt) { bar.hidden = selectedIds.size === 0; cnt.textContent = `${selectedIds.size} selected`; } }
+        function clearSelection() { selectedIds.clear(); document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false); document.querySelectorAll('[data-id]').forEach(art => art.classList.remove('ring-2')); updateBulkBar(); }
+        function applyBulkStatus() { const status = document.getElementById('bulk-status-select').value; if (!status || !selectedIds.size) return; const list = getWL(); selectedIds.forEach(id => { const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].status = status; if (status === 'finished') list[idx].date_watched = Date.now(); } }); saveWL(list); clearSelection(); renderStats(); renderWatchlist(); showToastNotification('Batch status metrics updated', 'success'); }
+        function deleteBulkSelected() { if (!selectedIds.size) return; if (!confirm(`Permanently scrub ${selectedIds.size} selected tracking profiles?`)) return; const list = getWL().filter(i => !selectedIds.has(String(i.tmdb_id))); saveWL(list); clearSelection(); renderStats(); renderWatchlist(); showToastNotification('Deleted selected profile indices', 'info'); }
+
+        // ==================== EXPORT / IMPORT / SHARE ====================
+        function exportCSV() { const list = getWL(); if (!list.length) { showToastNotification('Watchlist ledger is empty', 'info'); return; } const rows = [['tmdb_id','type','title','status','user_rating','notes','date_added','date_watched','progress_episode','progress_season']]; list.forEach(i => rows.push([i.tmdb_id, i.type, `"${(i.title || '').replace(/"/g, '""')}"`, i.status, i.user_rating || '', `"${(i.notes || '').replace(/"/g, '""')}"`, i.date_added ? new Date(i.date_added).toISOString().slice(0,10) : '', i.date_watched ? new Date(i.date_watched).toISOString().slice(0,10) : '', i.progress_episode || 0, i.progress_season || 1])); dl('flashstream-watchlist.csv', 'text/csv', rows.map(r => r.join(',')).join('\n')); showToastNotification('CSV profile data bundle downloaded', 'success'); }
+        function exportJSON() { const list = getWL(); if (!list.length) { showToastNotification('Watchlist dataset is empty', 'info'); return; } dl('flashstream-watchlist.json', 'application/json', JSON.stringify(list, null, 2)); showToastNotification('JSON structured preferences backup generated', 'success'); }
+        function importJSON(event) { const fileList = event.target.files; if (!fileList || fileList.length === 0) return; const file = fileList[0]; const reader = new FileReader(); reader.onload = e => { try { const data = JSON.parse(e.target.result); if (!Array.isArray(data)) throw new Error(); const existing = getWL(); const existingIds = new Set(existing.map(i => String(i.tmdb_id))); let added = 0; data.forEach(item => { if (!item.tmdb_id || !item.title) return; if (existingIds.has(String(item.tmdb_id))) return; existing.push({ ...item, tmdb_id: String(item.tmdb_id), date_added: item.date_added || Date.now() }); added++; }); saveWL(existing); renderStats(); renderWatchlist(); showToastNotification(`Successfully synchronized ${added} profile entries`, 'success'); } catch(e) { showToastNotification('Invalid preference JSON ledger document format', 'error'); } event.target.value = ''; }; reader.readAsText(file); }
+        function dl(filename, mime, content) { const a = document.createElement('a'); a.href = `data:${mime};charset=utf-8,${encodeURIComponent(content)}`; a.download = filename; a.click(); }
+        function copyShareLink() { const list = getWL().slice(0,50); const mini = list.map(i => ({ i: i.tmdb_id, t: i.type, n: i.title, p: i.poster_path, s: i.status })); const token = btoa(encodeURIComponent(JSON.stringify(mini))); navigator.clipboard?.writeText(`${location.origin}/watchlist.html?shared=${token}`).then(() => showToastNotification('Share link token copied to device clipboard', 'success')).catch(() => showToastNotification('Copy URL parameters layout manually', 'info')); }
+        function handleSharedList() { const token = new URLSearchParams(location.search).get('shared'); if (!token) return; try { const decoded = JSON.parse(decodeURIComponent(atob(token))); if (!Array.isArray(decoded)) return; if (!confirm(`Synchronize shared profile watchlist with ${decoded.length} entries?`)) return; const existing = getWL(); const existingIds = new Set(existing.map(i => String(i.tmdb_id))); let added = 0; decoded.forEach(d => { if (existingIds.has(String(d.i))) return; existing.push({ tmdb_id: String(d.i), type: d.t || 'movie', title: d.n || 'Unknown', poster_path: d.p || null, status: d.s || 'want_to_watch', date_added: Date.now() }); added++; }); if (added) { saveWL(existing); renderStats(); renderWatchlist(); showToastNotification(`Imported ${added} custom data rows from share link parameters`, 'success'); } } catch(e) { showToastNotification('Corrupt share parameter validation token phrase', 'error'); } }
+        function clearWatchlist() { if (!confirm('Scrub all matching watchlist records? This trajectory cannot be reversed.')) return; localStorage.removeItem('watchlist'); selectedIds.clear(); renderStats(); renderWatchlist(); showToastNotification('Personal profile tracking backlog completely cleared', 'info'); }
+
+        // ==================== NOTES MODAL ====================
+        function openNoteModal(id) { editingNoteId = id; const item = getWL().find(i => String(i.tmdb_id) === String(id)); document.getElementById('note-textarea').value = item?.notes || ''; document.getElementById('note-modal').hidden = false; setTimeout(() => document.getElementById('note-textarea').focus(), 50); }
+        function closeNoteModal() { document.getElementById('note-modal').hidden = true; editingNoteId = null; }
+        function saveNote() { if (!editingNoteId) return; const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(editingNoteId)); if (idx > -1) { list[idx].notes = document.getElementById('note-textarea').value.trim() || null; saveWL(list); } closeNoteModal(); renderWatchlist(); showToastNotification('Annotation modifications synchronized', 'success'); }
+
+        // ==================== UTILITIES ====================
+        function relativeDate(ts) { const days = Math.floor((Date.now() - ts) / 86400000); if (days < 1) return 'today'; if (days < 7) return `${days}d ago`; if (days < 30) return `${Math.floor(days / 7)}w ago`; if (days < 365) return `${Math.floor(days / 30)}mo ago`; return `${Math.floor(days / 365)}y ago`; }
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToastNotification(msg, type='success') { const c = { success:'bg-green-800 border-green-600', error:'bg-red-900 border-red-700', info:'bg-blue-900 border-blue-700' }; const el = document.createElement('div'); el.className = `pointer-events-auto max-w-sm w-full px-4 py-3 rounded-xl border text-sm font-medium shadow-xl ${c[type]} transform transition-all duration-300 translate-x-full opacity-0`; el.textContent = msg; document.getElementById('toast-container').appendChild(el); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('translate-x-full','opacity-0'))); setTimeout(() => { el.classList.add('translate-x-full','opacity-0'); setTimeout(() => el.remove(),350); },3000); }
+
+        // ==================== SEARCH DROPDOWN (FIXED) ====================
+        function setupSearchEngine() {
+            let queryDebounce = null;
+            const searchInput = document.getElementById('nav-search-input');
+            const dropdownMenu = document.getElementById('search-dropdown');
+            if (!searchInput || !dropdownMenu) return;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(queryDebounce);
+                const q = searchInput.value.trim();
+                if (q.length < 2) { dropdownMenu.hidden = true; return; }
+                queryDebounce = setTimeout(() => {
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const entries = (data.results || []).filter(r => r.media_type !== 'person').slice(0,5);
+                            if (!entries.length) { dropdownMenu.hidden = true; return; }
+                            dropdownMenu.innerHTML = entries.map(item => {
+                                const title = item.title || item.name || '';
+                                const year = (item.release_date || item.first_air_date || '').slice(0,4);
+                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true"><div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div></a>`;
+                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                            dropdownMenu.hidden = false;
+                        })
+                        .catch(() => { dropdownMenu.hidden = true; });
+                }, 300);
+            });
+            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdownMenu.hidden = true; });
+        }
+
+        // ==================== THEME, REGION, MOBILE ====================
+        function initTheme() { if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark'); else document.documentElement.classList.add('dark'); }
+        document.getElementById('theme-toggle')?.addEventListener('click', () => { const isDark = document.documentElement.classList.toggle('dark'); localStorage.setItem('cs-theme', isDark ? 'dark' : 'light'); });
+        document.getElementById('note-modal')?.addEventListener('click', e => { if (e.target === document.getElementById('note-modal')) closeNoteModal(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNoteModal(); });
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', () => { const m = document.getElementById('mobile-menu'); if (m) m.hidden = !m.hidden; });
+        const region = localStorage.getItem('user_region') || 'US';
+        const flagMap = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
+        const regionFlag = document.getElementById('region-flag'); if (regionFlag) regionFlag.textContent = flagMap[region] || '🌐';
+        const regionCode = document.getElementById('region-code'); if (regionCode) regionCode.textContent = region;
+
+        initTheme();
+        setupSearchEngine();
+        handleSharedList();
+        renderStats();
+        populateFilters();
+        renderWatchlist();
+    </script>
+</body>
+</html>

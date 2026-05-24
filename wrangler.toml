@@ -1,0 +1,31 @@
+name = "flashstream-worker"
+main = "worker/worker.js"
+compatibility_date = "2026-05-24"
+compatibility_flags = ["nodejs_compat"]
+
+binding = "flashstream_db"
+database_name = "flashstream-db"
+database_id = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c"
+
+[[d1_databases]]
+binding       = "flashstream_db"                               # Must match exactly with 'env.DB' inside your worker.js logic
+database_name = "flashstream-db"
+database_id   = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c" # Paste the ID returned by your 'wrangler d1 create' command
+
+[vars]
+ENVIRONMENT = "production"
+
+[observability]
+enabled = true
+
+# ============================================================
+# SECRETS PROVISIONING MEMO
+# ============================================================
+# Do NOT paste raw operational API keys or tokens into this file.
+# To keep your setup completely secure and protect your system,
+# run these commands inside your terminal path to bind your keys:
+#
+# 1. npx wrangler secret put TMDB_API_KEY
+# 2. npx wrangler secret put STREAMING_API_KEY
+# 3. npx wrangler secret put TURNSTILE_SECRET
+# ============================================================

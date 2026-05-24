@@ -1,0 +1,63 @@
+# ============================================================
+# FLASHSTREAM ANTI-SCRAPING CRAWLER MATRIX
+# Target File: public/robots.txt
+# Environment: flashstream.pages.dev (Core Production Node)
+# ============================================================
+
+# ------------------------------------------------------------
+# PILLAR 1: EXPLICIT COMMERCIAL AI SCRAPER BLOCKS
+# Prevents content theft, metadata scraping, and system resource strain
+# ------------------------------------------------------------
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Applebot-Extended
+User-agent: PerplexityBot
+User-agent: CCBot
+User-agent: Anthropic-AI
+User-agent: CohereBot
+User-agent: Meta-ExternalAgent
+User-agent: meta-externalagent
+User-agent: Meta-ExternalFetcher
+User-agent: meta-externalfetcher
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Bytespider
+User-agent: Diffbot
+User-agent: Omgilibot
+User-agent: Amazonbot
+Disallow: /
+
+# ------------------------------------------------------------
+# PILLAR 2: STANDARD CONSUMER SEARCH ENGINE INDEX RULES
+# Maximizes programmatic SEO traffic while protecting private user directories
+# ------------------------------------------------------------
+User-agent: *
+# Allowed Programmatic Content Directories
+Allow: /
+Allow: /index.html
+Allow: /discover.html
+Allow: /movie-detail.html
+Allow: /collection.html
+Allow: /about.html
+Allow: /privacy.html
+Allow: /terms.html
+Allow: /leaving-soon.html
+Allow: /coming-soon.html
+Allow: /community.html
+Allow: /insights.html
+Allow: /blog/
+
+# Protected Private Directories (Neutralizes Data Scraping Risk)
+Disallow: /settings.html
+Disallow: /watchlist.html
+Disallow: /offline.html
+Disallow: /api/
+Disallow: /data/
+
+# Enforce Request Rate Management (Protects Serverless Workloads)
+Crawl-delay: 2
+
+# Global Index XML Locator Mapping
+Sitemap: https://flashstream.pages.dev/sitemap.xml

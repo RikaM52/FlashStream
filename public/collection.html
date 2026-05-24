@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Collection | FlashStream</title>
+    <meta id="page-desc" name="description" content="Browse all films in this media franchise collection on FlashStream.">
+    <link id="link-canonical" rel="canonical" href="https://flashstream.pages.dev/collection.html">
+    <meta id="og-title" property="og:title" content="Collection | FlashStream">
+    <meta id="og-desc" property="og:description" content="">
+    <meta id="og-image" property="og:image" content="">
+    <meta id="og-url" property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton {
+            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        [hidden] { display: none !important; }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+    
+    <!-- MAIN NAVIGATION -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <nav id="breadcrumb" class="max-w-7xl mx-auto px-4 pt-4 pb-2 text-sm text-gray-500" aria-label="Breadcrumb">
+        <ol class="flex items-center gap-2 flex-wrap" role="list">
+            <li><a href="/index.html" class="hover:text-white transition-colors">Home</a></li>
+            <li aria-hidden="true">›</li>
+            <li><a href="/discover.html" class="hover:text-white transition-colors">Collections</a></li>
+            <li aria-hidden="true">›</li>
+            <li id="breadcrumb-title" class="text-gray-300 truncate max-w-xs">Loading…</li>
+        </ol>
+    </nav>
+
+    <main id="main-content">
+        <!-- SKELETON LOADING STATE -->
+        <div id="skeleton-state" class="max-w-7xl mx-auto px-4 py-8">
+            <div class="flex gap-6 flex-col md:flex-row mb-8">
+                <div class="skeleton rounded-2xl flex-shrink-0" style="width:200px;height:300px"></div>
+                <div class="flex-1 space-y-4 pt-2">
+                    <div class="skeleton h-9 rounded-xl w-2/3"></div>
+                    <div class="skeleton h-5 rounded-lg w-full"></div>
+                    <div class="skeleton h-5 rounded-lg w-4/5"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+                <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+                <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+                <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+                <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+            </div>
+        </div>
+
+        <!-- MAIN COLLECTION CONTENT (hidden until loaded) -->
+        <div id="collection-content" hidden>
+            <div class="relative overflow-hidden min-h-[260px]">
+                <img id="backdrop-img" src="" alt="" loading="lazy" class="absolute inset-0 w-full h-full object-cover object-center opacity-30">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/10"></div>
+                <div class="relative max-w-7xl mx-auto px-4 py-10 flex flex-col md:flex-row gap-8 items-start md:items-end">
+                    <img id="collection-poster" src="" alt="" loading="eager" width="200" height="300" class="w-40 md:w-48 rounded-2xl shadow-2xl ring-1 ring-white/10 flex-shrink-0">
+                    <div class="flex-1 min-w-0 pb-2">
+                        <h1 id="collection-name" class="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight"></h1>
+                        <p id="collection-film-count" class="text-lg text-gray-300 mb-4"></p>
+                        <p id="collection-overview" class="text-sm text-gray-400 leading-relaxed max-w-2xl mb-4 hidden"></p>
+                        <button id="add-all-btn" class="px-5 py-2.5 rounded-xl bg-accent text-white font-semibold text-sm hover:bg-red-700 transition-colors">Add All to Watchlist</button>
+                    </div>
+                </div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 py-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold text-white">Films in This Collection</h2>
+                    <p class="text-sm text-gray-400" id="film-count-label"></p>
+                </div>
+                <div id="films-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6" role="list"></div>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 pb-12">
+                <p class="text-xs text-gray-600">Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">The Movie Database (TMDB)</a>. Not endorsed by TMDB.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        /* ── SYSTEM ENDPOINTS AND ENGINE INITIALIZATION STATE ──────────────── */
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300' viewBox='0 0 200 300'%3E%3Crect width='200' height='300' fill='%231f1f29'/%3E%3C/svg%3E`;
+        
+        const urlParams = new URLSearchParams(location.search);
+        const COLLECTION_ID = urlParams.get('id');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLayoutTheme();
+            setupGlobalSearchEngine();
+            setupMobileMenu();
+            executeCollectionDataFetch();
+        });
+
+        function initializeLayoutTheme() {
+            if (localStorage.getItem('cs-theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            document.getElementById('theme-toggle')?.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
+            });
+            updateRegionBadge();
+        }
+
+        function updateRegionBadge() {
+            const region = localStorage.getItem('user_region') || 'US';
+            const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭' };
+            const flagElem = document.getElementById('region-flag');
+            const codeElem = document.getElementById('region-code');
+            if (flagElem) flagElem.textContent = flags[region] || '🌐';
+            if (codeElem) codeElem.textContent = region;
+        }
+
+        function setupMobileMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            if (mobileBtn && menu) {
+                mobileBtn.addEventListener('click', () => {
+                    const open = !menu.hidden;
+                    menu.hidden = open;
+                    mobileBtn.setAttribute('aria-expanded', String(!open));
+                });
+            }
+        }
+
+        /* ── LOCAL DATA PERSISTENCE MANAGEMENT (WATCHLIST SYNC) ────────────── */
+        function getWatchlist() { 
+            try { 
+                return JSON.parse(localStorage.getItem('watchlist') || '[]'); 
+            } catch(e) { 
+                return []; 
+            } 
+        }
+        
+        function saveWatchlist(listData) { 
+            localStorage.setItem('watchlist', JSON.stringify(listData)); 
+        }
+
+        /* ── DYNAMIC CARD RENDERER ───────────────────────────────────────── */
+        function renderFilmCard(film, index) {
+            const id = film.id;
+            const title = film.title || 'Unknown Title';
+            const year = (film.release_date || '').slice(0, 4) || 'TBA';
+            const rating = film.vote_average ? film.vote_average.toFixed(1) : null;
+            const poster = film.poster_path ? `${TMDB_IMG}w342${film.poster_path}` : NO_POSTER;
+            const targetHref = `/movie-detail.html?id=${id}&type=movie`;
+            const isAlreadyInWatchlist = getWatchlist().some(item => String(item.tmdb_id) === String(id));
+
+            return `
+                <article class="group" role="listitem">
+                    <div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] shadow-md">
+                        <span class="absolute top-2 left-2 z-10 w-7 h-7 rounded-full bg-black/70 text-white text-xs font-bold flex items-center justify-center font-mono">${index + 1}</span>
+                        <a href="${targetHref}" aria-label="${escapeAttr(title)}">
+                            <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)} Poster" loading="lazy" width="200" height="300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'">
+                        </a>
+                        <button onclick="handleWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" data-id="${id}" data-title="${escapeAttr(title)}" data-poster="${escapeAttr(film.poster_path || '')}" aria-label="${isAlreadyInWatchlist ? 'Remove from' : 'Add to'} watchlist">
+                            <svg class="w-4 h-4" fill="${isAlreadyInWatchlist ? '#e50914' : 'none'}" stroke="${isAlreadyInWatchlist ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <a href="${targetHref}" class="block mt-2 hover:text-accent transition-colors">
+                        <h3 class="text-xs font-semibold text-white line-clamp-1 leading-snug">${escapeHtml(title)}</h3>
+                        <div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium font-mono">
+                            <span>${year}</span>
+                            ${rating ? `<span class="text-amber-500">★ ${rating}</span>` : ''}
+                        </div>
+                    </a>
+                </article>
+            `;
+        }
+
+        /* ── WATCHLIST TOGGLE HANDLER ────────────────────────────────────── */
+        window.handleWatchlistToggle = function(event, buttonElement) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const watchlist = getWatchlist();
+            const id = buttonElement.dataset.id;
+            const itemIndex = watchlist.findIndex(item => String(item.tmdb_id) === String(id));
+            const isAddingAction = itemIndex === -1;
+
+            if (isAddingAction) {
+                watchlist.unshift({
+                    tmdb_id: String(id),
+                    type: 'movie',
+                    title: buttonElement.dataset.title,
+                    poster_path: buttonElement.dataset.poster || null,
+                    genre_ids: [],
+                    status: 'want_to_watch',
+                    date_added: Date.now()
+                });
+                showToastNotification('Added to watchlist ✓', 'success');
+            } else {
+                watchlist.splice(itemIndex, 1);
+                showToastNotification('Removed from watchlist', 'info');
+            }
+
+            saveWatchlist(watchlist);
+
+            const inlineSvg = buttonElement.querySelector('svg');
+            if (inlineSvg) {
+                inlineSvg.setAttribute('fill', isAddingAction ? '#e50914' : 'none');
+                inlineSvg.setAttribute('stroke', isAddingAction ? '#e50914' : 'white');
+            }
+            buttonElement.setAttribute('aria-label', `${isAddingAction ? 'Remove from' : 'Add to'} watchlist`);
+        };
+
+        function addAllToWatchlist(filmsArray) {
+            const watchlist = getWatchlist();
+            const existingIdsSet = new Set(watchlist.map(item => String(item.tmdb_id)));
+            let insertionCounter = 0;
+
+            filmsArray.forEach(film => {
+                if (existingIdsSet.has(String(film.id))) return;
+                watchlist.unshift({
+                    tmdb_id: String(film.id),
+                    type: 'movie',
+                    title: film.title,
+                    poster_path: film.poster_path || null,
+                    genre_ids: film.genre_ids || [],
+                    status: 'want_to_watch',
+                    date_added: Date.now()
+                });
+                existingIdsSet.add(String(film.id));
+                insertionCounter++;
+            });
+
+            saveWatchlist(watchlist);
+            showToastNotification(`Added ${insertionCounter} collection film${insertionCounter !== 1 ? 's' : ''} to watchlist`, 'success');
+            
+            // Re-render grid to update heart icons
+            const filmsGrid = document.getElementById('films-grid');
+            if (filmsGrid && window.currentFilmsArray) {
+                filmsGrid.innerHTML = window.currentFilmsArray.map((film, idx) => renderFilmCard(film, idx)).join('');
+            }
+        }
+
+        /* ── SERVERLESS DATA FETCH PIPELINE ────────────────────────────────── */
+        async function executeCollectionDataFetch() {
+            if (!COLLECTION_ID || !/^\d+$/.test(COLLECTION_ID)) {
+                document.getElementById('skeleton-state').innerHTML = `
+                    <div class="text-center py-24">
+                        <p class="text-gray-500 text-sm mb-4">No valid collection selected.</p>
+                        <a href="/discover.html" class="px-5 py-2 text-xs font-semibold rounded-xl bg-accent text-white hover:bg-red-700">Browse Catalogs</a>
+                    </div>`;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${WORKER_URL}/api/collection/${COLLECTION_ID}`);
+                if (!res.ok) throw new Error(`API error ${res.status}`);
+                const data = await res.json();
+
+                const collectionName = data.name || 'Collection';
+                const overviewText = data.overview || '';
+                const sortedParts = (data.parts || []).sort((a, b) => (a.release_date || '9999-12-31').localeCompare(b.release_date || '9999-12-31'));
+                window.currentFilmsArray = sortedParts;
+
+                document.getElementById('page-title').textContent = `${collectionName} | FlashStream`;
+                document.getElementById('breadcrumb-title').textContent = collectionName;
+                document.getElementById('collection-name').textContent = collectionName;
+                const countString = `${sortedParts.length} film${sortedParts.length !== 1 ? 's' : ''}`;
+                document.getElementById('collection-film-count').textContent = `${countString} in this collection`;
+                document.getElementById('film-count-label').textContent = countString;
+                if (overviewText) {
+                    const ovEl = document.getElementById('collection-overview');
+                    ovEl.textContent = overviewText;
+                    ovEl.classList.remove('hidden');
+                }
+                if (data.poster_path) document.getElementById('collection-poster').src = `${TMDB_IMG}w342${data.poster_path}`;
+                if (data.backdrop_path) document.getElementById('backdrop-img').src = `${TMDB_IMG}w1280${data.backdrop_path}`;
+                
+                const addAllBtn = document.getElementById('add-all-btn');
+                addAllBtn.onclick = () => addAllToWatchlist(sortedParts);
+                
+                const filmsGrid = document.getElementById('films-grid');
+                filmsGrid.innerHTML = sortedParts.map((film, idx) => renderFilmCard(film, idx)).join('');
+                
+                document.getElementById('skeleton-state').hidden = true;
+                document.getElementById('collection-content').hidden = false;
+            } catch (err) {
+                console.error('[Collection]', err);
+                document.getElementById('skeleton-state').innerHTML = `
+                    <div class="text-center py-24">
+                        <p class="text-xl font-bold text-white mb-2">Could not load collection</p>
+                        <p class="text-xs text-gray-500 mb-6 font-mono">${escapeHtml(err.message)}</p>
+                        <a href="/discover.html" class="px-5 py-2.5 bg-accent text-white font-semibold text-xs rounded-xl hover:bg-red-700 transition-colors">Return to Discovery</a>
+                    </div>`;
+            }
+        }
+
+        /* ── AUTO-SUGGEST DROPDOWN ENGINE ─────────────────────────────────── */
+        function setupGlobalSearchEngine() {
+            let searchDebounce = null;
+            const searchInput = document.getElementById('nav-search-input');
+            const dropdown = document.getElementById('search-dropdown');
+            if (!searchInput || !dropdown) return;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchDebounce);
+                const q = searchInput.value.trim();
+                if (q.length < 2) { dropdown.hidden = true; return; }
+                searchDebounce = setTimeout(() => executeQueryFetch(q), 300);
+            });
+
+            searchInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    const q = searchInput.value.trim();
+                    if (q) window.location.href = `/discover.html?q=${encodeURIComponent(q)}`;
+                }
+                if (e.key === 'Escape') dropdown.hidden = true;
+            });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true;
+            });
+        }
+
+        async function executeQueryFetch(q) {
+            const dropdown = document.getElementById('search-dropdown');
+            if (!dropdown) return;
+            try {
+                const res = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`);
+                const data = await res.json();
+                const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+                if (!results.length) { dropdown.hidden = true; return; }
+                dropdown.innerHTML = results.map(item => {
+                    const title = item.title || item.name || '';
+                    const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                    const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                    const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+                    return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">
+                        <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+                        <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
+                    </a>`;
+                }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                dropdown.hidden = false;
+            } catch(e) { dropdown.hidden = true; }
+        }
+
+        /* ── UTILITIES ────────────────────────────────────────────────────── */
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToastNotification(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const styleMap = { success: 'bg-green-900/90 border-green-600 text-green-100', error: 'bg-red-900/90 border-red-700 text-red-100', info: 'bg-gray-900/90 border-white/10 text-gray-300' };
+            const toast = document.createElement('div');
+            toast.className = `max-w-sm w-full px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-xl ${styleMap[type] || styleMap.info} transition-all duration-300 transform translate-x-full opacity-0`;
+            toast.setAttribute('role', 'status');
+            toast.textContent = message;
+            container.appendChild(toast);
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.remove('translate-x-full', 'opacity-0')));
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 350);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

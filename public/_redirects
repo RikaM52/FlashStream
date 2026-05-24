@@ -1,0 +1,43 @@
+# ============================================================
+# FLASHSTREAM ROUTING REWRITE MATRIX
+# Target Host: Cloudflare Pages Edge Server Router
+# Rules: Priority Order, Strict Rewrites, and 301 Permanent Redirects
+# ============================================================
+
+# 1. PRIMARY SYSTEM CRITICAL ASSET PASSTHROUGHS
+/manifest.json       /manifest.json       200
+/sw.js               /sw.js               200
+/robots.txt          /robots.txt          200
+/sitemap.xml         /sitemap.xml         200
+/offline.html        /offline.html        200
+/icons/*             /icons/:splat        200
+/data/*              /data/:splat         200
+
+# 2. PROGRAMMATIC CLEAN URL REWRITES (NO .HTML EXTENSIONS)
+/discover            /discover.html       200
+/watchlist           /watchlist.html      200
+/leaving-soon        /leaving-soon.html   200
+/coming-soon         /coming-soon.html    200
+/community           /community.html      200
+/settings            /settings.html       200
+/insights            /insights.html       200
+/about               /about.html          200
+/privacy             /privacy.html        200
+/terms               /terms.html          200
+/blog                /blog/index.html     200
+
+# 3. DYNAMIC METADATA PATH PROXIES
+/movie/*             /movie-detail.html   200
+/show/*              /movie-detail.html   200
+/tv/*                /movie-detail.html   200
+/person/*            /movie-detail.html   200
+/collection/*        /collection.html     200
+
+# 4. LEGACY ALIGNMENT PERMANENT REDIRECTS (PRESERVES SEO TRACTION)
+/privacy-policy      /privacy             301
+/privacy-policy.html /privacy             301
+/cinesphere/*        /                    301
+
+# 5. RESTRICTED CATCH-ALL SPA FALLBACK (PROTECTS BLOG & STATIC FILES)
+# Rewrites loose trailing slash sub-directories while keeping asset files safe
+/index.html          /index.html          200

@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Movies, TV &amp; Shorts — Filter by Mood, Genre, Country | FlashStream</title>
+    <meta name="description" content="Browse thousands of movies, TV shows, and vertical shorts. Filter by mood, genre, language, country, coming soon, and more.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://flashstream.pages.dev/discover.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Discover Movies, TV &amp; Shorts | FlashStream">
+    <meta property="og:description" content="Browse thousands of movies and TV shows. Filter by mood, genre, platform, language, and more.">
+    <meta property="og:url" content="https://flashstream.pages.dev/discover.html">
+    <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json" id="jsonld-itemlist"></script>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton {
+            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        .chip, .content-chip {
+            display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px;
+            border-radius: 9999px; font-size: 12px; font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.12); cursor: pointer; transition: all 0.15s;
+            color: #9ca3af; background: #111116; white-space: nowrap; user-select: none;
+        }
+        .chip:hover, .content-chip:hover { border-color: rgba(255,255,255,0.3); color: #fff; background: #1a1a24; }
+        .chip.active, .content-chip.active { background: #e50914; border-color: #e50914; color: #fff; }
+        .filter-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; margin-bottom: 8px; display: block; }
+        [hidden] { display: none !important; }
+        .badge-pulse { animation: bpulse 1.4s ease-in-out infinite; }
+        @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        .standard-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #374151; outline: none; margin: 12px 0; }
+        .standard-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #e50914; cursor: pointer; border: none; }
+        .dual-slider { position: relative; height: 24px; margin: 10px 0; }
+        .dual-slider input[type=range] { position: absolute; width: 100%; background: transparent; pointer-events: none; -webkit-appearance: none; margin: 0; padding: 0; }
+        .dual-slider input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #374151; border-radius: 2px; }
+        .dual-slider input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #e50914; cursor: pointer; border: none; position: relative; margin-top: -6px; }
+        .active-filter-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.3); color: #e50914; }
+        .active-filter-tag button { background: none; border: none; color: #e50914; cursor: pointer; font-size: 14px; padding: 0 4px; }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+    
+    <!-- MAIN APPLICATION APP NAVBAR NAVIGATION -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-white font-semibold">Discover</a>
+                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
+                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag"> </span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-white font-semibold py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <main id="main-content" class="max-w-7xl mx-auto px-4 py-6">
+        <div class="flex flex-col md:flex-row gap-8">
+            
+            <!-- FILTERS SIDE PANEL VIEWPORT -->
+            <aside id="filter-panel" class="hidden md:flex flex-col gap-5 w-80 flex-shrink-0 overflow-y-auto max-h-[calc(100vh-80px)] sticky top-20" aria-label="Filter options">
+                <div class="flex gap-2">
+                    <button onclick="clearAllFilters()" class="flex-1 py-2 text-sm rounded-lg bg-red-900/30 border border-red-800/50 text-red-400 hover:bg-red-900/50 transition-colors">Clear All</button>
+                    <button onclick="shareFilters()" class="flex-1 py-2 text-sm rounded-lg bg-gray-900 border border-white/10 text-gray-300 hover:bg-gray-800 transition-colors">Share</button>
+                </div>
+
+                <!-- Quick Modes -->
+                <div><span class="filter-section-title">Quick Modes</span><div id="quick-modes" class="flex gap-2 flex-wrap"></div></div>
+                
+                <!-- Content Type -->
+                <div><span class="filter-section-title">Content Type</span><div id="content-type-buttons" class="flex gap-2"></div></div>
+                
+                <!-- Shorts Category (hidden unless shorts selected) -->
+                <div id="shorts-category" hidden><span class="filter-section-title">Shorts Origin Category</span><div id="shorts-cat-buttons" class="flex gap-2 flex-wrap"></div></div>
+                
+                <!-- Genres -->
+                <div><span class="filter-section-title">Genres</span><div id="genre-chips" class="flex flex-wrap gap-2"></div></div>
+                
+                <!-- Platform Filters -->
+                <div><span class="filter-section-title">Streaming Networks</span><div id="platform-filters" class="flex flex-col gap-2"></div></div>
+                
+                <!-- Language Filter -->
+                <div><span class="filter-section-title">Original Audio Language</span><select id="language-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent"><option value="">Any Language</option><option value="ko">Korean (K-Drama)</option><option value="ja">Japanese (Anime)</option><option value="zh">Chinese (C-Drama)</option><option value="th">Thai</option><option value="hi">Hindi</option><option value="ur">Urdu</option><option value="ta">Tamil</option><option value="ms">Malay</option><option value="id">Indonesian</option><option value="tl">Tagalog / Filipino</option><option value="vi">Vietnamese</option><option value="tr">Turkish</option><option value="ar">Arabic</option><option value="es">Spanish</option><option value="pt">Portuguese</option><option value="en">English</option><option value="fr">French</option><option value="de">German</option><option value="it">Italian</option></select></div>
+                
+                <!-- Production Country -->
+                <div><span class="filter-section-title">Production Country Context</span><select id="country-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent"><option value="">Any Country</option><option value="KR">South Korea</option><option value="JP">Japan</option><option value="CN">China</option><option value="TW">Taiwan</option><option value="HK">Hong Kong</option><option value="TH">Thailand</option><option value="IN">India</option><option value="PK">Pakistan</option><option value="MY">Malaysia</option><option value="SG">Singapore</option><option value="AE">United Arab Emirates</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="CA">Canada</option><option value="FR">France</option><option value="DE">Germany</option><option value="TR">Turkey</option></select></div>
+                
+                <!-- Rating Slider -->
+                <div><div class="flex justify-between items-center mb-1"><span class="filter-section-title mb-0">Minimum TMDB Rating</span><span id="rating-display" class="text-xs text-gray-400">0.0</span></div><input type="range" id="rating-min" class="standard-slider" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('rating-display').textContent=this.value; scheduleFetch()"></div>
+                
+                <!-- Year Slider (dual) -->
+                <div><span class="filter-section-title">Release Year Boundaries</span><div class="dual-slider"><input type="range" id="year-min" min="1950" max="2026" value="1950" step="1" oninput="updateChronologicalYearSliders(event)"><input type="range" id="year-max" min="1950" max="2026" value="2026" step="1" oninput="updateChronologicalYearSliders(event)"></div><div id="year-display" class="text-xs text-gray-400 text-right">1950 - 2026</div></div>
+                
+                <!-- Runtime Slider (dual) -->
+                <div><span class="filter-section-title">Runtime Boundaries (Minutes)</span><div class="dual-slider"><input type="range" id="runtime-min" min="0" max="300" value="0" step="5" oninput="updateRuntimeDurationSliders(event)"><input type="range" id="runtime-max" min="0" max="300" value="300" step="5" oninput="updateRuntimeDurationSliders(event)"></div><div id="runtime-display" class="text-xs text-gray-400 text-right">0 - 300 min</div></div>
+                
+                <!-- Micro-trope Selector -->
+                <div><span class="filter-section-title">Micro-Trope Niche Overrides</span><select id="with-trope-select" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="scheduleFetch()"><option value="">Any Mapped Trope</option><option value="contract_marriage">Contract Marriage / Fake Bond</option><option value="ceo_employee">CEO / Workplace Corporate Romance</option><option value="reincarnation">Reincarnation / Alternate Timelines</option><option value="revenge">Revenge / Retribution Slugs</option><option value="enemies_lovers">Enemies to Lovers Dynamics</option><option value="historical_fantasy">Historical Xianxia / Wuxia Fantasy</option></select></div>
+            </aside>
+
+            <!-- RESULTS COLUMN -->
+            <div class="flex-1 min-w-0">
+                <!-- Active filters panel -->
+                <div id="active-filters-container" class="hidden flex flex-wrap gap-2 p-2 rounded-xl bg-gray-900/50 border border-white/5 mb-4">
+                    <span class="text-xs text-gray-500 self-center pl-1">Active:</span>
+                    <div id="active-filters-list" class="flex flex-wrap gap-1.5"></div>
+                </div>
+                <div id="filter-warning" class="hidden px-3 py-2 mb-4 rounded-xl bg-amber-900/20 border border-amber-700/40 text-xs text-amber-300"></div>
+
+                <!-- View controls -->
+                <div class="flex items-center justify-between mb-4 gap-4 flex-wrap">
+                    <p id="results-count" class="text-sm text-gray-400 font-medium" aria-live="polite">Loading results...</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <select id="sort-by" onchange="scheduleFetch()" class="bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:outline-none focus:border-accent" aria-label="Sort catalog items">
+                            <option value="popularity.desc">Most Popular</option>
+                            <option value="vote_average.desc">Highest Rated</option>
+                            <option value="first_air_date.desc">Newest First</option>
+                            <option value="first_air_date.asc">Oldest First</option>
+                            <option value="revenue.desc">Highest Grossing</option>
+                            <option value="original_title.asc">A to Z</option>
+                        </select>
+                        <button id="view-grid" onclick="setView('grid')" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" aria-label="Grid view" aria-pressed="true"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
+                        <button id="view-list" onclick="setView('list')" class="p-2 rounded-lg text-gray-500 hover:bg-white/10 hover:text-white" aria-label="List view" aria-pressed="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+                    </div>
+                </div>
+
+                <!-- Results grid -->
+                <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" role="list"></div>
+
+                <!-- Empty state -->
+                <div id="empty-state" hidden class="text-center py-24 border border-white/5 rounded-2xl bg-gray-900/20">
+                    <h2 class="text-xl font-semibold text-white mb-2">No matching items indexed</h2>
+                    <p class="text-gray-400 mb-6 max-w-sm mx-auto text-xs">Try clearing specific pacing rules or micro-trope tag arrays to discover international titles.</p>
+                    <button onclick="clearAllFilters()" class="px-6 py-2.5 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors text-xs uppercase tracking-wider">Reset Filters</button>
+                </div>
+
+                <!-- Load more button -->
+                <div class="text-center mt-8">
+                    <button id="load-more-btn" onclick="loadMore()" class="hidden px-8 py-3 bg-gray-900 border border-white/10 text-gray-300 text-xs font-semibold rounded-xl hover:bg-gray-800 transition-colors uppercase tracking-wider">Load More</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-white/10 py-10 px-4 bg-black mt-12" role="contentinfo">
+        <div class="max-w-7xl mx-auto text-center text-xs text-gray-600">
+            <p>FlashStream Engine • Directory metadata powered by federated network syndications.</p>
+        </div>
+    </footer>
+
+    <script>
+        /* ── WORKSPACE CORE INFRASTRUCTURE ENDPOINTS ───────────────────────── */
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        const NO_POSTER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E";
+
+        /* ── PRE-MAPPED TRANSACTION DICTIONARIES ───────────────────────────── */
+        const GENRES = [
+            { id: 28, name: 'Action' }, { id: 12, name: 'Adventure' }, { id: 16, name: 'Animation' },
+            { id: 35, name: 'Comedy' }, { id: 80, name: 'Crime' }, { id: 99, name: 'Documentary' },
+            { id: 18, name: 'Drama' }, { id: 10751, name: 'Family' }, { id: 14, name: 'Fantasy' },
+            { id: 36, name: 'History' }, { id: 27, name: 'Horror' }, { id: 10402, name: 'Music' },
+            { id: 9648, name: 'Mystery' }, { id: 10749, name: 'Romance' }, { id: 878, name: 'Sci-Fi' },
+            { id: 53, name: 'Thriller' }, { id: 10752, name: 'War' }, { id: 37, name: 'Western' }
+        ];
+
+        const QUICK_MODES = {
+            light: 'with_genres=35,16&vote_average.gte=6',
+            scary: 'with_genres=27',
+            feelgood: 'with_genres=35,10751,10749',
+            binge: 'content_type=tv',
+            date: 'with_genres=10749,35',
+            family: 'with_genres=10751,16',
+            hidden: 'vote_average.gte=7.5',
+            hollywood: 'with_original_language=en',
+            kdrama: 'with_original_language=ko&content_type=tv',
+            cdrama: 'with_original_language=zh&content_type=tv',
+            anime: 'with_original_language=ja&with_genres=16',
+            bollywood: 'with_original_language=hi',
+            thai: 'with_original_language=th'
+        };
+
+        const TRACKED_PROVIDERS = [
+            { id: 8, name: 'Netflix' }, { id: 9, name: 'Amazon Prime' }, { id: 337, name: 'Disney+' },
+            { id: 70, name: 'Viki' }, { id: 118, name: 'iQIYI' }, { id: 122, name: 'Hotstar' },
+            { id: 192, name: 'YouTube' }, { id: 1001, name: 'Viu' }, { id: 1002, name: 'Zee5' },
+            { id: 1003, name: 'SonyLIV' }
+        ];
+
+        /* ── INTERNAL CLIENT RUNTIME PREFERENCE STATES ─────────────────────── */
+        let selectedContentTypes = new Set(['movie']);
+        let selectedGenres = new Set();
+        let selectedPlatforms = new Set();
+        let currentView = localStorage.getItem('cs-view') || 'grid';
+        let fetchDebouncePointer = null;
+        let activeResultsArray = [];
+        let isCompilationLocked = false;
+        let currentPageIndex = 1;
+        let currentShortCategory = null;
+
+        /* ── CORE COMPILER LIFECYCLE HANDLERS ──────────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLayoutContext();
+            renderThematicPreferenceGrids();
+            setupSearchFiltersEngine();
+            setupSearchDropdown();
+            executeInitialDeepQueryFetch();
+        });
+
+        function initializeLayoutContext() {
+            if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            const region = localStorage.getItem('user_region') || 'US';
+            document.getElementById('region-code').textContent = region;
+            const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
+            document.getElementById('region-flag').textContent = flags[region] || ' ';
+        }
+
+        /* ── WATCHLIST HELPERS ────────────────────────────────────────────── */
+        function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
+        function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
+        function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
+
+        function handleCardWatchlistToggle(event, btn) {
+            event.preventDefault(); event.stopPropagation();
+            const id = btn.dataset.id;
+            const list = getWL();
+            const idx = list.findIndex(i => String(i.tmdb_id) === String(id));
+            let added = false;
+            if (idx > -1) { list.splice(idx, 1); showToastMessage('Removed from watchlist', 'info'); }
+            else {
+                list.unshift({ tmdb_id: String(id), type: btn.dataset.type, title: btn.dataset.title, poster_path: btn.dataset.poster || null, genre_ids: [], status: 'want_to_watch', date_added: Date.now() });
+                added = true; showToastMessage('Added to watchlist ✓', 'success');
+            }
+            saveWL(list);
+            const svg = btn.querySelector('svg');
+            if (svg) { svg.setAttribute('fill', added ? '#e50914' : 'none'); svg.setAttribute('stroke', added ? '#e50914' : 'white'); }
+            btn.setAttribute('aria-pressed', String(added));
+        }
+
+        /* ── DYNAMIC GENERATOR CHECKBOX AND GRID RENDERERS ────────────────── */
+        function renderThematicPreferenceGrids() {
+            const quickDiv = document.getElementById('quick-modes');
+            if (quickDiv) quickDiv.innerHTML = Object.keys(QUICK_MODES).map(k => `<button class="chip" onclick="applyQuickMode('${k}')">${escapeHtml(k.charAt(0).toUpperCase() + k.slice(1))}</button>`).join('');
+            const ctDiv = document.getElementById('content-type-buttons');
+            if (ctDiv) ctDiv.innerHTML = `<button class="content-chip active" data-content-type="movie" onclick="toggleContentType('movie', this)">Movies</button><button class="content-chip" data-content-type="tv" onclick="toggleContentType('tv', this)">TV Shows</button><button class="content-chip" data-content-type="short" onclick="toggleContentType('short', this)">Shorts</button>`;
+            const shortsDiv = document.getElementById('shorts-cat-buttons');
+            if (shortsDiv) shortsDiv.innerHTML = ['western','korean','japanese','chinese','thai'].map(c => `<button class="chip" data-short="${c}" onclick="setShortsCategory('${c}', this)">${escapeHtml(c.charAt(0).toUpperCase() + c.slice(1))}</button>`).join('');
+            const genreGrid = document.getElementById('genre-chips');
+            if (genreGrid) genreGrid.innerHTML = GENRES.map(g => `<button class="chip" data-id="${g.id}" onclick="toggleGenreChip(this, ${g.id})">${escapeHtml(g.name)}</button>`).join('');
+            const providerGrid = document.getElementById('platform-filters');
+            if (providerGrid) providerGrid.innerHTML = TRACKED_PROVIDERS.map(p => `<label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer hover:text-white select-none"><input type="checkbox" value="${p.id}" class="accent-red-600 provider-cb" onchange="syncSelectedPlatforms()"> ${escapeHtml(p.name)}</label>`).join('');
+        }
+
+        function toggleGenreChip(btn, id) {
+            if (selectedGenres.has(id)) { selectedGenres.delete(id); btn.classList.remove('active'); }
+            else { selectedGenres.add(id); btn.classList.add('active'); }
+            scheduleFetch();
+        }
+
+        function syncSelectedPlatforms() {
+            selectedPlatforms.clear();
+            document.querySelectorAll('.provider-cb:checked').forEach(cb => selectedPlatforms.add(parseInt(cb.value)));
+            scheduleFetch();
+        }
+
+        function toggleContentType(type, btn) {
+            document.querySelectorAll('.content-chip').forEach(b => b.classList.remove('active'));
+            selectedContentTypes.clear();
+            selectedContentTypes.add(type);
+            btn.classList.add('active');
+            document.getElementById('shorts-category').hidden = (type !== 'short');
+            scheduleFetch();
+        }
+
+        function setShortsCategory(cat, btn) {
+            document.querySelectorAll('[data-short]').forEach(b => b.classList.remove('active'));
+            if (currentShortCategory === cat) currentShortCategory = null;
+            else { currentShortCategory = cat; btn.classList.add('active'); }
+            scheduleFetch();
+        }
+
+        /* ── SLIDERS VALUE HANDLERS WITH PROTECTIONS ──────────────────────── */
+        function updateChronologicalYearSliders(event) {
+            const minEl = document.getElementById('year-min');
+            const maxEl = document.getElementById('year-max');
+            let min = parseInt(minEl.value, 10);
+            let max = parseInt(maxEl.value, 10);
+            if (min > max) {
+                if (event?.target === minEl) { maxEl.value = min; max = min; }
+                else { minEl.value = max; min = max; }
+            }
+            document.getElementById('year-display').textContent = `${min} - ${max}`;
+            scheduleFetch();
+        }
+
+        function updateRuntimeDurationSliders(event) {
+            const minEl = document.getElementById('runtime-min');
+            const maxEl = document.getElementById('runtime-max');
+            let min = parseInt(minEl.value, 10);
+            let max = parseInt(maxEl.value, 10);
+            if (min > max) {
+                if (event?.target === minEl) { maxEl.value = min; max = min; }
+                else { minEl.value = max; min = max; }
+            }
+            document.getElementById('runtime-display').textContent = `${min} - ${max} min`;
+            scheduleFetch();
+        }
+
+        /* ── EXTENSIBLE SERVER QUERY PARAMETER MATRIX INITIALIZERS ────────── */
+        function buildRequestParams(page = 1) {
+            const params = new URLSearchParams();
+            const currentType = [...selectedContentTypes][0] || 'movie';
+            params.set('content_type', currentType === 'short' ? 'short' : currentType);
+            params.set('page', String(page));
+            params.set('watch_region', localStorage.getItem('user_region') || 'US');
+            const sortSelect = document.getElementById('sort-by');
+            if (sortSelect) params.set('sort_by', sortSelect.value);
+            if (selectedGenres.size) params.set('with_genres', [...selectedGenres].join(','));
+            if (selectedPlatforms.size) params.set('with_watch_providers', [...selectedPlatforms].join('|'));
+            const langSelect = document.getElementById('language-filter');
+            if (langSelect && langSelect.value) params.set('with_original_language', langSelect.value);
+            const countrySelect = document.getElementById('country-filter');
+            if (countrySelect && countrySelect.value) params.set('with_origin_country', countrySelect.value);
+            const ratingSlider = document.getElementById('rating-min');
+            if (ratingSlider && parseFloat(ratingSlider.value) > 0) params.set('vote_average.gte', ratingSlider.value);
+            const tropeSelect = document.getElementById('with-trope-select');
+            if (tropeSelect && tropeSelect.value) params.set('with_trope', tropeSelect.value);
+            const queryInput = document.getElementById('nav-search-input');
+            if (queryInput && queryInput.value.trim()) params.set('query', queryInput.value.trim());
+
+            const yMin = document.getElementById('year-min').value;
+            const yMax = document.getElementById('year-max').value;
+            if (currentType === 'tv') {
+                if (yMin !== '1950') params.set('first_air_date.gte', `${yMin}-01-01`);
+                if (yMax !== '2026') params.set('first_air_date.lte', `${yMax}-12-31`);
+            } else {
+                if (yMin !== '1950') params.set('primary_release_date.gte', `${yMin}-01-01`);
+                if (yMax !== '2026') params.set('primary_release_date.lte', `${yMax}-12-31`);
+            }
+            const rMin = document.getElementById('runtime-min').value;
+            const rMax = document.getElementById('runtime-max').value;
+            if (rMin !== '0') params.set('with_runtime.gte', rMin);
+            if (rMax !== '300') params.set('with_runtime.lte', rMax);
+
+            if (currentType === 'short' && currentShortCategory) {
+                params.set('content_type', 'short');
+                const catMap = { korean:'ko', japanese:'ja', chinese:'zh', thai:'th' };
+                if (catMap[currentShortCategory]) params.set('with_original_language', catMap[currentShortCategory]);
+            }
+            return params;
+        }
+
+        /* ── HIGH-CONCURRENCY DISCOVERY REFETCH TRIGGERS ────────────────────── */
+        function scheduleFetch() {
+            clearTimeout(fetchDebouncePointer);
+            fetchDebouncePointer = setTimeout(() => {
+                currentPageIndex = 1;
+                activeResultsArray = [];
+                executeNetworkDiscoveryPipeline(false);
+            }, 350);
+        }
+
+        async function executeNetworkDiscoveryPipeline(appendMode = false) {
+            const grid = document.getElementById('results-grid');
+            const emptyState = document.getElementById('empty-state');
+            const counter = document.getElementById('results-count');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            if (!appendMode) {
+                emptyState.hidden = true;
+                loadMoreBtn.classList.add('hidden');
+                grid.innerHTML = Array(10).fill(0).map(() => '<div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>').join('');
+                counter.textContent = 'Loading core matrices...';
+            } else {
+                isCompilationLocked = true;
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.textContent = 'Mapping edge streams...';
+            }
+            try {
+                const params = buildRequestParams(appendMode ? currentPageIndex : 1);
+                const isShort = params.get('content_type') === 'short';
+                const apiPath = isShort ? '/api/shorts' : (params.has('query') ? '/api/search' : '/api/discover');
+                const targetUrl = `${WORKER_URL}${apiPath}?${params.toString()}`;
+                const responseData = await fetch(targetUrl).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
+                const rawResults = responseData.results || [];
+                if (appendMode) activeResultsArray.push(...rawResults);
+                else activeResultsArray = rawResults;
+
+                const distinctMap = new Map();
+                const cleanArray = [];
+                for (const item of activeResultsArray) {
+                    if (!item.id || distinctMap.has(item.id)) continue;
+                    distinctMap.set(item.id, true);
+                    cleanArray.push(item);
+                }
+                if (!cleanArray.length) {
+                    grid.innerHTML = '';
+                    emptyState.hidden = false;
+                    counter.textContent = '0 records indexed';
+                    loadMoreBtn.classList.add('hidden');
+                    return;
+                }
+                counter.textContent = `Showing ${cleanArray.length} filtered directory element${cleanArray.length !== 1 ? 's' : ''}`;
+                grid.className = currentView === 'list' ? 'flex flex-col gap-3' : 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4';
+                grid.innerHTML = cleanArray.map(item => renderCatalogItemCard(item)).join('');
+                const totalPages = responseData.total_pages || 1;
+                const hasMoreData = currentPageIndex < totalPages && rawResults.length >= 20;
+                loadMoreBtn.classList.toggle('hidden', !hasMoreData);
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.textContent = 'Load More';
+
+                const shareParams = buildRequestParams(1);
+                history.replaceState(null, '', `?${shareParams.toString()}`);
+                document.getElementById('jsonld-itemlist').textContent = JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'ItemList',
+                    'name': 'FlashStream Discovery Results',
+                    'numberOfItems': cleanArray.length,
+                    'itemListElement': cleanArray.slice(0,10).map((item,i) => ({
+                        '@type': 'ListItem',
+                        'position': i+1,
+                        'name': item.title || item.name,
+                        'url': `https://flashstream.pages.dev/movie-detail.html?id=${item.id}&type=${item.media_type||'movie'}`
+                    }))
+                });
+            } catch (err) {
+                console.error('(Catalog Compilation Crash)', err);
+                grid.innerHTML = '';
+                counter.textContent = 'Network pipeline mapping timed out.';
+                emptyState.hidden = false;
+            } finally {
+                isCompilationLocked = false;
+            }
+        }
+
+        function loadMore() { if (isCompilationLocked) return; currentPageIndex++; executeNetworkDiscoveryPipeline(true); }
+
+        /* ── MONOLITHIC CARD PROFILE VIEW STRINGS ──────────────────────────── */
+        function renderCatalogItemCard(item) {
+            const id = item.id;
+            const title = item.title || item.name || 'Unknown Title';
+            const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+            const year = (item.release_date || item.first_air_date || '').slice(0,4) || 'TBA';
+            const rating = item.vote_average ? item.vote_average.toFixed(1) : null;
+            const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER_SVG;
+            const href = `/movie-detail.html?id=${id}&type=${type}`;
+            const inWL = isInWL(id);
+            const hideRat = localStorage.getItem('hide_ratings') === 'true';
+            if (currentView === 'list') {
+                return `<article class="flex items-center gap-4 p-3 rounded-xl bg-gray-900 border border-white/5 hover:border-white/10 transition-all" role="listitem">
+                    <a href="${href}" class="flex-shrink-0 w-12 h-18 bg-cover bg-center rounded-lg" style="background-image:url('${escapeAttr(poster)}')"></a>
+                    <div class="flex-1 min-w-0"><a href="${href}" class="font-semibold text-sm text-white hover:text-accent line-clamp-1 block">${escapeHtml(title)}</a><p class="text-xs text-gray-500 font-medium font-mono mt-1">${year} · ${type.toUpperCase()} ${!hideRat && rating ? `· ★ ${rating}` : ''}</p></div>
+                    <button onclick="handleCardWatchlistToggle(event, this)" class="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-5 h-5" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
+                </article>`;
+            }
+            return `<article class="group" role="listitem">
+                <div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] border border-white/5 group-hover:border-white/10 transition-all shadow-md">
+                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="this.src='${NO_POSTER_SVG}'"></a>
+                    <button onclick="handleCardWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-all" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
+                </div>
+                <a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1 leading-snug">${escapeHtml(title)}</h3><div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium font-mono"><span>${year}</span>${!hideRat && rating ? `<span class="text-yellow-400">★ ${rating}</span>` : ''}</div></a>
+            </article>`;
+        }
+
+        function setView(type) {
+            currentView = type;
+            localStorage.setItem('cs-view', type);
+            const grid = document.getElementById('results-grid');
+            if (grid && activeResultsArray.length) {
+                grid.className = type === 'list' ? 'flex flex-col gap-3' : 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4';
+                executeNetworkDiscoveryPipeline(false);
+            }
+            document.getElementById('view-grid')?.setAttribute('aria-pressed', String(type === 'grid'));
+            document.getElementById('view-list')?.setAttribute('aria-pressed', String(type === 'list'));
+        }
+
+        function applyQuickMode(mode) {
+            clearAllFilters(false);
+            const p = new URLSearchParams(QUICK_MODES[mode] || '');
+            if (p.get('content_type') === 'tv') { selectedContentTypes.clear(); selectedContentTypes.add('tv'); }
+            if (p.get('with_genres')) p.get('with_genres').split(',').forEach(id => selectedGenres.add(parseInt(id,10)));
+            if (p.get('with_original_language')) document.getElementById('language-filter').value = p.get('with_original_language');
+            if (p.get('vote_average.gte')) { document.getElementById('rating-min').value = p.get('vote_average.gte'); document.getElementById('rating-display').textContent = parseFloat(p.get('vote_average.gte')).toFixed(1); }
+            document.querySelectorAll('#genre-chips .chip').forEach(btn => btn.classList.toggle('active', selectedGenres.has(parseInt(btn.dataset.id,10))));
+            document.querySelectorAll('.content-chip').forEach(btn => btn.classList.toggle('active', selectedContentTypes.has(btn.dataset.contentType)));
+            scheduleFetch();
+        }
+
+        /* ── HIGH-PERFORMANCE AUTO-SUGGEST DROPDOWN ENGINE ────────────────── */
+        function setupSearchDropdown() {
+            const input = document.getElementById('nav-search-input');
+            const dropdown = document.getElementById('search-dropdown');
+            if (!input || !dropdown) return;
+            let debounce;
+            input.addEventListener('input', () => {
+                clearTimeout(debounce);
+                const q = input.value.trim();
+                if (q.length < 2) { dropdown.hidden = true; return; }
+                debounce = setTimeout(() => {
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0,6);
+                            if (!results.length) { dropdown.hidden = true; return; }
+                            dropdown.innerHTML = results.map(item => {
+                                const title = item.title || item.name || '';
+                                const year = (item.release_date || item.first_air_date || '').slice(0,4);
+                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                    <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
+                                    <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
+                                </a>`;
+                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
+                            dropdown.hidden = false;
+                        }).catch(() => dropdown.hidden = true);
+                }, 300);
+            });
+            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
+        }
+
+        function setupSearchFiltersEngine() {
+            const searchInput = document.getElementById('nav-search-input');
+            if (searchInput) searchInput.addEventListener('input', () => scheduleFetch());
+        }
+
+        function executeInitialDeepQueryFetch() {
+            const incomingQueryParams = new URLSearchParams(window.location.search);
+            if (incomingQueryParams.has('q')) document.getElementById('nav-search-input').value = incomingQueryParams.get('q');
+            if (incomingQueryParams.has('with_original_language')) document.getElementById('language-filter').value = incomingQueryParams.get('with_original_language');
+            if (incomingQueryParams.has('with_genres')) incomingQueryParams.get('with_genres').split(',').forEach(id => selectedGenres.add(parseInt(id,10)));
+            executeNetworkDiscoveryPipeline(false);
+        }
+
+        function clearAllFilters(doFetch = true) {
+            selectedGenres.clear(); selectedPlatforms.clear(); currentShortCategory = null;
+            selectedContentTypes = new Set(['movie']);
+            document.getElementById('language-filter').value = '';
+            document.getElementById('country-filter').value = '';
+            document.getElementById('rating-min').value = '0';
+            document.getElementById('rating-display').textContent = '0.0';
+            document.getElementById('year-min').value = '1950';
+            document.getElementById('year-max').value = '2026';
+            document.getElementById('runtime-min').value = '0';
+            document.getElementById('runtime-max').value = '300';
+            document.getElementById('year-display').textContent = '1950 - 2026';
+            document.getElementById('runtime-display').textContent = '0 - 300 min';
+            document.getElementById('with-trope-select').value = '';
+            document.getElementById('nav-search-input').value = '';
+            document.querySelectorAll('#genre-chips .chip').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.provider-cb').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.content-chip').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.content-chip[data-content-type="movie"]').classList.add('active');
+            document.getElementById('shorts-category').hidden = true;
+            if (doFetch) scheduleFetch();
+            showToastMessage('All filters cleared', 'info');
+        }
+
+        function shareFilters() { navigator.clipboard.writeText(window.location.href).then(() => showToastMessage('Link copied!','success')).catch(()=>{}); }
+
+        /* ── UTILITIES ────────────────────────────────────────────────────── */
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToastMessage(msg, type='success') {
+            const c = { success:'bg-green-900/90 border-green-600 text-green-100' };
+            const el = document.createElement('div');
+            el.className = `px-4 py-2.5 rounded-xl text-xs font-semibold text-white border ${c[type] || 'bg-gray-900/90 border-white/10'}`;
+            el.textContent = msg;
+            document.getElementById('toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 2500);
+        }
+
+        // Expose global functions
+        window.toggleGenreChip = toggleGenreChip;
+        window.syncSelectedPlatforms = syncSelectedPlatforms;
+        window.toggleContentType = toggleContentType;
+        window.setShortsCategory = setShortsCategory;
+        window.updateChronologicalYearSliders = updateChronologicalYearSliders;
+        window.updateRuntimeDurationSliders = updateRuntimeDurationSliders;
+        window.clearAllFilters = clearAllFilters;
+        window.shareFilters = shareFilters;
+        window.applyQuickMode = applyQuickMode;
+        window.setView = setView;
+        window.loadMore = loadMore;
+        window.handleCardWatchlistToggle = handleCardWatchlistToggle;
+        window.scheduleFetch = scheduleFetch;
+    </script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coming Soon — Upcoming Movies & TV Shows | CineSphere</title>
+  <meta name="description" content="Browse upcoming movies and TV shows coming soon to theaters and streaming. Release dates, trailers, and more.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://flashstream.pages.dev/coming-soon.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Coming Soon — Upcoming Movies & TV Shows | CineSphere">
+  <meta property="og:description" content="Browse upcoming movies and TV shows coming soon to theaters and streaming.">
+  <meta property="og:url" content="https://flashstream.pages.dev/coming-soon.html">
+  <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#e50914">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#e50914'}}}};</script>
+  <style>
+    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+    .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
+    .skeleton{background:linear-gradient(90deg,#1f1f29 25%,#2a2a38 50%,#1f1f29 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    :focus-visible{outline:2px solid #e50914;outline-offset:3px;border-radius:4px}
+    .chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.15s;color:#9ca3af;background:transparent;white-space:nowrap}
+    .chip:hover{border-color:rgba(255,255,255,0.4);color:#fff}
+    .chip.active{background:#e50914;border-color:#e50914;color:#fff}
+    .filter-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:8px}
+    [hidden]{display:none!important}
+    #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+    .release-badge{position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);padding:4px 8px;border-radius:8px;font-size:11px;font-weight:500;text-align:center;color:#fff}
+  </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+
+  <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+  <!-- NAVIGATION -->
+  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+      <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="CineSphere home">
+        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+        <span class="hidden sm:block">CineSphere</span>
+      </a>
+
+      <!-- SEARCH BAR -->
+      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+        <div class="relative">
+          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input type="search" id="nav-search-input" placeholder="Search upcoming movies, TV shows..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search CineSphere" autocomplete="off">
+        </div>
+        <div id="search-dropdown" class="absolute top-full mt-1 left-0 right-0 bg-gray-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50" hidden></div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+        <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+        <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+        <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+        <a href="/coming-soon.html" class="text-white font-semibold">Coming Soon</a>
+        <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+        <a href="/settings.html" class="text-gray-400 hover:text-white transition-colors">Settings</a>
+      </div>
+
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+          <span id="region-flag">🌐</span><span id="region-code" class="font-mono text-gray-300">US</span>
+        </a>
+        <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+      <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+      <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+      <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+      <a href="/coming-soon.html" class="text-white font-semibold py-1.5">Coming Soon</a>
+      <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+      <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+    </div>
+  </nav>
+
+  <main id="main-content" class="max-w-7xl mx-auto px-4 py-6">
+    <!-- PAGE HEADER -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-white mb-2">Coming Soon</h1>
+      <p class="text-gray-400">Upcoming movies and TV shows releasing in theaters and on streaming platforms.</p>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div class="flex flex-wrap gap-2">
+        <button class="chip active" data-type="all" onclick="filterByType('all')">All</button>
+        <button class="chip" data-type="movie" onclick="filterByType('movie')">Movies</button>
+        <button class="chip" data-type="tv" onclick="filterByType('tv')">TV Shows</button>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-500">Sort by:</span>
+        <select id="sort-by" class="bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
+          <option value="date_asc">Release Date (Earliest)</option>
+          <option value="date_desc">Release Date (Latest)</option>
+          <option value="popularity">Most Anticipated</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- RESULTS GRID -->
+    <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" role="list" aria-label="Coming soon results">
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+      <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
+    </div>
+
+    <div id="empty-state" hidden class="text-center py-24">
+      <div class="text-6xl mb-4">📅</div>
+      <h2 class="text-xl font-semibold text-white mb-2">No upcoming releases found</h2>
+      <p class="text-gray-400 mb-6">Check back later for new announcements.</p>
+    </div>
+
+    <div id="pagination" class="flex items-center justify-center gap-2 mt-8 flex-wrap" role="navigation" aria-label="Results pagination"></div>
+  </main>
+
+  <script>
+    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+    const NO_POSTER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3Ctext x='72' y='108' text-anchor='middle' dominant-baseline='middle' font-size='40' fill='%23444'%3E🎬%3C/text%3E%3C/svg%3E";
+
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentType = 'all';
+    let sortBy = 'date_asc';
+    let fetchDebounce = null;
+    let currentView = localStorage.getItem('cs-view') || 'grid';
+
+    function getRegion() { return localStorage.getItem('user_region') || 'US'; }
+    
+    function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
+    function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
+    function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
+    
+    function toggleWatchlist(item) {
+      const list = getWL();
+      const idx = list.findIndex(i => String(i.tmdb_id) === String(item.tmdb_id));
+      if (idx > -1) {
+        list.splice(idx, 1);
+        saveWL(list);
+        showToast('Removed from watchlist', 'info');
+        return false;
+      }
+      list.unshift({
+        tmdb_id: String(item.tmdb_id),
+        type: item.type,
+        title: item.title,
+        poster_path: item.poster_path,
+        genre_ids: item.genre_ids || [],
+        status: 'want_to_watch',
+        date_added: Date.now()
+      });
+      saveWL(list);
+      showToast('Added to watchlist', 'success');
+      return true;
+    }
+
+    function filterByType(type) {
+      currentType = type;
+      document.querySelectorAll('[data-type]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+      currentPage = 1;
+      fetchComingSoon();
+    }
+
+    function formatReleaseDate(dateStr) {
+      if (!dateStr) return 'Coming Soon';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    function getDaysLeft(dateStr) {
+      if (!dateStr) return null;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const release = new Date(dateStr);
+      release.setHours(0, 0, 0, 0);
+      const diffTime = release - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays;
+    }
+
+    async function fetchComingSoon() {
+      const grid = document.getElementById('results-grid');
+      const empty = document.getElementById('empty-state');
+      const count = document.getElementById('results-count');
+      
+      empty.hidden = true;
+      grid.innerHTML = Array(8).fill(0).map(() => `<div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>`).join('');
+      
+      const today = new Date().toISOString().slice(0, 10);
+      
+      try {
+        let allResults = [];
+        
+        // Fetch movies (future releases)
+        const movieParams = new URLSearchParams();
+        movieParams.set('content_type', 'movie');
+        movieParams.set('primary_release_date.gte', today);
+        movieParams.set('sort_by', 'primary_release_date.asc');
+        movieParams.set('page', currentPage);
+        movieParams.set('watch_region', getRegion());
+        
+        const movieData = await fetch(`${WORKER_URL}/api/discover?${movieParams}`).then(r => r.json());
+        let movieResults = movieData.results || [];
+        movieResults = movieResults.filter(item => {
+          const releaseDate = item.release_date;
+          return releaseDate && releaseDate >= today && item.title && item.title.length > 0;
+        });
+        movieResults.forEach(item => { item.media_type = 'movie'; });
+        allResults.push(...movieResults);
+        
+        // Fetch TV shows (future air dates)
+        if (currentType === 'all' || currentType === 'tv') {
+          const tvParams = new URLSearchParams();
+          tvParams.set('content_type', 'tv');
+          tvParams.set('first_air_date.gte', today);
+          tvParams.set('sort_by', 'first_air_date.asc');
+          tvParams.set('page', currentPage);
+          tvParams.set('watch_region', getRegion());
+          
+          const tvData = await fetch(`${WORKER_URL}/api/discover?${tvParams}`).then(r => r.json());
+          let tvResults = tvData.results || [];
+          tvResults = tvResults.filter(item => {
+            const airDate = item.first_air_date;
+            return airDate && airDate >= today && item.name && item.name.length > 0;
+          });
+          tvResults.forEach(item => { item.media_type = 'tv'; });
+          allResults.push(...tvResults);
+        }
+        
+        // Apply type filter
+        if (currentType !== 'all') {
+          allResults = allResults.filter(item => item.media_type === currentType);
+        }
+        
+        // Sort results
+        const sortSelect = document.getElementById('sort-by');
+        const sortValue = sortSelect ? sortSelect.value : 'date_asc';
+        
+        if (sortValue === 'date_asc') {
+          allResults.sort((a, b) => {
+            const dateA = a.release_date || a.first_air_date || '';
+            const dateB = b.release_date || b.first_air_date || '';
+            return dateA.localeCompare(dateB);
+          });
+        } else if (sortValue === 'date_desc') {
+          allResults.sort((a, b) => {
+            const dateA = a.release_date || a.first_air_date || '';
+            const dateB = b.release_date || b.first_air_date || '';
+            return dateB.localeCompare(dateA);
+          });
+        } else if (sortValue === 'popularity') {
+          allResults.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+        }
+        
+        totalPages = Math.max(Math.min(movieData.total_pages || 1, 500), Math.min(50, 500));
+        
+        if (allResults.length === 0) {
+          grid.innerHTML = '';
+          empty.hidden = false;
+          return;
+        }
+        
+        grid.innerHTML = allResults.map(item => renderCard(item)).join('');
+        renderPagination();
+        
+      } catch (err) {
+        console.error('[ComingSoon]', err);
+        grid.innerHTML = '';
+        empty.hidden = false;
+      }
+    }
+    
+    function renderCard(item) {
+      const id = item.id;
+      const title = item.title || item.name || 'Unknown';
+      const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+      const releaseDate = item.release_date || item.first_air_date || '';
+      const formattedDate = formatReleaseDate(releaseDate);
+      const daysLeft = getDaysLeft(releaseDate);
+      const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER_SVG;
+      const href = `/movie-detail.html?id=${id}&type=${type}`;
+      const inWL = isInWL(id);
+      const hideRat = localStorage.getItem('hide_ratings') === 'true';
+      const rating = item.vote_average?.toFixed(1);
+      
+      let dateBadge = '';
+      if (daysLeft !== null && daysLeft > 0) {
+        if (daysLeft <= 7) {
+          dateBadge = `<span class="release-badge bg-red-600/90">${formattedDate} · ${daysLeft} days left</span>`;
+        } else if (daysLeft <= 30) {
+          dateBadge = `<span class="release-badge bg-amber-600/90">${formattedDate} · ${daysLeft} days</span>`;
+        } else {
+          dateBadge = `<span class="release-badge bg-blue-600/90">${formattedDate}</span>`;
+        }
+      } else {
+        dateBadge = `<span class="release-badge bg-gray-700/90">${formattedDate}</span>`;
+      }
+      
+      const typeIcon = type === 'tv' ? '📺' : '🎬';
+      
+      return `
+        <article class="group">
+          <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
+            <a href="${href}">
+              <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER_SVG}'">
+            </a>
+            ${dateBadge}
+            <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleCardWatchlist(event, this)">
+              <svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </button>
+          </div>
+          <a href="${href}" class="block mt-2 hover:text-accent">
+            <h3 class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(title)}</h3>
+            <div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+              <span>${typeIcon} ${formattedDate}</span>
+              ${!hideRat && rating ? `<span class="text-yellow-400 ml-2">★ ${rating}</span>` : ''}
+            </div>
+          </a>
+        </article>
+      `;
+    }
+    
+    function renderPagination() {
+      const el = document.getElementById('pagination');
+      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      let start = Math.max(1, currentPage - 2);
+      const end = Math.min(totalPages, start + 4);
+      if (end - start < 4) start = Math.max(1, end - 4);
+      let html = `<button onclick="goToPage(1)" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">«</button>
+                  <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">‹</button>`;
+      for (let p = start; p <= end; p++) {
+        html += `<button onclick="goToPage(${p})" class="px-3 py-1.5 text-sm rounded-lg border ${p === currentPage ? 'bg-accent border-accent text-white font-semibold' : 'border-white/10 text-gray-400 hover:bg-white/10'}">${p}</button>`;
+      }
+      html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">›</button>
+               <button onclick="goToPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">»</button>
+               <span class="text-xs text-gray-500 ml-2">Page ${currentPage} of ${totalPages.toLocaleString()}</span>`;
+      el.innerHTML = html;
+    }
+    
+    async function goToPage(page) {
+      currentPage = page;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await fetchComingSoon();
+    }
+    
+    function handleCardWatchlist(event, btn) {
+      event.preventDefault();
+      event.stopPropagation();
+      const added = toggleWatchlist({
+        tmdb_id: btn.dataset.id,
+        type: btn.dataset.type,
+        title: btn.dataset.title,
+        poster_path: btn.dataset.poster,
+        genre_ids: JSON.parse(btn.dataset.genres || '[]')
+      });
+      const svg = btn.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', added ? '#e50914' : 'none');
+        svg.setAttribute('stroke', added ? '#e50914' : 'white');
+      }
+      btn.setAttribute('aria-pressed', String(added));
+    }
+    
+    function showToast(message, type = 'success') {
+      const c = { success: 'bg-green-800 border-green-600 text-green-100', error: 'bg-red-900 border-red-700 text-red-100', info: 'bg-blue-900 border-blue-700 text-blue-100' };
+      const el = document.createElement('div');
+      el.className = `pointer-events-auto max-w-sm w-full px-4 py-3 rounded-xl border text-sm font-medium shadow-xl ${c[type] || c.info} transform transition-all duration-300 translate-x-full opacity-0`;
+      el.setAttribute('role', 'status');
+      el.textContent = message;
+      document.getElementById('toast-container').appendChild(el);
+      requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.remove('translate-x-full', 'opacity-0'); }));
+      setTimeout(() => {
+        el.classList.add('translate-x-full', 'opacity-0');
+        setTimeout(() => el.remove(), 350);
+      }, 3000);
+    }
+    
+    // Search functionality
+    let searchDebounce = null;
+    const searchInput = document.getElementById('nav-search-input');
+    const searchDropdown = document.getElementById('search-dropdown');
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchDebounce);
+        const q = searchInput.value.trim();
+        if (q.length < 2) {
+          if (searchDropdown) searchDropdown.hidden = true;
+          return;
+        }
+        searchDebounce = setTimeout(() => doSearch(q), 300);
+      });
+      searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          const q = searchInput.value.trim();
+          if (q) window.location.href = `/discover.html?q=${encodeURIComponent(q)}`;
+        }
+        if (e.key === 'Escape' && searchDropdown) searchDropdown.hidden = true;
+      });
+    }
+    
+    document.addEventListener('click', e => {
+      if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true;
+    });
+    
+    async function doSearch(q) {
+      try {
+        const data = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`).then(r => r.json());
+        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+        if (!results.length || !searchDropdown) {
+          if (searchDropdown) searchDropdown.hidden = true;
+          return;
+        }
+        searchDropdown.innerHTML = results.map(item => {
+          const title = item.title || item.name || '';
+          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+          return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5" onclick="searchDropdown.hidden=true">
+            ${poster ? `<img src="${poster}" alt="" class="w-7 h-10 object-cover rounded">` : '<div class="w-7 h-10 bg-gray-800 rounded"></div>'}
+            <div><p class="text-sm font-medium text-white">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
+          </a>`;
+        }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5" onclick="searchDropdown.hidden=true">See all results →</a>`;
+        searchDropdown.hidden = false;
+      } catch {
+        if (searchDropdown) searchDropdown.hidden = true;
+      }
+    }
+    
+    // Mobile menu
+    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+      const m = document.getElementById('mobile-menu');
+      if (m) {
+        const hidden = m.hidden;
+        m.hidden = !hidden;
+        document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', String(hidden));
+      }
+    });
+    
+    // Theme
+    function initTheme() {
+      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+    }
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
+    });
+    initTheme();
+    
+    // Region badge
+    const regionFlag = document.getElementById('region-flag');
+    const regionCode = document.getElementById('region-code');
+    if (regionFlag && regionCode) {
+      const region = getRegion();
+      const flags = { US: '🇺🇸', GB: '🇬🇧', AU: '🇦🇺', CA: '🇨🇦', FR: '🇫🇷', DE: '🇩🇪', JP: '🇯🇵', KR: '🇰🇷', IN: '🇮🇳', CN: '🇨🇳', BR: '🇧🇷', SG: '🇸🇬', TH: '🇹🇭' };
+      regionFlag.textContent = flags[region] || '🌐';
+      regionCode.textContent = region;
+    }
+    
+    function escapeHtml(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function escapeAttr(s) { return String(s ?? '').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+    
+    // Event listeners
+    document.getElementById('sort-by')?.addEventListener('change', () => {
+      currentPage = 1;
+      fetchComingSoon();
+    });
+    
+    // Initialize
+    fetchComingSoon();
+  </script>
+</body>
+</html>

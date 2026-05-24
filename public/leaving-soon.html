@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expiring Titles Monitor — FlashStream</title>
+    <meta name="description" content="Track movies, series, and dramas leaving global streaming networks soon. Verify localized regional expiration timelines on FlashStream.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://flashstream.pages.dev/leaving-soon.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Expiring Titles Directory | FlashStream">
+    <meta property="og:description" content="Monitor regional streaming platform expiration maps. Catch titles before they leave your area.">
+    <meta property="og:url" content="https://flashstream.pages.dev/leaving-soon.html">
+    <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/icons/icon-192.png" type="image/png">
+    <meta name="theme-color" content="#e50914">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#e50914'
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .skeleton {
+            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
+        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+        [hidden] { display: none !important; }
+        .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
+        @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+    <!-- SYNCHRONIZED APP LOGISTICS NAVIGATION HEADER -->
+    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
+            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <span class="hidden sm:block">FlashStream</span>
+            </a>
+            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
+                <div class="relative">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, shorts..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search all content directories" autocomplete="off">
+                </div>
+                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
+                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+                <a href="/leaving-soon.html" class="text-white font-semibold">Leaving Soon</a>
+                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Regional settings">
+                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                </a>
+                <button id="theme-toggle" aria-label="Toggle interface theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
+            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon.html" class="text-white font-semibold py-1.5">Leaving Soon</a>
+            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+        </div>
+    </nav>
+
+    <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6 border-b border-white/5 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Leaving Soon</h1>
+                <p class="text-sm text-gray-400">Cross-referenced expiration indices tracking titles departing streaming nodes within 30 days.</p>
+                <p id="last-updated-label" class="text-xs text-gray-600 mt-1 font-mono"></p>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center">
+                <select id="service-select" aria-label="Filter by provider service" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
+                    <option value="all">All Services</option>
+                    <option value="netflix">Netflix</option>
+                    <option value="prime">Amazon Prime</option>
+                    <option value="disney">Disney+</option>
+                    <option value="viki">Viki</option>
+                    <option value="viu">Viu</option>
+                    <option value="iqiyi">iQIYI</option>
+                    <option value="zee5">Zee5</option>
+                    <option value="sonyliv">SonyLIV</option>
+                    <option value="youtube">YouTube Feeds</option>
+                </select>
+                <select id="urgency-filter" aria-label="Filter by expiration windows" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
+                    <option value="30">Any Deadline (30 Days)</option>
+                    <option value="7">Urgent (7 Days or Less)</option>
+                    <option value="3">Critical (3 Days or Less)</option>
+                </select>
+                <select id="country-select" aria-label="Filter by country" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
+                    <option value="US">🇺🇸 United States</option>
+                    <option value="GB">🇬🇧 United Kingdom</option>
+                    <option value="MY">🇲🇾 Malaysia</option>
+                    <option value="SG">🇸🇬 Singapore</option>
+                    <option value="AE">🇦🇪 United Arab Emirates</option>
+                    <option value="PK">🇵🇰 Pakistan</option>
+                    <option value="IN">🇮🇳 India</option>
+                    <option value="TH">🇹🇭 Thailand</option>
+                    <option value="JP">🇯🇵 Japan</option>
+                    <option value="KR">🇰🇷 South Korea</option>
+                    <option value="CN">🇨🇳 China</option>
+                    <option value="CA">🇨🇦 Canada</option>
+                    <option value="AU">🇦🇺 Australia</option>
+                    <option value="DE">🇩🇪 Germany</option>
+                    <option value="FR">🇫🇷 France</option>
+                </select>
+                <button id="refresh-btn" class="px-4 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">Refresh</button>
+            </div>
+        </div>
+
+        <!-- LEGAL PLATFORM ACCURACY WARNING -->
+        <div class="mb-6 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/40 text-xs text-amber-300 flex items-start gap-2 leading-relaxed" role="note">
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <p>Expiration metrics are aggregated via background cache synchronization frameworks and represent historical estimations provided directly by provider portals. Always check your local streaming app console to confirm title availability limits before your viewing session.</p>
+        </div>
+
+        <!-- MAIN DYNAMIC CONTENT GRID -->
+        <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" role="list" aria-label="Expiring media titles grid cards"></div>
+
+        <!-- TRANSLUCENT INITIAL SHIMMER SKELETONS -->
+        <div id="loading-skeleton" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" aria-hidden="true">
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+            <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
+        </div>
+
+        <!-- BLANK CONTAINER BACKLOG FALLBACK -->
+        <div id="empty-state" hidden class="text-center py-24 border border-dashed border-white/5 rounded-2xl bg-gray-900/10">
+            <h2 class="text-xl font-semibold text-white mb-2">No Titles Leaving Soon</h2>
+            <p class="text-gray-500 text-sm max-w-sm mx-auto">No expiring entries were found matching your current provider selection rules. Change your location profile or check back later.</p>
+        </div>
+    </main>
+
+    <script>
+        /* ============================================================
+           FLASHSTREAM — LEAVING SOON ENGINE (FULLY CORRECTED)
+           Fixed: search dropdown reference, brand naming, region flags
+           ============================================================ */
+
+        // ── CONFIGURATION CONSTANTS & ENGINE INITIALIZATION STATE ────────────────
+        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
+        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='225' viewBox='0 0 150 225'%3E%3Crect width='150' height='225' fill='%231f1f29'/%3E%3C/svg%3E`;
+
+        const REGION_FLAGS = {
+            US: '🇺🇸', GB: '🇬🇧', MY: '🇲🇾', SG: '🇸🇬', AE: '🇦🇪',
+            PK: '🇵🇰', IN: '🇮🇳', TH: '🇹🇭', JP: '🇯🇵', KR: '🇰🇷',
+            CA: '🇨🇦', AU: '🇦🇺', DE: '🇩🇪', FR: '🇫🇷', CN: '🇨🇳'
+        };
+
+        let masterExpirationsList = [];
+        let filteredExpirationsList = [];
+        let recordsPerPageCount = 24;
+        let currentlyRenderedPageLimit = 1;
+
+        /* ── AUTOMATED EVENT INITIALIZATION LIFECYCLES ─────────────────────────── */
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUserPreferences();
+            setupSearchEngine();
+            bindFilterEventHandlers();
+            executeExpirationDataFetch();
+        });
+
+        function initializeUserPreferences() {
+            if (localStorage.getItem('cs-theme') === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            const activeRegion = localStorage.getItem('user_region') || 'US';
+            const countrySelector = document.getElementById('country-select');
+            if (countrySelector) countrySelector.value = activeRegion;
+            updateNavigationRegionBadge(activeRegion);
+        }
+
+        function updateNavigationRegionBadge(regionCode) {
+            const flagElem = document.getElementById('region-flag');
+            const codeElem = document.getElementById('region-code');
+            if (flagElem) flagElem.textContent = REGION_FLAGS[regionCode] || '🌐';
+            if (codeElem) codeElem.textContent = regionCode;
+        }
+
+        function bindFilterEventHandlers() {
+            document.getElementById('service-select')?.addEventListener('change', runLocalFiltersAndCompile);
+            document.getElementById('urgency-filter')?.addEventListener('change', runLocalFiltersAndCompile);
+            
+            document.getElementById('country-select')?.addEventListener('change', (e) => {
+                const selectedCountry = e.target.value;
+                localStorage.setItem('user_region', selectedCountry);
+                updateNavigationRegionBadge(selectedCountry);
+                executeExpirationDataFetch();
+            });
+
+            document.getElementById('refresh-btn')?.addEventListener('click', executeExpirationDataFetch);
+            
+            document.getElementById('theme-toggle')?.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
+            });
+
+            window.addEventListener('scroll', () => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 600) {
+                    evaluateAndTriggerInfiniteScrollPageLoad();
+                }
+            });
+        }
+
+        /* ── ANONYMOUS B2B TREND INTELLIGENCE TELEMETRY LOGS ───────────────────── */
+        function isAnalyticsOptedIn() {
+            return localStorage.getItem('consent_given') === 'true';
+        }
+
+        function dispatchInsightsLog(eventType, transactionData = {}) {
+            if (!isAnalyticsOptedIn()) return;
+            try {
+                navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({
+                    event_type: eventType,
+                    client_timestamp: Date.now(),
+                    ...transactionData
+                }));
+            } catch (e) {
+                // telemetry skipped
+            }
+        }
+
+        /* ── MASTER DATA AGGREGATION & CACHE FETCH PIPELINE ────────────────────── */
+        async function executeExpirationDataFetch() {
+            const loadingSkeleton = document.getElementById('loading-skeleton');
+            const resultsGrid = document.getElementById('results-grid');
+            const emptyState = document.getElementById('empty-state');
+            const countryCode = document.getElementById('country-select')?.value || 'US';
+            
+            if (loadingSkeleton) loadingSkeleton.hidden = false;
+            if (resultsGrid) resultsGrid.innerHTML = '';
+            if (emptyState) emptyState.hidden = true;
+            
+            try {
+                const targetApiRoute = `${WORKER_URL}/api/leaving-soon?country=${countryCode}`;
+                const responseData = await fetch(targetApiRoute).then(res => {
+                    if (!res.ok) throw new Error(`API error code flag returned ${res.status}`);
+                    return res.json();
+                });
+                
+                masterExpirationsList = responseData.results || [];
+                const timestampLabel = document.getElementById('last-updated-label');
+                if (timestampLabel) {
+                    const compiledDate = responseData.updated ? new Date(responseData.updated) : new Date();
+                    timestampLabel.textContent = `Last synchronized signature block: ${compiledDate.toLocaleString()}`;
+                }
+                
+                dispatchInsightsLog('leaving_soon_index_load', { 
+                    country: countryCode, 
+                    record_count: masterExpirationsList.length 
+                });
+                runLocalFiltersAndCompile();
+            } catch (err) {
+                console.error('[Expirations Engine Failure]', err);
+                if (resultsGrid) {
+                    resultsGrid.innerHTML = `<p class="text-xs font-mono text-red-400 col-span-full text-center py-10">Data matrix synchronization unavailable. Ensure your configuration variables are mapped properly.</p>`;
+                }
+            } finally {
+                if (loadingSkeleton) loadingSkeleton.hidden = true;
+            }
+        }
+
+        /* ── RENDERING MATRIX ENGINE CONTROLLERS ───────────────────────────────── */
+        function runLocalFiltersAndCompile() {
+            const platformFilter = document.getElementById('service-select')?.value || 'all';
+            const urgencyDeadline = parseInt(document.getElementById('urgency-filter')?.value || '30', 10);
+            
+            filteredExpirationsList = masterExpirationsList.filter(item => {
+                if ((item.days_left || 30) > urgencyDeadline) return false;
+                if (platformFilter !== 'all' && item.platform?.toLowerCase() !== platformFilter.toLowerCase()) {
+                    return false;
+                }
+                return true;
+            });
+            
+            currentlyRenderedPageLimit = 1;
+            renderWatchlistCanvas(false);
+        }
+
+        function evaluateAndTriggerInfiniteScrollPageLoad() {
+            if (currentlyRenderedPageLimit * recordsPerPageCount >= filteredExpirationsList.length) return;
+            currentlyRenderedPageLimit++;
+            renderWatchlistCanvas(true);
+        }
+
+        /* ── INTERACTIVE CANVAS COMPILER AND LIST RENDERERS ────────────────── */
+        function renderWatchlistCanvas(appendRecords = false) {
+            const canvasGrid = document.getElementById('results-grid');
+            const emptyFrame = document.getElementById('empty-state');
+            
+            if (!canvasGrid) return;
+            if (!appendRecords) canvasGrid.innerHTML = '';
+            
+            if (filteredExpirationsList.length === 0) {
+                if (emptyFrame) emptyFrame.hidden = false;
+                return;
+            }
+            if (emptyFrame) emptyFrame.hidden = true;
+            
+            const calculationStartIndex = (currentlyRenderedPageLimit - 1) * recordsPerPageCount;
+            const calculationEndIndex = currentlyRenderedPageLimit * recordsPerPageCount;
+            const recordsPageBatch = filteredExpirationsList.slice(calculationStartIndex, calculationEndIndex);
+            
+            if (recordsPageBatch.length === 0 && appendRecords) return;
+            
+            const htmlCardBuffer = recordsPageBatch.map(item => {
+                const id = item.tmdb_id;
+                const title = item.title || 'Unknown Title';
+                const type = item.media_type || 'movie';
+                const remainingDays = item.days_left || 30;
+                const platform = item.platform || 'Streaming';
+                const posterPath = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
+                const targetDetailUrl = `/movie-detail.html?id=${id}&type=${type}`;
+                const inWatchlistFlag = verifyLocalWatchlistPresence(id);
+                
+                const urgencyBadgeStyle = remainingDays <= 3
+                    ? 'bg-red-600 badge-pulse text-white'
+                    : (remainingDays <= 7 ? 'bg-red-600 text-white' : 'bg-amber-500 text-black');
+                    
+                return `
+                    <article class="group bg-gray-900 border border-white/5 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" role="listitem">
+                        <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
+                            <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${urgencyBadgeStyle}">${remainingDays}d left</span>
+                            <a href="${targetDetailUrl}" onclick="dispatchInsightsLog('leaving_soon_card_click', { mediaId: '${id}', platform: '${escapeAttr(platform)}' })">
+                                <img src="${escapeAttr(posterPath)}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.src='${NO_POSTER}'">
+                            </a>
+                            <button class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
+                                data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}"
+                                onclick="toggleLocalWatchlistEvent(event, this)" aria-label="Toggle Watchlist">
+                                <svg class="w-4 h-4" fill="${inWatchlistFlag ? '#e50914' : 'none'}" stroke="${inWatchlistFlag ? '#e50914' : 'currentColor'}" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="p-3 flex flex-col gap-1">
+                            <a href="${targetDetailUrl}" class="font-semibold text-sm text-white hover:text-accent line-clamp-1 transition-colors">${escapeHtml(title)}</a>
+                            <div class="flex justify-between items-center text-xs text-gray-400">
+                                <span>${escapeHtml(platform)}</span>
+                                <span class="uppercase">${type === 'tv' ? 'TV' : 'Movie'}</span>
+                            </div>
+                        </div>
+                    </article>`;
+            }).join('');
+            
+            if (appendRecords) canvasGrid.innerHTML += htmlCardBuffer;
+            else canvasGrid.innerHTML = htmlCardBuffer;
+        }
+
+        /* ── INTERACTIVE WATCHLIST EVENT SYNCHRONIZATION CONTROLS ─────────────── */
+        function getLocalWatchlist() {
+            try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; }
+        }
+
+        function saveLocalWatchlist(listData) {
+            localStorage.setItem('watchlist', JSON.stringify(listData));
+        }
+
+        function verifyLocalWatchlistPresence(id) {
+            return getLocalWatchlist().some(item => String(item.tmdb_id) === String(id));
+        }
+
+        function toggleLocalWatchlistEvent(event, elementRef) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            const watchlist = getLocalWatchlist();
+            const mediaId = elementRef.dataset.id;
+            const itemIndex = watchlist.findIndex(item => String(item.tmdb_id) === String(mediaId));
+            let itemAddedStatus = false;
+            
+            if (itemIndex > -1) {
+                watchlist.splice(itemIndex, 1);
+                saveLocalWatchlist(watchlist);
+                showToastNotification('Removed from watchlist indices', 'info');
+            } else {
+                watchlist.unshift({
+                    tmdb_id: String(mediaId),
+                    type: elementRef.dataset.type || 'movie',
+                    title: elementRef.dataset.title,
+                    poster_path: elementRef.dataset.poster || null,
+                    genre_ids: [],
+                    status: 'want_to_watch',
+                    date_added: Date.now()
+                });
+                saveLocalWatchlist(watchlist);
+                showToastNotification('Added to tracking dashboard', 'success');
+                itemAddedStatus = true;
+            }
+            
+            const inlineSvg = elementRef.querySelector('svg');
+            if (inlineSvg) {
+                inlineSvg.setAttribute('fill', itemAddedStatus ? '#e50914' : 'none');
+                inlineSvg.setAttribute('stroke', itemAddedStatus ? '#e50914' : 'currentColor');
+            }
+            dispatchInsightsLog('leaving_soon_watchlist_toggle', { mediaId: mediaId, added: itemAddedStatus });
+        }
+
+        /* ── SEARCH INPUT INTEGRATION DROPDOWN MODULE (FIXED) ─────────────────── */
+        function setupSearchEngine() {
+            let queryDebounce = null;
+            const searchInput = document.getElementById('nav-search-input');
+            const dropdownMenu = document.getElementById('search-dropdown');
+            if (!searchInput || !dropdownMenu) return;
+            
+            searchInput.addEventListener('input', () => {
+                clearTimeout(queryDebounce);
+                const queryStr = searchInput.value.trim();
+                if (queryStr.length < 2) { dropdownMenu.hidden = true; return; }
+                
+                queryDebounce = setTimeout(() => {
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(queryStr)}&type=multi`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const entries = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 5);
+                            if (!entries.length) { dropdownMenu.hidden = true; return; }
+                            
+                            dropdownMenu.innerHTML = entries.map(item => {
+                                const title = item.title || item.name || '';
+                                const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                                
+                                return `
+                                    <a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                        <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p>
+                                            <p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p>
+                                        </div>
+                                    </a>`;
+                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(queryStr)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                            dropdownMenu.hidden = false;
+                        })
+                        .catch(() => { dropdownMenu.hidden = true; });
+                }, 300);
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#nav-search-wrap')) dropdownMenu.hidden = true;
+            });
+        }
+
+        /* ── DATA SECURITY ESCAPE UTILITIES ───────────────────────────────────── */
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        function escapeAttr(s) {
+            return String(s ?? '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function showToastNotification(message, notificationType = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const toastElement = document.createElement('div');
+            toastElement.className = `px-4 py-2.5 rounded-xl text-sm font-semibold text-white border ${notificationType === 'success' ? 'bg-green-900/90 border-green-600' : 'bg-gray-900/90 border-white/10'}`;
+            toastElement.textContent = message;
+            container.appendChild(toastElement);
+            setTimeout(() => toastElement.remove(), 3000);
+        }
+    </script>
+</body>
+</html>
