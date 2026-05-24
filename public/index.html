@@ -64,9 +64,9 @@
     </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
     
-    <!-- MAIN NAVIGATION -->
+    <!-- MAIN NAVIGATION LAYERS -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
             <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
@@ -109,8 +109,8 @@
         </div>
     </nav>
 
-    <!-- CONSENT BANNER -->
-    <div id="consent-banner" class="fixed bottom-0 left-0 right-0 z-[9000] bg-gray-900 border-t border-white/10 p-4" role="dialog" aria-label="Cookie consent" hidden>
+    <!-- PRIVACY MONETIZATION SECURITY BLOCK BANNER -->
+    <div id="consent-banner" class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t border-white/10 p-4" role="dialog" aria-label="Cookie consent" hidden>
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <p class="text-sm text-gray-300 flex-1">FlashStream uses anonymized telemetry trends to optimize availability indexes. We never lease personal tracking identifiers. <a href="/privacy.html" class="text-accent underline ml-1">Privacy Protocol</a></p>
             <div class="flex gap-3 flex-shrink-0">
@@ -119,10 +119,10 @@
             </div>
         </div>
     </div>
-    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+    <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
     <main id="main-content">
-        <!-- HERO SECTION -->
+        <!-- HERO banner section -->
         <section class="relative py-20 px-4 overflow-hidden" aria-labelledby="hero-heading">
             <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-black/60 to-black pointer-events-none" aria-hidden="true"></div>
             <div class="relative max-w-4xl mx-auto text-center">
@@ -137,195 +137,282 @@
             </div>
         </section>
 
-        <!-- MOOD FILTERS -->
+        <!-- QUICK THEMATIC CONTENT AND REGIONAL FILTER STRIPS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="mood-heading">
-            <h2 id="mood-heading" class="text-lg font-semibold text-white mb-3">What are you in the mood for?</h2>
-            <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1 flex-wrap" role="group" aria-label="Mood quick filters">
-                <a href="/discover.html?with_genres=35&vote_average.gte=6" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Feel Good</a>
-                <a href="/discover.html?with_genres=27" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Horror</a>
-                <a href="/discover.html?with_genres=10749,35" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Date Night</a>
-                <a href="/discover.html?content_type=tv&with_status=0" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Binge TV</a>
-                <a href="/discover.html?with_original_language=ko" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">K‑Drama</a>
-                <a href="/discover.html?with_original_language=ja&with_genres=16" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Anime</a>
-                <a href="/discover.html?with_original_language=th" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Thai Drama</a>
-                <a href="/discover.html?with_genres=10751,16" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Family</a>
-                <a href="/discover.html?with_genres=99" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Documentary</a>
-                <a href="/discover.html?vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc" class="px-4 py-2 rounded-full text-sm font-medium bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Hidden Gems</a>
+            <h2 id="mood-heading" class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">What are you in the mood for?</h2>
+            <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2 flex-nowrap" role="group" aria-label="Mood quick filters">
+                <a href="/discover.html?with_genres=35&amp;vote_average.gte=6" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Feel Good</a>
+                <a href="/discover.html?with_genres=27" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Horror</a>
+                <a href="/discover.html?with_genres=10749,35" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Date Night</a>
+                <a href="/discover.html?content_type=tv&amp;with_status=0" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Binge TV</a>
+                <a href="/discover.html?with_original_language=ko" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">K-Drama &amp; Series</a>
+                <a href="/discover.html?with_original_language=ja&amp;with_genres=16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Anime Catalog</a>
+                <a href="/discover.html?with_original_language=th" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Thai Serials</a>
+                <a href="/discover.html?with_original_language=ta" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Tamil Blockbusters</a>
+                <a href="/discover.html?with_genres=10751,16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Family Night</a>
+                <a href="/discover.html?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Hidden Gems</a>
             </div>
         </section>
 
-        <!-- CONTINUE WATCHING (dynamic) -->
+        <!-- PROGRESSIVE WATCHLIST IN-PROGRESS CAROUSELS (CONTINUE WATCHING) -->
         <section id="continue-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="continue-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="continue-heading" class="text-xl font-bold text-white">Continue Watching</h2></div>
-            <div id="continue-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+            <h2 id="continue-heading" class="text-xl font-bold text-white mb-4">Continue Watching</h2>
+            <div id="continue-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
-        <!-- PERSONALIZED RECS -->
+        <!-- B2B PREDICTIVE ALGORITHM CHANNELS (PICKED FOR YOU) -->
         <section id="recs-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="recs-heading">
-            <div class="flex items-center justify-between mb-3">
-                <div><h2 id="recs-heading" class="text-xl font-bold text-white">Picked for You</h2><p class="text-xs text-gray-500 mt-0.5">Based on your watchlist taste</p></div>
+            <div class="mb-4">
+                <h2 id="recs-heading" class="text-xl font-bold text-white">Picked for You</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Based on your dynamic local storage watchlist taste profile parameters.</p>
             </div>
-            <div id="recs-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+            <div id="recs-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
-        <!-- TRENDING -->
+        <!-- REGION-AWARE WEEKLY TRENDING MATRIX CHANNELS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="trending-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="trending-heading" class="text-xl font-bold text-white">Trending This Week</h2><a href="/discover.html?sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="trending-heading" class="text-xl font-bold text-white">Trending This Week</h2>
+                <a href="/discover.html?sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
 
-        <!-- LEAVING SOON -->
+        <!-- REGIONAL COMPILING PLATFORMS EXPIRATIONS GRID CHANNELS -->
         <section id="leaving-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon.html" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2"></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2>
+                <a href="/leaving-soon.html" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
-        <!-- KOREAN & ASIAN DRAMA -->
+        <!-- PREMIUM TIERS INTERNATIONALLY TUNED ASIAN SEALS CAROUSELS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="asian-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="asian-heading" class="text-xl font-bold text-white">Korean &amp; Asian Drama</h2><a href="/discover.html?with_original_language=ko&content_type=tv" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="kdrama-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="asian-heading" class="text-xl font-bold text-white">Korean &amp; East Asian Drama</h2>
+                <a href="/discover.html?with_original_language=ko&amp;content_type=tv" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="kdrama-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
 
-        <!-- ANIME -->
+        <!-- DYNAMIC BROADCAST ANIME REGIONAL CHANNELS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="anime-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="anime-heading" class="text-xl font-bold text-white">Anime</h2><a href="/discover.html?with_original_language=ja&with_genres=16" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="anime-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="anime-heading" class="text-xl font-bold text-white">Anime Masterpieces</h2>
+                <a href="/discover.html?with_original_language=ja&amp;with_genres=16" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="anime-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
 
-        <!-- BOLLYWOOD -->
+        <!-- SOUTH ASIAN COARSE CINEMAS NETWORKS CHANNELS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="bollywood-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="bollywood-heading" class="text-xl font-bold text-white">Bollywood &amp; Indian Cinema</h2><a href="/discover.html?with_original_language=hi" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="bollywood-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="bollywood-heading" class="text-xl font-bold text-white">Bollywood &amp; Indian Cinema</h2>
+                <a href="/discover.html?with_original_language=hi" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="bollywood-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
 
-        <!-- NOW PLAYING -->
+        <!-- THEATER NOW PLAYING EXPERIMENTAL MODULE CHANNELS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="nowplaying-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="nowplaying-heading" class="text-xl font-bold text-white">Now Playing in Cinemas</h2><a href="/discover.html?content_type=movie&sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="nowplaying-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="nowplaying-heading" class="text-xl font-bold text-white">Now Playing in Cinemas</h2>
+                <a href="/discover.html?content_type=movie&amp;sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="nowplaying-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
 
-        <!-- POPULAR TV -->
-        <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="populartv-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="populartv-heading" class="text-xl font-bold text-white">Popular TV Shows</h2><a href="/discover.html?content_type=tv&sort_by=popularity.desc" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="populartv-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
-        </section>
-
-        <!-- HIDDEN GEMS -->
+        <!-- SYSTEM HIDDEN GEMS INDICES INTERCEPT LAYOUT CHANNELS -->
         <section class="max-w-7xl mx-auto px-4 mb-16" aria-labelledby="gems-heading">
-            <div class="flex items-center justify-between mb-3"><h2 id="gems-heading" class="text-xl font-bold text-white">Hidden Gems</h2><a href="/discover.html?vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc" class="text-sm text-accent hover:underline">See all</a></div>
-            <div id="gems-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"><div class="flex gap-4"><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div><div class="w-36 flex-shrink-0 rounded-xl skeleton" style="height:216px"></div></div></div>
+            <div class="flex items-center justify-between mb-4">
+                <h2 id="gems-heading" class="text-xl font-bold text-white">Critically Acclaimed Hidden Gems</h2>
+                <a href="/discover.html?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a>
+            </div>
+            <div id="gems-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list">
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+                <div class="w-36 h-56 rounded-xl skeleton flex-shrink-0" aria-hidden="true"></div>
+            </div>
         </section>
     </main>
 
     <footer class="border-t border-white/10 py-10 px-4 bg-black" role="contentinfo">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div><a href="/index.html" class="flex items-center gap-2 text-lg font-bold text-white mb-2"><img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6"><span>FlashStream</span></a><p class="text-sm text-gray-500">Global movie &amp; TV discovery. Free forever.</p></div>
-            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover.html" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist.html" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon.html" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon.html" class="text-gray-400 hover:text-white">Coming Soon</a></li></ul></div>
-            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/about.html" class="text-gray-400 hover:text-white">About</a></li><li><a href="/privacy.html" class="text-gray-400 hover:text-white">Privacy</a></li><li><a href="/terms.html" class="text-gray-400 hover:text-white">Terms</a></li><li><a href="/settings.html" class="text-gray-400 hover:text-white">Settings</a></li></ul><p class="text-xs text-gray-600 mt-4">Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a></p></div>
+            <div>
+                <a href="/index.html" class="flex items-center gap-2 text-lg font-bold text-white mb-2">
+                    <img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6">
+                    <span>FlashStream</span>
+                </a>
+                <p class="text-xs text-gray-600">Global movie &amp; TV discovery index. Free forever.</p>
+            </div>
+            <div>
+                <h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a></li>
+                    <li><a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a></li>
+                    <li><a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a></li>
+                    <li><a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/privacy.html" class="text-gray-400 hover:text-white transition-colors">Privacy Protocol</a></li>
+                    <li><a href="/terms.html" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+                    <li><a href="/settings.html" class="text-gray-400 hover:text-white transition-colors">Settings Dashboard</a></li>
+                </ul>
+                <p class="text-xs text-gray-600 mt-4">Data component metrics aggregated via open APIs.</p>
+            </div>
         </div>
     </footer>
 
+    <!-- ══ UNIFIED RUNTIME APPLICATION DATA ENGINE CONTROLLERS ════════════ -->
     <script>
-        /* ========== FLASHSTREAM INDEX SCRIPT ========== */
+        /* ── SYSTEM STORAGE CONSTANTS & ROUTING LEDGERS ────────────────────── */
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        const NO_POSTER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E";
+        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E`;
 
+        // Decentralized cookie-less user interaction preference maps
         const PREFS = {
             getRegion: () => localStorage.getItem('user_region') || 'US',
-            setRegion: (r) => localStorage.setItem('user_region', r),
+            setRegion: (regionCode) => localStorage.setItem('user_region', regionCode),
             getTheme: () => localStorage.getItem('cs-theme') || 'dark',
-            setTheme: (t) => localStorage.setItem('cs-theme', t),
+            setTheme: (themeOption) => localStorage.setItem('cs-theme', themeOption),
             getTaste: () => { try { return JSON.parse(localStorage.getItem('taste_profile') || '{}'); } catch { return {}; } }
         };
 
-        // --- INITIALIZATION ---
+        /* ── INTERFACE LIFE-CYCLE CONSOLE INITIALIZATION ────────────────────── */
         document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            updateRegionBadge();
-            setupMobileMenu();
-            initConsent();
+            initializeLayoutTheme();
+            updateNavigationRegionBadge();
+            setupMobileMenuControllers();
+            initializeUserPrivacyHandshake();
             setupMainSearchEngine();
-            loadAllRows();
+            executeParallelCurationIngestion();
         });
 
-        function initTheme() {
-            if (PREFS.getTheme() === 'light') document.documentElement.classList.remove('dark');
-            else document.documentElement.classList.add('dark');
+        function initializeLayoutTheme() {
+            if (PREFS.getTheme() === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+            
             document.getElementById('theme-toggle')?.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 PREFS.setTheme(isDark ? 'dark' : 'light');
             });
         }
 
-        function updateRegionBadge() {
-            const r = PREFS.getRegion();
-            const flagElem = document.getElementById('region-flag');
-            const codeElem = document.getElementById('region-code');
+        function updateNavigationRegionBadge() {
+            const currentRegion = PREFS.getRegion();
+            const flagElement = document.getElementById('region-flag');
+            const codeElement = document.getElementById('region-code');
             const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
-            if (flagElem) flagElem.textContent = flags[r] || '🌐';
-            if (codeElem) codeElem.textContent = r;
+            if (flagElement) flagElement.textContent = flags[currentRegion] || ' ';
+            if (codeElement) codeElement.textContent = currentRegion;
         }
 
-        function setupMobileMenu() {
-            const btn = document.getElementById('mobile-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            if (btn && menu) {
-                btn.addEventListener('click', () => {
-                    const open = !menu.hidden;
-                    menu.hidden = open;
-                    btn.setAttribute('aria-expanded', String(!open));
+        function setupMobileMenuControllers() {
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            const menuPanel = document.getElementById('mobile-menu');
+            if (mobileBtn && menuPanel) {
+                mobileBtn.addEventListener('click', () => {
+                    const expanded = !menuPanel.hidden;
+                    menuPanel.hidden = expanded;
+                    mobileBtn.setAttribute('aria-expanded', String(!expanded));
                 });
             }
         }
 
-        // --- CONSENT & TELEMETRY ---
-        function isDataTrackingAllowed() { return localStorage.getItem('consent_given') !== 'false'; }
+        /* ── PRIVACY TRANSITIONS & TELEMETRY INSIGHTS HARVESTING ────────────── */
+        function isDataTrackingAllowed() {
+            return localStorage.getItem('consent_given') !== 'false';
+        }
+
         function transmitAnalyticsBeacon(eventType, metadataPayload = {}) {
             if (!isDataTrackingAllowed()) return;
             try {
-                navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...metadataPayload }));
-            } catch(e) { console.warn('[Analytics] skip'); }
+                navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({
+                    event_type: eventType,
+                    client_timestamp: Date.now(),
+                    ...metadataPayload
+                }));
+            } catch (err) {
+                console.warn('[Telemetry Handshake] Metric trace packet bypassed.');
+            }
         }
 
-        function initConsent() {
-            const consent = localStorage.getItem('consent_given');
-            const banner = document.getElementById('consent-banner');
-            if (consent === null) { if (banner) banner.hidden = false; }
-            else if (consent === 'true') { transmitAnalyticsBeacon('homepage_session_start'); }
+        function initializeUserPrivacyHandshake() {
+            const privacyConsentStatus = localStorage.getItem('consent_given');
+            const bannerElement = document.getElementById('consent-banner');
+            
+            if (privacyConsentStatus === null) {
+                if (bannerElement) bannerElement.hidden = false;
+            } else if (privacyConsentStatus === 'true') {
+                transmitAnalyticsBeacon('homepage_session_start');
+            }
+            
             document.getElementById('consent-accept')?.addEventListener('click', () => {
                 localStorage.setItem('consent_given', 'true');
-                if (banner) banner.hidden = true;
+                if (bannerElement) bannerElement.hidden = true;
                 transmitAnalyticsBeacon('homepage_session_start');
-                showToast('Telemetry diagnostics enabled', 'success');
+                showToastMessageNotification('Telemetry optimization pipeline active', 'success');
             });
+
             document.getElementById('consent-decline')?.addEventListener('click', () => {
                 localStorage.setItem('consent_given', 'false');
-                if (banner) banner.hidden = true;
-                showToast('Data footprint minimized', 'info');
+                if (bannerElement) bannerElement.hidden = true;
+                showToastMessageNotification('Data collection minimized', 'info');
             });
         }
 
-        // --- SEARCH DROPDOWN ---
+        /* ── AUTO-SUGGEST NAVIGATION SEARCH DROPDOWN ENGINE ────────────────── */
         function setupMainSearchEngine() {
-            let debounce = null;
-            const input = document.getElementById('nav-search-input');
+            let searchDebounce = null;
+            const searchInput = document.getElementById('nav-search-input');
             const dropdown = document.getElementById('search-dropdown');
-            if (!input || !dropdown) return;
-            input.addEventListener('input', () => {
-                clearTimeout(debounce);
-                const q = input.value.trim();
+            if (!searchInput || !dropdown) return;
+
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchDebounce);
+                const q = searchInput.value.trim();
                 if (q.length < 2) { dropdown.hidden = true; return; }
-                debounce = setTimeout(() => executeQueryFetch(q), 300);
+                searchDebounce = setTimeout(() => executeQueryFetch(q), 300);
             });
-            input.addEventListener('keydown', e => {
+
+            searchInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
-                    const q = input.value.trim();
-                    if (q) { transmitAnalyticsBeacon('search_enter_submit', { query: q }); window.location.href = `/discover.html?q=${encodeURIComponent(q)}`; }
+                    const q = searchInput.value.trim();
+                    if (q) {
+                        transmitAnalyticsBeacon('search_enter_submit', { query: q });
+                        window.location.href = `/discover.html?q=${encodeURIComponent(q)}`;
+                    }
                 }
                 if (e.key === 'Escape') dropdown.hidden = true;
             });
-            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
+
+            document.addEventListener('click', e => {
+                if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true;
+            });
         }
 
         async function executeQueryFetch(q) {
@@ -335,52 +422,92 @@
                 const res = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`);
                 const data = await res.json();
                 const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+                
                 if (!results.length) { dropdown.hidden = true; return; }
+                
                 dropdown.innerHTML = results.map(item => {
                     const title = item.title || item.name || '';
                     const year = (item.release_date || item.first_air_date || '').slice(0, 4);
                     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                     const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
-                    return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" role="option" onclick="document.getElementById('search-dropdown').hidden=true">
-                        <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="this.src='${NO_POSTER}'">
-                        <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year}${year ? ' · ' : ''}${type === 'tv' ? 'TV Show' : 'Movie'}</p></div>
-                    </a>`;
-                }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
+                    
+                    return `
+                        <a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" role="option" onclick="document.getElementById('search-dropdown').hidden=true">
+                            <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p>
+                                <p class="text-xs text-gray-500">${year}${year ? ' · ' : ''}${type === 'tv' ? 'TV Show' : 'Movie'}</p>
+                            </div>
+                        </a>`;
+                }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
                 dropdown.hidden = false;
             } catch { dropdown.hidden = true; }
         }
 
-        // --- WATCHLIST HELPERS ---
+        /* ── DEVICE ACCESSIBLE WATCHLIST DATA MODIFIERS ────────────────────── */
         function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
         function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
         function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
+
         function toggleWL(item) {
             const list = getWL();
             const idx = list.findIndex(i => String(i.tmdb_id) === String(item.tmdb_id));
-            if (idx > -1) { list.splice(idx, 1); saveWL(list); showToast('Removed from watchlist', 'info'); return false; }
-            list.unshift({ tmdb_id: String(item.tmdb_id), type: item.type || 'movie', title: item.title, poster_path: item.poster_path || null, genre_ids: item.genre_ids || [], status: 'want_to_watch', date_added: Date.now() });
-            saveWL(list); transmitAnalyticsBeacon('watchlist_addition_click', { mediaId: item.tmdb_id, type: item.type }); showToast('Added to watchlist ✓', 'success'); return true;
+            if (idx > -1) {
+                list.splice(idx, 1);
+                saveWL(list);
+                showToastMessageNotification('Removed from tracking dashboard', 'info');
+                return false;
+            }
+            list.unshift({
+                tmdb_id: String(item.tmdb_id),
+                type: item.type || 'movie',
+                title: item.title,
+                poster_path: item.poster_path || null,
+                genre_ids: item.genre_ids || [],
+                status: 'want_to_watch',
+                date_added: Date.now()
+            });
+            saveWL(list);
+            transmitAnalyticsBeacon('watchlist_addition_click', { mediaId: item.tmdb_id, type: item.type });
+            showToastMessageNotification('Added to watchlist ✓', 'success');
+            return true;
         }
-        window.handleWLBtn = function(event, btn) {
-            event.preventDefault(); event.stopPropagation();
-            let parsedGenres = []; try { parsedGenres = JSON.parse(btn.dataset.genres || '[]'); } catch(e) {}
-            const added = toggleWL({ tmdb_id: btn.dataset.id, type: btn.dataset.type, title: btn.dataset.title, poster_path: btn.dataset.poster, genre_ids: parsedGenres });
-            const svg = btn.querySelector('svg');
-            if (svg) { svg.setAttribute('fill', added ? '#e50914' : 'none'); svg.setAttribute('stroke', added ? '#e50914' : 'white'); }
-            btn.setAttribute('aria-pressed', String(added));
-        };
 
-        // --- BADGE (leaving soon / upcoming / new) ---
+        function handleWLBtn(event, btn) {
+            event.preventDefault();
+            event.stopPropagation();
+            let parsedGenres = [];
+            try { parsedGenres = JSON.parse(btn.dataset.genres || '[]'); } catch(e) {}
+            
+            const added = toggleWL({
+                tmdb_id: btn.dataset.id,
+                type: btn.dataset.type,
+                title: btn.dataset.title,
+                poster_path: btn.dataset.poster,
+                genre_ids: parsedGenres
+            });
+            
+            const svg = btn.querySelector('svg');
+            if (svg) {
+                svg.setAttribute('fill', added ? '#e50914' : 'none');
+                svg.setAttribute('stroke', added ? '#e50914' : 'white');
+            }
+            btn.setAttribute('aria-pressed', String(added));
+        }
+
+        /* ── TIME-RELATIVE LIFECYCLE BADGES AND INTERCEPTS ─────────────────── */
         function getLifecycleBadge(item) {
             const today = new Date();
             let lc = []; try { lc = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); } catch(e) {}
             const le = lc.find(l => String(l.tmdb_id) === String(item.id));
+            
             if (le) {
                 const days = Math.ceil((new Date(le.leaving_date) - today) / 86400000);
                 if (days > 0 && days <= 3) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white badge-pulse uppercase">Leaving ${days}d</span>`;
                 if (days > 0 && days <= 7) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white uppercase">Leaving ${days}d</span>`;
                 if (days > 0 && days <= 30) return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-black uppercase">Leaving ${days}d</span>`;
             }
+
             const rel = item.release_date || item.first_air_date;
             if (rel) {
                 const d = new Date(rel);
@@ -390,7 +517,7 @@
             return '';
         }
 
-        // --- CARD RENDERING ---
+        /* ── DYNAMIC ASSET COMPILING AND CARD ROW ASSEMBLERS ──────────────── */
         function renderCard(item) {
             const id = item.id;
             const title = item.title || item.name || 'Unknown';
@@ -402,40 +529,68 @@
             const inWL = isInWL(id);
             const badge = getLifecycleBadge(item);
             const hideRatings = localStorage.getItem('hide_ratings') === 'true';
-            return `<article class="flex-shrink-0 w-36 group" role="listitem">
-                <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">${badge}
-                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>
-                    <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" aria-label="${inWL ? 'Remove from' : 'Add to'} watchlist" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleWLBtn(event,this)">
-                        <svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                    </button>
-                </div>
-                <a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(title)}</h3><div class="flex items-center gap-1 mt-0.5 text-xs text-gray-400 font-medium"><span>${year}</span>${!hideRatings && score ? `<span class="text-yellow-400">★ ${score}</span>` : ''}</div></a>
-            </article>`;
+
+            return `
+                <article class="flex-shrink-0 w-36 group" role="listitem">
+                    <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
+                        ${badge}
+                        <a href="${href}" aria-label="${escapeAttr(title)}">
+                            <img src="${escapeAttr(poster)}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'">
+                        </a>
+                        <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors"
+                            aria-label="${inWL ? 'Remove from' : 'Add to'} watchlist" aria-pressed="${inWL}"
+                            data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}'
+                            onclick="handleWLBtn(event,this)">
+                            <svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        </button>
+                    </div>
+                    <a href="${href}" class="block mt-2 hover:text-accent transition-colors">
+                        <h3 class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(title)}</h3>
+                        <div class="flex items-center gap-1 mt-0.5 text-xs text-gray-400 font-medium font-mono">
+                            <span>${year}</span>
+                            ${!hideRatings && score ? `<span class="text-yellow-400">★ ${score}</span>` : ''}
+                        </div>
+                    </a>
+                </article>`;
         }
 
         function renderRow(id, items) {
             const el = document.getElementById(id);
             if (!el) return;
-            if (!items || !items.length) { el.innerHTML = '<p class="text-sm text-gray-500 py-4">No data available.</p>'; return; }
+            if (!items || !items.length) {
+                el.innerHTML = '<p class="text-xs text-gray-500 py-4 italic">No matching region data indexed inside local parameters.</p>';
+                return;
+            }
             el.innerHTML = items.map(renderCard).join('');
         }
 
-        // --- CONTINUE WATCHING ---
+        /* ── DYNAMIC CAROUSEL RETRIEVAL LOOPS ──────────────────────────────── */
         function loadContinue() {
             let history = []; try { history = JSON.parse(localStorage.getItem('viewing_history') || '[]'); } catch(e) {}
             const unfinished = history.filter(i => i.type === 'tv' && !i.completed);
             if (!unfinished.length) return;
-            const contSec = document.getElementById('continue-section'); if (contSec) contSec.hidden = false;
-            const row = document.getElementById('continue-row');
-            if (row) {
-                row.innerHTML = unfinished.slice(0,6).map(item => {
+            
+            const continueSection = document.getElementById('continue-section');
+            if (continueSection) continueSection.hidden = false;
+            const continueRow = document.getElementById('continue-row');
+            if (continueRow) {
+                continueRow.innerHTML = unfinished.slice(0, 6).map(item => {
                     const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER;
-                    return `<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>${item.progress_season ? `<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">S${item.progress_season} E${item.progress_episode || 1}</span>` : ''}</div><a href="/movie-detail.html?id=${item.tmdb_id}&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p><span class="text-[11px] text-blue-400 font-semibold font-mono">Continue</span></a></article>`;
+                    return `
+                        <article class="flex-shrink-0 w-36 group" role="listitem">
+                            <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
+                                <a href="/movie-detail.html?id=${item.tmdb_id}&type=tv"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>
+                                ${item.progress_season ? `<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wide">S${item.progress_season} E${item.progress_episode || 1}</span>` : ''}
+                            </div>
+                            <a href="/movie-detail.html?id=${item.tmdb_id}&type=tv" class="block mt-2 hover:text-accent">
+                                <p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p>
+                                <span class="text-[11px] text-blue-400 font-semibold font-mono">Continue</span>
+                            </a>
+                        </article>`;
                 }).join('');
             }
         }
 
-        // --- LEAVING SOON (static JSON fallback) ---
         async function loadLeavingSoon() {
             try {
                 const res = await fetch('/data/leaving-soon.json');
@@ -443,47 +598,70 @@
                 const data = await res.json();
                 const items = data.items || [];
                 localStorage.setItem('leaving_soon_cache', JSON.stringify(items));
+                
                 const today = new Date();
-                const urgent = items.filter(i => { const days = Math.ceil((new Date(i.leaving_date) - today) / 86400000); return days > 0 && days <= 30; }).sort((a,b) => new Date(a.leaving_date) - new Date(b.leaving_date)).slice(0,8);
+                const urgent = items.filter(i => {
+                    const days = Math.ceil((new Date(i.leaving_date) - today) / 86400000);
+                    return days > 0 && days <= 30;
+                }).sort((a, b) => new Date(a.leaving_date) - new Date(b.leaving_date)).slice(0, 8);
+                
                 if (!urgent.length) return;
-                const leaveSec = document.getElementById('leaving-section'); if (leaveSec) leaveSec.hidden = false;
-                const row = document.getElementById('leaving-row');
-                if (row) {
-                    row.innerHTML = urgent.map(item => {
+                const leavingSection = document.getElementById('leaving-section');
+                if (leavingSection) leavingSection.hidden = false;
+                const leavingRow = document.getElementById('leaving-row');
+                if (leavingRow) {
+                    leavingRow.innerHTML = urgent.map(item => {
                         const days = Math.ceil((new Date(item.leaving_date) - today) / 86400000);
                         const bc = days <= 3 ? 'bg-red-600 badge-pulse' : days <= 7 ? 'bg-red-600' : 'bg-amber-500 text-black';
                         const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER;
-                        return `<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${bc} text-white uppercase">${days}d left</span><a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a></div><a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p><p class="text-[11px] text-red-400 font-semibold uppercase">${escapeHtml(item.platform || '')}</p></a></article>`;
+                        return `
+                            <article class="flex-shrink-0 w-36 group" role="listitem">
+                                <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
+                                    <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${bc} text-white uppercase">${days}d left</span>
+                                    <a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}"><img src="${poster}" alt="" loading="lazy" width="144" height="216" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'"></a>
+                                </div>
+                                <a href="/movie-detail.html?id=${item.tmdb_id}&type=${item.media_type || 'movie'}" class="block mt-2 hover:text-accent">
+                                    <p class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(item.title || '')}</p>
+                                    <p class="text-[11px] text-red-400 font-semibold uppercase tracking-wider">${escapeHtml(item.platform || '')}</p>
+                                </a>
+                            </article>`;
                     }).join('');
                 }
             } catch {}
         }
 
-        // --- RECOMMENDATIONS (based on finished watchlist genres) ---
         async function loadRecs() {
             const wl = getWL();
             const finished = wl.filter(i => i.status === 'finished' || i.status === 'favorites' || i.status === 'rewatch');
             if (finished.length < 2) return;
+            
             const freq = {};
             finished.forEach(item => { (item.genre_ids || []).forEach(g => { freq[g] = (freq[g] || 0) + 1; }); });
-            const topGenre = Object.entries(freq).sort((a,b) => b[1] - a[1])[0]?.[0];
+            const topGenreArray = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+            const topGenre = topGenreArray[0]?.[0];
             if (!topGenre) return;
+
             const taste = PREFS.getTaste();
-            const vetoed = new Set(Object.entries(taste.genres || {}).filter(([,v]) => v === 'veto').map(([id]) => id));
+            const vetoed = new Set(Object.entries(taste.genres || {}).filter(([, s]) => s === 'veto').map(([id]) => id));
             const wlIds = new Set(wl.map(i => String(i.tmdb_id)));
+            
             try {
                 const res = await fetch(`${WORKER_URL}/api/discover?content_type=movie&with_genres=${topGenre}&sort_by=vote_average.desc&vote_count.gte=300`);
                 const data = await res.json();
-                const filtered = (data.results || []).filter(item => !wlIds.has(String(item.id)) && !(item.genre_ids || []).some(g => vetoed.has(String(g)))).slice(0,12);
+                const filtered = (data.results || []).filter(item => !wlIds.has(String(item.id)) && !(item.genre_ids || []).some(g => vetoed.has(String(g)))).slice(0, 12);
+                
                 if (!filtered.length) return;
-                const recsSec = document.getElementById('recs-section'); if (recsSec) recsSec.hidden = false;
+                const recsSection = document.getElementById('recs-section');
+                if (recsSection) recsSection.hidden = false;
                 renderRow('recs-row', filtered);
             } catch {}
         }
 
-        // --- LOAD ALL ROWS ---
-        async function loadAllRows() {
-            loadContinue(); loadLeavingSoon(); loadRecs();
+        async function executeParallelCurationIngestion() {
+            loadContinue();
+            loadLeavingSoon();
+            loadRecs();
+            
             const rowMap = [
                 { id: 'trending-row', path: '/api/trending?type=all&window=week' },
                 { id: 'kdrama-row', path: '/api/discover?content_type=tv&with_original_language=ko&sort_by=popularity.desc' },
@@ -493,27 +671,39 @@
                 { id: 'populartv-row', path: '/api/trending?type=tv&window=week' },
                 { id: 'gems-row', path: '/api/discover?content_type=movie&vote_average.gte=7.5&vote_count.lte=1000&vote_count.gte=100&sort_by=vote_average.desc' }
             ];
+            
             await Promise.allSettled(rowMap.map(async ({ id, path }) => {
-                try { const res = await fetch(`${WORKER_URL}${path}`); const data = await res.json(); renderRow(id, (data.results || []).slice(0,14)); } catch { const el = document.getElementById(id); if (el) el.innerHTML = '<p class="text-sm text-gray-500 py-4">Failed to load content.</p>'; }
+                try {
+                    const res = await fetch(`${WORKER_URL}${path}`);
+                    const data = await res.json();
+                    renderRow(id, (data.results || []).slice(0, 14));
+                } catch {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = '<p class="text-xs text-gray-500 py-4 italic">Failed to connect with background serverless index nodes.</p>';
+                }
             }));
         }
 
-        // --- UTILITIES ---
+        /* ── DATA INTEGRITY ESCAPE SANITIZATION UTILITIES ─────────────────────── */
         function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
         function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-        function showToast(msg, type = 'success') {
+        function showToastMessageNotification(msg, type = 'success') {
             const c = { success:'bg-green-900/90 border-green-600 text-green-100', error:'bg-red-900/90 border-red-700 text-red-100', info:'bg-gray-900/90 border-white/10 text-gray-300' };
             const el = document.createElement('div');
             el.className = `pointer-events-auto max-w-sm w-full px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-xl ${c[type] || c.info} transform transition-all duration-300 translate-x-full opacity-0`;
-            el.setAttribute('role', 'status'); el.textContent = msg;
-            const container = document.getElementById('toast-container');
-            if (container) container.appendChild(el);
+            el.setAttribute('role', 'status');
+            el.textContent = msg;
+            const toastContainer = document.getElementById('toast-container');
+            if (toastContainer) toastContainer.appendChild(el);
             requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.remove('translate-x-full', 'opacity-0'); }));
             setTimeout(() => { el.classList.add('translate-x-full', 'opacity-0'); setTimeout(() => el.remove(), 350); }, 3000);
         }
 
-        // SERVICE WORKER
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {})); }
+        /* ── REGISTER DECENTRALIZED PWA SERVICE WORKERS LAYER ───────────────── */
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+        }
+        window.handleWLBtn = handleWLBtn;
     </script>
 </body>
 </html>
