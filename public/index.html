@@ -172,8 +172,8 @@
             <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
-        <!-- LEAVING SOON (dynamic) -->
-        <section id="leaving-section" hidden class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
+ <!-- LEAVING SOON (dynamic) – temporarily hidden -->
+        <section id="leaving-section" hidden style="display: none;" class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
             <div class="flex items-center justify-between mb-4"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon.html" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
@@ -254,6 +254,7 @@
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
         const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E`;
+// force redeploy 2026-05-25
 
         const PREFS = {
             getRegion: () => localStorage.getItem('user_region') || 'US',
