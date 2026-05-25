@@ -114,8 +114,8 @@
   </footer>
 
   <script>
-    /* FIX 1: Percent-encode SVG to stop the SyntaxError */
-    const NO_POSTER = "data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20200%20300%27%20fill%3D%27%231f2937%27%3E%3Crect%20width%3D%27200%27%20height%3D%27300%27/%3E%3C/svg%3E";
+    /* FIX 1: Use backticks to completely avoid quote escaping issues (syntax error fixed) */
+    const NO_POSTER = `data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20viewBox%3D'0%200%20200%20300'%20fill%3D'%231f2937'%3E%3Crect%20width%3D'200'%20height%3D'300'/%3E%3C/svg%3E`;
     const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
 
