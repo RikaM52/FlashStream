@@ -3,14 +3,10 @@ main = "worker/worker.js"
 compatibility_date = "2026-05-24"
 compatibility_flags = ["nodejs_compat"]
 
-binding = "flashstream_db"
-database_name = "flashstream-db"
-database_id = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c"
-
 [[d1_databases]]
-binding       = "flashstream_db"                               # Must match exactly with 'env.DB' inside your worker.js logic
+binding       = "flashstream_db"
 database_name = "flashstream-db"
-database_id   = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c" # Paste the ID returned by your 'wrangler d1 create' command
+database_id   = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c"
 
 [vars]
 ENVIRONMENT = "production"
