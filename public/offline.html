@@ -23,7 +23,7 @@
 
   <!-- Simplified navbar (no search, region badge – offline) -->
   <nav class="border-b border-white/5 px-4 h-16 flex items-center" role="navigation" aria-label="Main navigation">
-    <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white" aria-label="FlashStream home">
+    <a href="/" class="flex items-center gap-2 text-xl font-bold text-white" aria-label="FlashStream home">
       <span class="text-accent text-2xl" aria-hidden="true">◈</span>
       <span>FlashStream</span>
     </a>
@@ -50,7 +50,7 @@
           </svg>
           Try Again
         </button>
-        <a href="/watchlist.html" class="px-6 py-3 bg-gray-800 border border-white/10 text-gray-300 font-semibold rounded-xl hover:bg-gray-700 transition-colors">
+        <a href="/watchlist" class="px-6 py-3 bg-gray-800 border border-white/10 text-gray-300 font-semibold rounded-xl hover:bg-gray-700 transition-colors">
           View My Watchlist
         </a>
       </div>
@@ -83,8 +83,9 @@
 
   <script>
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    // FIXED: No emoji inside SVG – replaced with simple text "MOVIE" (or you can remove the text element)
-    const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Crect width='40' height='60' fill='%231f1f29'/%3E%3Ctext x='20' y='30' text-anchor='middle' dominant-baseline='middle' font-size='12' fill='%23666' font-family='monospace'%3EMOVIE%3C/text%3E%3C/svg%3E`;
+    // Percent-encoded NO_POSTER – no single quotes, text "MOVIE" (no emoji)
+    const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2260%22%20viewBox%3D%220%200%2040%2060%22%3E%3Crect%20width%3D%2240%22%20height%3D%2260%22%20fill%3D%22%231f1f29%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2230%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20font-size%3D%2212%22%20fill%3D%22%23666%22%20font-family%3D%22monospace%22%3EMOVIE%3C%2Ftext%3E%3C%2Fsvg%3E';
+    function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
 
     function initTheme() {
       if (localStorage.getItem('cs-theme') !== 'light') {
@@ -116,7 +117,6 @@
         favorites: 'Favourites'
       };
 
-      // No emojis – use plain text labels
       const STATUS_ICON_TEXT = {
         want_to_watch: '[Want]',
         watching: '[Watching]',
@@ -134,7 +134,7 @@
         const title = escapeHtml(item.title || 'Unknown');
         return `
           <div class="flex items-center gap-3 p-3 bg-gray-900 border border-white/10 rounded-xl">
-            <img src="${escapeAttr(poster)}" alt="${title}" loading="lazy" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+            <img src="${escapeAttr(poster)}" alt="${title}" loading="lazy" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0" onerror="handleImgError(this)">
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-white line-clamp-1">${title}</p>
               <p class="text-xs text-gray-500">${icon} ${escapeHtml(label)}</p>
@@ -144,7 +144,7 @@
       }).join('');
 
       if (list.length > 8) {
-        container.insertAdjacentHTML('beforeend', `<p class="text-xs text-gray-500 text-center py-2">+${list.length - 8} more in your <a href="/watchlist.html" class="text-accent hover:underline">watchlist</a></p>`);
+        container.insertAdjacentHTML('beforeend', `<p class="text-xs text-gray-500 text-center py-2">+${list.length - 8} more in your <a href="/watchlist" class="text-accent hover:underline">watchlist</a></p>`);
       }
     }
 
@@ -158,7 +158,7 @@
       setTimeout(() => {
         if (navigator.onLine) {
           st.textContent = 'Connection restored! Redirecting…';
-          setTimeout(() => { window.location.href = '/index.html'; }, 800);
+          setTimeout(() => { window.location.href = '/'; }, 800);
         } else {
           st.textContent = 'Still offline. Please check your connection.';
           btn.disabled = false;
@@ -169,7 +169,7 @@
 
     window.addEventListener('online', () => {
       document.getElementById('connection-status').textContent = 'You are back online! Redirecting…';
-      setTimeout(() => { window.location.href = '/index.html'; }, 1000);
+      setTimeout(() => { window.location.href = '/'; }, 1000);
     });
     window.addEventListener('offline', () => {
       document.getElementById('connection-status').textContent = 'Connection lost.';

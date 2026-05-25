@@ -6,11 +6,11 @@
     <title>Discover Movies, TV &amp; Shorts — Filter by Mood, Genre, Country | FlashStream</title>
     <meta name="description" content="Browse thousands of movies, TV shows, and vertical shorts. Filter by mood, genre, language, country, coming soon, and more.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://flashstream.pages.dev/discover.html">
+    <link rel="canonical" href="https://flashstream.pages.dev/discover">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Discover Movies, TV &amp; Shorts | FlashStream">
     <meta property="og:description" content="Browse thousands of movies and TV shows. Filter by mood, genre, platform, language, and more.">
-    <meta property="og:url" content="https://flashstream.pages.dev/discover.html">
+    <meta property="og:url" content="https://flashstream.pages.dev/discover">
     <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
     <meta name="twitter:card" content="summary_large_image">
     <script type="application/ld+json" id="jsonld-itemlist"></script>
@@ -71,7 +71,7 @@
     <!-- MAIN APPLICATION APP NAVBAR NAVIGATION -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+            <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
                 <span class="text-accent text-2xl" aria-hidden="true">◈</span>
                 <span class="hidden sm:block">FlashStream</span>
             </a>
@@ -83,14 +83,14 @@
                 <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
             </div>
             <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover.html" class="text-white font-semibold">Discover</a>
-                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
+                <a href="/discover" class="text-white font-semibold">Discover</a>
+                <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
+                <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
+                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
+                <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
                     <span id="region-flag"> </span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
@@ -102,12 +102,12 @@
             </div>
         </div>
         <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover.html" class="text-white font-semibold py-1.5">Discover</a>
-            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+            <a href="/discover" class="text-white font-semibold py-1.5">Discover</a>
+            <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
         </div>
     </nav>
 
@@ -209,7 +209,13 @@
         /* ── WORKSPACE CORE INFRASTRUCTURE ENDPOINTS ───────────────────────── */
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        const NO_POSTER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E";
+        // Percent-encoded NO_POSTER_SVG – no single quotes, no emoji
+        const NO_POSTER_SVG = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22144%22%20height%3D%22216%22%20viewBox%3D%220%200%20144%20216%22%3E%3Crect%20width%3D%22144%22%20height%3D%22216%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
+
+        function handleImgError(img) {
+            img.onerror = null;
+            img.src = NO_POSTER_SVG;
+        }
 
         /* ── PRE-MAPPED TRANSACTION DICTIONARIES ───────────────────────────── */
         const GENRES = [
@@ -269,8 +275,7 @@
             else document.documentElement.classList.add('dark');
             const region = localStorage.getItem('user_region') || 'US';
             document.getElementById('region-code').textContent = region;
-            const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭', MY:'🇲🇾', PK:'🇵🇰', AE:'🇦🇪' };
-            document.getElementById('region-flag').textContent = flags[region] || ' ';
+            document.getElementById('region-flag').textContent = '';
         }
 
         /* ── WATCHLIST HELPERS ────────────────────────────────────────────── */
@@ -287,7 +292,7 @@
             if (idx > -1) { list.splice(idx, 1); showToastMessage('Removed from watchlist', 'info'); }
             else {
                 list.unshift({ tmdb_id: String(id), type: btn.dataset.type, title: btn.dataset.title, poster_path: btn.dataset.poster || null, genre_ids: [], status: 'want_to_watch', date_added: Date.now() });
-                added = true; showToastMessage('Added to watchlist ✓', 'success');
+                added = true; showToastMessage('Added to watchlist', 'success');
             }
             saveWL(list);
             const svg = btn.querySelector('svg');
@@ -477,7 +482,7 @@
                         '@type': 'ListItem',
                         'position': i+1,
                         'name': item.title || item.name,
-                        'url': `https://flashstream.pages.dev/movie-detail.html?id=${item.id}&type=${item.media_type||'movie'}`
+                        'url': `https://flashstream.pages.dev/movie-detail?id=${item.id}&type=${item.media_type||'movie'}`
                     }))
                 });
             } catch (err) {
@@ -500,7 +505,7 @@
             const year = (item.release_date || item.first_air_date || '').slice(0,4) || 'TBA';
             const rating = item.vote_average ? item.vote_average.toFixed(1) : null;
             const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : `${TMDB_IMG}w342${item.poster_path}`) : NO_POSTER_SVG;
-            const href = `/movie-detail.html?id=${id}&type=${type}`;
+            const href = `/movie-detail?id=${id}&type=${type}`;
             const inWL = isInWL(id);
             const hideRat = localStorage.getItem('hide_ratings') === 'true';
             if (currentView === 'list') {
@@ -512,7 +517,7 @@
             }
             return `<article class="group" role="listitem">
                 <div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] border border-white/5 group-hover:border-white/10 transition-all shadow-md">
-                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="this.src='${NO_POSTER_SVG}'"></a>
+                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="handleImgError(this)"></a>
                     <button onclick="handleCardWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-all" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
                 </div>
                 <a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1 leading-snug">${escapeHtml(title)}</h3><div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium font-mono"><span>${year}</span>${!hideRat && rating ? `<span class="text-yellow-400">★ ${rating}</span>` : ''}</div></a>
@@ -564,11 +569,11 @@
                                 const year = (item.release_date || item.first_air_date || '').slice(0,4);
                                 const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                                 const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-                                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
                                     <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
                                     <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
                                 </a>`;
-                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
+                            }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
                             dropdown.hidden = false;
                         }).catch(() => dropdown.hidden = true);
                 }, 300);

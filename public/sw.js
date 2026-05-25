@@ -3,16 +3,17 @@ const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/discover.html',
-  '/movie-detail.html',
-  '/watchlist.html',
-  '/leaving-soon.html',
-  '/coming-soon.html',
-  '/community.html',
-  '/settings.html',
-  '/about.html',
-  '/privacy.html',
-  '/terms.html'
+  '/discover',
+  '/watchlist',
+  '/leaving-soon',
+  '/coming-soon',
+  '/community',
+  '/settings',
+  '/about',
+  '/privacy',
+  '/terms',
+  '/icons/icon-192.png',
+  '/icons/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -38,14 +39,19 @@ self.addEventListener('fetch', event => {
   const isHtml = request.headers.get('Accept')?.includes('text/html');
   const isSameOrigin = url.host === self.location.host;
 
+  // For HTML navigation – serve from cache first (avoids any network redirect)
   if (isSameOrigin && isHtml) {
     event.respondWith(
-      fetch(request).catch(() => caches.match(request))
-        .then(response => response || caches.match('/index.html'))
+      caches.match(request).then(cached => {
+        if (cached) return cached;
+        // Fallback to network if not cached (should not happen after install)
+        return fetch(request).catch(() => caches.match('/index.html'));
+      })
     );
     return;
   }
 
+  // For static assets – cache first
   if (isSameOrigin && /\.(css|js|woff2?|ttf|eot|svg|png|jpg|jpeg|webp|ico)$/.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then(cached => cached || fetch(request))
@@ -53,5 +59,6 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // For everything else – network first (API, images, etc.)
   event.respondWith(fetch(request));
 });

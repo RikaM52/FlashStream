@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title">Collection | FlashStream</title>
     <meta id="page-desc" name="description" content="Browse all films in this media franchise collection on FlashStream.">
-    <link id="link-canonical" rel="canonical" href="https://flashstream.pages.dev/collection.html">
+    <link id="link-canonical" rel="canonical" href="https://flashstream.pages.dev/collection">
     <meta id="og-title" property="og:title" content="Collection | FlashStream">
     <meta id="og-desc" property="og:description" content="">
     <meta id="og-image" property="og:image" content="">
@@ -51,8 +51,8 @@
     <!-- MAIN NAVIGATION -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+            <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+                <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
                 <span class="hidden sm:block">FlashStream</span>
             </a>
             <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
@@ -63,15 +63,15 @@
                 <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
             </div>
             <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
-                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+                <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+                <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
+                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                    <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -82,21 +82,21 @@
             </div>
         </div>
         <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+            <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
         </div>
     </nav>
 
     <!-- BREADCRUMB -->
     <nav id="breadcrumb" class="max-w-7xl mx-auto px-4 pt-4 pb-2 text-sm text-gray-500" aria-label="Breadcrumb">
         <ol class="flex items-center gap-2 flex-wrap" role="list">
-            <li><a href="/index.html" class="hover:text-white transition-colors">Home</a></li>
+            <li><a href="/" class="hover:text-white transition-colors">Home</a></li>
             <li aria-hidden="true">›</li>
-            <li><a href="/discover.html" class="hover:text-white transition-colors">Collections</a></li>
+            <li><a href="/discover" class="hover:text-white transition-colors">Collections</a></li>
             <li aria-hidden="true">›</li>
             <li id="breadcrumb-title" class="text-gray-300 truncate max-w-xs">Loading…</li>
         </ol>
@@ -154,7 +154,9 @@
         /* ── SYSTEM ENDPOINTS AND ENGINE INITIALIZATION STATE ──────────────── */
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='300' viewBox='0 0 200 300'%3E%3Crect width='200' height='300' fill='%231f1f29'/%3E%3C/svg%3E`;
+        // Percent-encoded NO_POSTER – no single quotes
+        const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22300%22%20viewBox%3D%220%200%20200%20300%22%3E%3Crect%20width%3D%22200%22%20height%3D%22300%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
+        function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
         
         const urlParams = new URLSearchParams(location.search);
         const COLLECTION_ID = urlParams.get('id');
@@ -181,10 +183,9 @@
 
         function updateRegionBadge() {
             const region = localStorage.getItem('user_region') || 'US';
-            const flags = { US:'🇺🇸', GB:'🇬🇧', AU:'🇦🇺', CA:'🇨🇦', FR:'🇫🇷', DE:'🇩🇪', JP:'🇯🇵', KR:'🇰🇷', IN:'🇮🇳', CN:'🇨🇳', BR:'🇧🇷', SG:'🇸🇬', TH:'🇹🇭' };
             const flagElem = document.getElementById('region-flag');
             const codeElem = document.getElementById('region-code');
-            if (flagElem) flagElem.textContent = flags[region] || '🌐';
+            if (flagElem) flagElem.textContent = '';
             if (codeElem) codeElem.textContent = region;
         }
 
@@ -220,7 +221,7 @@
             const year = (film.release_date || '').slice(0, 4) || 'TBA';
             const rating = film.vote_average ? film.vote_average.toFixed(1) : null;
             const poster = film.poster_path ? `${TMDB_IMG}w342${film.poster_path}` : NO_POSTER;
-            const targetHref = `/movie-detail.html?id=${id}&type=movie`;
+            const targetHref = `/movie-detail?id=${id}&type=movie`;
             const isAlreadyInWatchlist = getWatchlist().some(item => String(item.tmdb_id) === String(id));
 
             return `
@@ -228,7 +229,7 @@
                     <div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] shadow-md">
                         <span class="absolute top-2 left-2 z-10 w-7 h-7 rounded-full bg-black/70 text-white text-xs font-bold flex items-center justify-center font-mono">${index + 1}</span>
                         <a href="${targetHref}" aria-label="${escapeAttr(title)}">
-                            <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)} Poster" loading="lazy" width="200" height="300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER}'">
+                            <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)} Poster" loading="lazy" width="200" height="300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="handleImgError(this)">
                         </a>
                         <button onclick="handleWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" data-id="${id}" data-title="${escapeAttr(title)}" data-poster="${escapeAttr(film.poster_path || '')}" aria-label="${isAlreadyInWatchlist ? 'Remove from' : 'Add to'} watchlist">
                             <svg class="w-4 h-4" fill="${isAlreadyInWatchlist ? '#e50914' : 'none'}" stroke="${isAlreadyInWatchlist ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true">
@@ -267,7 +268,7 @@
                     status: 'want_to_watch',
                     date_added: Date.now()
                 });
-                showToastNotification('Added to watchlist ✓', 'success');
+                showToastNotification('Added to watchlist', 'success');
             } else {
                 watchlist.splice(itemIndex, 1);
                 showToastNotification('Removed from watchlist', 'info');
@@ -306,7 +307,6 @@
             saveWatchlist(watchlist);
             showToastNotification(`Added ${insertionCounter} collection film${insertionCounter !== 1 ? 's' : ''} to watchlist`, 'success');
             
-            // Re-render grid to update heart icons
             const filmsGrid = document.getElementById('films-grid');
             if (filmsGrid && window.currentFilmsArray) {
                 filmsGrid.innerHTML = window.currentFilmsArray.map((film, idx) => renderFilmCard(film, idx)).join('');
@@ -319,7 +319,7 @@
                 document.getElementById('skeleton-state').innerHTML = `
                     <div class="text-center py-24">
                         <p class="text-gray-500 text-sm mb-4">No valid collection selected.</p>
-                        <a href="/discover.html" class="px-5 py-2 text-xs font-semibold rounded-xl bg-accent text-white hover:bg-red-700">Browse Catalogs</a>
+                        <a href="/discover" class="px-5 py-2 text-xs font-semibold rounded-xl bg-accent text-white hover:bg-red-700">Browse Catalogs</a>
                     </div>`;
                 return;
             }
@@ -362,7 +362,7 @@
                     <div class="text-center py-24">
                         <p class="text-xl font-bold text-white mb-2">Could not load collection</p>
                         <p class="text-xs text-gray-500 mb-6 font-mono">${escapeHtml(err.message)}</p>
-                        <a href="/discover.html" class="px-5 py-2.5 bg-accent text-white font-semibold text-xs rounded-xl hover:bg-red-700 transition-colors">Return to Discovery</a>
+                        <a href="/discover" class="px-5 py-2.5 bg-accent text-white font-semibold text-xs rounded-xl hover:bg-red-700 transition-colors">Return to Discovery</a>
                     </div>`;
             }
         }
@@ -384,7 +384,7 @@
             searchInput.addEventListener('keydown', e => {
                 if (e.key === 'Enter') {
                     const q = searchInput.value.trim();
-                    if (q) window.location.href = `/discover.html?q=${encodeURIComponent(q)}`;
+                    if (q) window.location.href = `/discover?q=${encodeURIComponent(q)}`;
                 }
                 if (e.key === 'Escape') dropdown.hidden = true;
             });
@@ -407,11 +407,11 @@
                     const year = (item.release_date || item.first_air_date || '').slice(0, 4);
                     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                     const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
-                    return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">
-                        <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="this.src='${NO_POSTER}'">
+                    return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5 transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">
+                        <img src="${escapeAttr(poster)}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800 flex-shrink-0" onerror="handleImgError(this)">
                         <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
                     </a>`;
-                }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center transition-colors" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
                 dropdown.hidden = false;
             } catch(e) { dropdown.hidden = true; }
         }

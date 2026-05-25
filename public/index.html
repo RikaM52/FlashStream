@@ -26,7 +26,7 @@
             "@type": "SearchAction",
             "target": {
                 "@type": "EntryPoint",
-                "urlTemplate": "https://flashstream.pages.dev/discover.html?q={search_term_string}"
+                "urlTemplate": "https://flashstream.pages.dev/discover?q={search_term_string}"
             },
             "query-input": "required name=search_term_string"
         }
@@ -69,7 +69,7 @@
     <!-- MAIN NAVIGATION -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+            <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
                 <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
                 <span class="hidden sm:block">FlashStream</span>
             </a>
@@ -81,14 +81,14 @@
                 <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
             </div>
             <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
-                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-                <a href="/leaving-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
+                <a href="/discover" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
+                <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
+                <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
+                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
+                <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
+                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
                     <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
@@ -100,19 +100,19 @@
             </div>
         </div>
         <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-            <a href="/leaving-soon.html" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+            <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
+            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
         </div>
     </nav>
 
     <!-- PRIVACY CONSENT BANNER -->
     <div id="consent-banner" class="fixed bottom-0 left-0 right-0 z-50 bg-gray-900 border-t border-white/10 p-4" role="dialog" aria-label="Cookie consent" hidden>
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <p class="text-sm text-gray-300 flex-1">FlashStream uses anonymized telemetry trends to optimize availability indexes. We never lease personal tracking identifiers. <a href="/privacy.html" class="text-accent underline ml-1">Privacy Protocol</a></p>
+            <p class="text-sm text-gray-300 flex-1">FlashStream uses anonymized telemetry trends to optimize availability indexes. We never lease personal tracking identifiers. <a href="/privacy" class="text-accent underline ml-1">Privacy Protocol</a></p>
             <div class="flex gap-3 flex-shrink-0">
                 <button id="consent-decline" class="px-4 py-2 text-sm rounded-lg border border-white/20 text-gray-300 hover:bg-white/10">Decline</button>
                 <button id="consent-accept" class="px-4 py-2 text-sm rounded-lg bg-accent text-white font-semibold hover:bg-red-700">Accept</button>
@@ -131,8 +131,8 @@
                 </h1>
                 <p class="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">Filter by mood, platform, language, and micro-tropes. Find exactly what fits right now — across global streaming services worldwide.</p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/discover.html" class="px-8 py-4 bg-accent text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-lg">Browse Everything</a>
-                    <a href="/watchlist.html" class="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors text-lg border border-white/20">My Watchlist</a>
+                    <a href="/discover" class="px-8 py-4 bg-accent text-white font-bold rounded-xl hover:bg-red-700 transition-colors text-lg">Browse Everything</a>
+                    <a href="/watchlist" class="px-8 py-4 bg-white/10 text-white font-semibold rounded-xl hover:bg-white/20 transition-colors text-lg border border-white/20">My Watchlist</a>
                 </div>
             </div>
         </section>
@@ -141,16 +141,16 @@
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="mood-heading">
             <h2 id="mood-heading" class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">What are you in the mood for?</h2>
             <div class="flex gap-2 overflow-x-auto scrollbar-hide pb-2 flex-nowrap" role="group" aria-label="Mood quick filters">
-                <a href="/discover.html?with_genres=35&amp;vote_average.gte=6" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Feel Good</a>
-                <a href="/discover.html?with_genres=27" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Horror</a>
-                <a href="/discover.html?with_genres=10749,35" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Date Night</a>
-                <a href="/discover.html?content_type=tv&amp;with_status=0" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Binge TV</a>
-                <a href="/discover.html?with_original_language=ko" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">K-Drama &amp; Series</a>
-                <a href="/discover.html?with_original_language=ja&amp;with_genres=16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Anime Catalog</a>
-                <a href="/discover.html?with_original_language=th" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Thai Serials</a>
-                <a href="/discover.html?with_original_language=ta" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Tamil Blockbusters</a>
-                <a href="/discover.html?with_genres=10751,16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Family Night</a>
-                <a href="/discover.html?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Hidden Gems</a>
+                <a href="/discover?with_genres=35&amp;vote_average.gte=6" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Feel Good</a>
+                <a href="/discover?with_genres=27" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Horror</a>
+                <a href="/discover?with_genres=10749,35" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Date Night</a>
+                <a href="/discover?content_type=tv&amp;with_status=0" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Binge TV</a>
+                <a href="/discover?with_original_language=ko" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">K-Drama &amp; Series</a>
+                <a href="/discover?with_original_language=ja&amp;with_genres=16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Anime Catalog</a>
+                <a href="/discover?with_original_language=th" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Thai Serials</a>
+                <a href="/discover?with_original_language=ta" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Tamil Blockbusters</a>
+                <a href="/discover?with_genres=10751,16" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Family Night</a>
+                <a href="/discover?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="px-4 py-2.5 rounded-full text-xs font-semibold bg-gray-900 border border-white/10 text-gray-300 hover:border-accent hover:text-white transition-all whitespace-nowrap">Hidden Gems</a>
             </div>
         </section>
 
@@ -168,49 +168,49 @@
 
         <!-- TRENDING THIS WEEK -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="trending-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="trending-heading" class="text-xl font-bold text-white">Trending This Week</h2><a href="/discover.html?sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="trending-heading" class="text-xl font-bold text-white">Trending This Week</h2><a href="/discover?sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- LEAVING SOON (dynamic) – temporarily hidden (remove style to show later) -->
         <section id="leaving-section" hidden style="display: none;" class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon.html" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- KOREAN & EAST ASIAN DRAMA -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="asian-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="asian-heading" class="text-xl font-bold text-white">Korean &amp; East Asian Drama</h2><a href="/discover.html?with_original_language=ko&amp;content_type=tv" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="asian-heading" class="text-xl font-bold text-white">Korean &amp; East Asian Drama</h2><a href="/discover?with_original_language=ko&amp;content_type=tv" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="kdrama-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- ANIME MASTERPIECES -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="anime-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="anime-heading" class="text-xl font-bold text-white">Anime Masterpieces</h2><a href="/discover.html?with_original_language=ja&amp;with_genres=16" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="anime-heading" class="text-xl font-bold text-white">Anime Masterpieces</h2><a href="/discover?with_original_language=ja&amp;with_genres=16" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="anime-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- BOLLYWOOD & INDIAN CINEMA -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="bollywood-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="bollywood-heading" class="text-xl font-bold text-white">Bollywood &amp; Indian Cinema</h2><a href="/discover.html?with_original_language=hi" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="bollywood-heading" class="text-xl font-bold text-white">Bollywood &amp; Indian Cinema</h2><a href="/discover?with_original_language=hi" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="bollywood-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- POPULAR TV SHOWS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="populartv-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="populartv-heading" class="text-xl font-bold text-white">Popular TV Shows</h2><a href="/discover.html?content_type=tv&amp;sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="populartv-heading" class="text-xl font-bold text-white">Popular TV Shows</h2><a href="/discover?content_type=tv&amp;sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="populartv-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- NOW PLAYING IN CINEMAS -->
         <section class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="nowplaying-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="nowplaying-heading" class="text-xl font-bold text-white">Now Playing in Cinemas</h2><a href="/discover.html?content_type=movie&amp;sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="nowplaying-heading" class="text-xl font-bold text-white">Now Playing in Cinemas</h2><a href="/discover?content_type=movie&amp;sort_by=popularity.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="nowplaying-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
         <!-- HIDDEN GEMS -->
         <section class="max-w-7xl mx-auto px-4 mb-16" aria-labelledby="gems-heading">
-            <div class="flex items-center justify-between mb-4"><h2 id="gems-heading" class="text-xl font-bold text-white">Critically Acclaimed Hidden Gems</h2><a href="/discover.html?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
+            <div class="flex items-center justify-between mb-4"><h2 id="gems-heading" class="text-xl font-bold text-white">Critically Acclaimed Hidden Gems</h2><a href="/discover?vote_average.gte=7.5&amp;vote_count.lte=1000&amp;vote_count.gte=100&amp;sort_by=vote_average.desc" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="gems-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
@@ -220,7 +220,7 @@
                 <article class="bg-gray-900 border border-white/5 rounded-2xl overflow-hidden hover:border-accent/30 transition-all flex flex-col justify-between">
                     <div class="p-5">
                         <span class="text-[10px] uppercase font-bold tracking-wider text-accent px-2 py-0.5 rounded bg-red-950/40 border border-red-900/30">Vertical Shorts</span>
-                        <h2 class="text-base font-bold text-white mt-3 hover:text-accent"><a href="/blog/how-to-watch-vertical-shorts-ad-free.html">Where to Stream Global Vertical Short Series Safely Without Ads</a></h2>
+                        <h2 class="text-base font-bold text-white mt-3 hover:text-accent"><a href="/blog/how-to-watch-vertical-shorts-ad-free">Where to Stream Global Vertical Short Series Safely Without Ads</a></h2>
                         <p class="text-xs text-gray-400 mt-2 line-clamp-2">Avoid platform paywalls. A comprehensive structural map for accessing rising vertical micro-dramas via legitimate coin packages and ecosystem referrals.</p>
                     </div>
                     <div class="p-5 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-500 font-mono">
@@ -230,7 +230,7 @@
                 <article class="bg-gray-900 border border-white/5 rounded-2xl overflow-hidden hover:border-accent/30 transition-all flex flex-col justify-between">
                     <div class="p-5">
                         <span class="text-[10px] uppercase font-bold tracking-wider text-blue-400 px-2 py-0.5 rounded bg-blue-950/40 border border-blue-900/30">Regional Streaming</span>
-                        <h2 class="text-base font-bold text-white mt-3 hover:text-accent"><a href="/blog/stream-pakistani-dramas-dubai-uk.html">How to Watch Pakistani Serials Legally from Dubai, London, and New York</a></h2>
+                        <h2 class="text-base font-bold text-white mt-3 hover:text-accent"><a href="/blog/stream-pakistani-dramas-dubai-uk">How to Watch Pakistani Serials Legally from Dubai, London, and New York</a></h2>
                         <p class="text-xs text-gray-400 mt-2 line-clamp-2">Track authorized high-definition syndication networks across South Asian diaspora zones without falling into malicious external tracker loops.</p>
                     </div>
                     <div class="p-5 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-500 font-mono">
@@ -243,9 +243,9 @@
 
     <footer class="border-t border-white/10 py-10 px-4 bg-black" role="contentinfo">
         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div><a href="/index.html" class="flex items-center gap-2 text-lg font-bold text-white mb-2"><img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6"><span>FlashStream</span></a><p class="text-xs text-gray-600">Global movie & TV discovery index. Free forever.</p></div>
-            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover.html" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist.html" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon.html" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon.html" class="text-gray-400 hover:text-white">Coming Soon</a></li></ul></div>
-            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/privacy.html" class="text-gray-400 hover:text-white">Privacy Protocol</a></li><li><a href="/terms.html" class="text-gray-400 hover:text-white">Terms of Service</a></li><li><a href="/settings.html" class="text-gray-400 hover:text-white">Settings Dashboard</a></li></ul><p class="text-xs text-gray-600 mt-4">Data powered by TMDB.</p></div>
+            <div><a href="/" class="flex items-center gap-2 text-lg font-bold text-white mb-2"><img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6"><span>FlashStream</span></a><p class="text-xs text-gray-600">Global movie & TV discovery index. Free forever.</p></div>
+            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon" class="text-gray-400 hover:text-white">Coming Soon</a></li></ul></div>
+            <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/privacy" class="text-gray-400 hover:text-white">Privacy Protocol</a></li><li><a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a></li><li><a href="/settings" class="text-gray-400 hover:text-white">Settings Dashboard</a></li></ul><p class="text-xs text-gray-600 mt-4">Data powered by TMDB.</p></div>
         </div>
     </footer>
 
@@ -336,7 +336,7 @@
                 searchDebounce = setTimeout(() => executeSearch(q), 300);
             });
             searchInput.addEventListener('keydown', e => {
-                if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover.html?q=${encodeURIComponent(q)}`; }
+                if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover?q=${encodeURIComponent(q)}`; }
                 if (e.key === 'Escape') dropdown.hidden = true;
             });
             document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
@@ -357,11 +357,11 @@
                     const year = (item.release_date || item.first_air_date || '').slice(0,4);
                     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                     const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
-                    html += '<a href="/movie-detail.html?id=' + item.id + '&type=' + type + '" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById(\'search-dropdown\').hidden=true">';
+                    html += '<a href="/movie-detail?id=' + item.id + '&type=' + type + '" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById(\'search-dropdown\').hidden=true">';
                     html += '<img src="' + escapeAttr(poster) + '" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800" onerror="handleImgError(this)">';
                     html += '<div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">' + escapeHtml(title) + '</p><p class="text-xs text-gray-500">' + year + (year ? ' · ' : '') + (type === 'tv' ? 'TV Show' : 'Movie') + '</p></div></a>';
                 }
-                html += '<a href="/discover.html?q=' + encodeURIComponent(q) + '" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center" onclick="document.getElementById(\'search-dropdown\').hidden=true">See all results for "' + escapeHtml(q) + '" →</a>';
+                html += '<a href="/discover?q=' + encodeURIComponent(q) + '" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center" onclick="document.getElementById(\'search-dropdown\').hidden=true">See all results for "' + escapeHtml(q) + '" →</a>';
                 dropdown.innerHTML = html;
                 dropdown.hidden = false;
             } catch(e) { dropdown.hidden = true; }
@@ -426,7 +426,7 @@
             const year = (item.release_date || item.first_air_date || '').slice(0,4) || 'TBA';
             const score = item.vote_average ? item.vote_average.toFixed(1) : null;
             const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : TMDB_IMG + 'w342' + item.poster_path) : NO_POSTER;
-            const href = '/movie-detail.html?id=' + id + '&type=' + type;
+            const href = '/movie-detail?id=' + id + '&type=' + type;
             const inWL = isInWL(id);
             const badge = getLifecycleBadge(item);
             const hideRatings = localStorage.getItem('hide_ratings') === 'true';
@@ -465,7 +465,7 @@
                     const item = slice[i];
                     const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : TMDB_IMG + 'w342' + item.poster_path) : NO_POSTER;
                     const badge = item.progress_season ? '<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">S' + item.progress_season + ' E' + (item.progress_episode || 1) + '</span>' : '';
-                    html += '<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv"><img src="' + escapeAttr(poster) + '" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="handleImgError(this)"></a>' + badge + '</div><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">' + escapeHtml(item.title) + '</p><span class="text-[11px] text-blue-400 font-semibold">Continue</span></a></article>';
+                    html += '<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail?id=' + item.tmdb_id + '&type=tv"><img src="' + escapeAttr(poster) + '" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="handleImgError(this)"></a>' + badge + '</div><a href="/movie-detail?id=' + item.tmdb_id + '&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">' + escapeHtml(item.title) + '</p><span class="text-[11px] text-blue-400 font-semibold">Continue</span></a></article>';
                 }
                 row.innerHTML = html;
             }

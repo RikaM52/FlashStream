@@ -6,11 +6,11 @@
     <title>Expiring Titles Monitor — FlashStream</title>
     <meta name="description" content="Track movies, series, and dramas leaving global streaming networks soon. Verify localized regional expiration timelines on FlashStream.">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://flashstream.pages.dev/leaving-soon.html">
+    <link rel="canonical" href="https://flashstream.pages.dev/leaving-soon">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Expiring Titles Directory | FlashStream">
     <meta property="og:description" content="Monitor regional streaming platform expiration maps. Catch titles before they leave your area.">
-    <meta property="og:url" content="https://flashstream.pages.dev/leaving-soon.html">
+    <meta property="og:url" content="https://flashstream.pages.dev/leaving-soon">
     <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
     <meta name="twitter:card" content="summary_large_image">
     <link rel="manifest" href="/manifest.json">
@@ -54,7 +54,7 @@
     <!-- SYNCHRONIZED APP LOGISTICS NAVIGATION HEADER -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-            <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+            <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
                 <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
                 <span class="hidden sm:block">FlashStream</span>
             </a>
@@ -66,14 +66,14 @@
                 <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
             </div>
             <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover.html" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-                <a href="/watchlist.html" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-                <a href="/leaving-soon.html" class="text-white font-semibold">Leaving Soon</a>
-                <a href="/coming-soon.html" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-                <a href="/community.html" class="text-gray-400 hover:text-white transition-colors">Community</a>
+                <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
+                <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
+                <a href="/leaving-soon" class="text-white font-semibold">Leaving Soon</a>
+                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
+                <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Regional settings">
+                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Regional settings">
                     <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle interface theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
@@ -85,12 +85,12 @@
             </div>
         </div>
         <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover.html" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-            <a href="/watchlist.html" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-            <a href="/leaving-soon.html" class="text-white font-semibold py-1.5">Leaving Soon</a>
-            <a href="/coming-soon.html" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community.html" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings.html" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+            <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
+            <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
+            <a href="/leaving-soon" class="text-white font-semibold py-1.5">Leaving Soon</a>
+            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
+            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
+            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
         </div>
     </nav>
 
@@ -163,6 +163,7 @@
     <script>
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+        // Percent-encoded NO_POSTER – no single quotes, safe for onerror
         const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22225%22%20viewBox%3D%220%200%20150%20225%22%3E%3Crect%20width%3D%22150%22%20height%3D%22225%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
         function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
 
@@ -292,7 +293,7 @@
                 const remainingDays = item.days_left || 30;
                 const platform = item.platform || 'Streaming';
                 const posterPath = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
-                const targetDetailUrl = `/movie-detail.html?id=${id}&type=${type}`;
+                const targetDetailUrl = `/movie-detail?id=${id}&type=${type}`;
                 const inWatchlistFlag = verifyLocalWatchlistPresence(id);
                 const urgencyBadgeStyle = remainingDays <= 3 ? 'bg-red-600 badge-pulse text-white' : (remainingDays <= 7 ? 'bg-red-600 text-white' : 'bg-amber-500 text-black');
                 return `
@@ -380,11 +381,11 @@
                                 const year = (item.release_date || item.first_air_date || '').slice(0, 4);
                                 const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                                 const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-                                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
                                     <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
                                     <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div>
                                 </a>`;
-                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                            }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
                             dropdown.hidden = false;
                         }).catch(() => dropdown.hidden = true);
                 }, 300);
