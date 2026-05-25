@@ -1,11 +1,11 @@
 {
-  "updated": "2026-05-24T12:00:00Z",
+  "updated": "2026-05-25T12:00:00Z",
   "items": [
     {
-      "tmdb_id": "81002370",
+      "tmdb_id": "77169",
       "title": "Hotel Del Luna",
       "media_type": "tv",
-      "poster_path": "/olN9wX5Vb9Snyh3u6b3O4aLWhX6.jpg",
+      "poster_path": "/mEFTRsNrVrBKCDFBXGPKc1HhMmy.jpg",
       "platform": "Viu",
       "leaving_date": "2026-06-02"
     },
@@ -13,7 +13,7 @@
       "tmdb_id": "134371",
       "title": "Love Between Fairy and Devil",
       "media_type": "tv",
-      "poster_path": "/4v91gC30Iu3Hh4tZf3mJzW26R2A.jpg",
+      "poster_path": "/qfn1BvUqKJQNUUPiKbKJPqJaKMo.jpg",
       "platform": "iQIYI",
       "leaving_date": "2026-06-05"
     },
@@ -29,7 +29,7 @@
       "tmdb_id": "210515",
       "title": "Kabhi Main Kabhi Tum",
       "media_type": "tv",
-      "poster_path": "/8vB6C3Wv7xIUh4tYf5mJzW26R2A.jpg",
+      "poster_path": "/4nfGRGOGivtJuGxjKmfU9iGOLJW.jpg",
       "platform": "Zee5",
       "leaving_date": "2026-06-03"
     },
@@ -43,9 +43,9 @@
     },
     {
       "tmdb_id": "546221",
-      "title": "The Battle of Changjin",
+      "title": "The Battle of Changjin Lake",
       "media_type": "movie",
-      "poster_path": "/68m9g40Iu3Hh4tYf5mJzW26R2A.jpg",
+      "poster_path": "/suaEOxCbHKlkP7YEHM3SPBZpxSC.jpg",
       "platform": "SonyLIV",
       "leaving_date": "2026-06-08"
     }

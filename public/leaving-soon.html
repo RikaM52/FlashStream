@@ -74,7 +74,7 @@
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
                 <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Regional settings">
-                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                    <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle interface theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -120,21 +120,21 @@
                     <option value="3">Critical (3 Days or Less)</option>
                 </select>
                 <select id="country-select" aria-label="Filter by country" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
-                    <option value="US">🇺🇸 United States</option>
-                    <option value="GB">🇬🇧 United Kingdom</option>
-                    <option value="MY">🇲🇾 Malaysia</option>
-                    <option value="SG">🇸🇬 Singapore</option>
-                    <option value="AE">🇦🇪 United Arab Emirates</option>
-                    <option value="PK">🇵🇰 Pakistan</option>
-                    <option value="IN">🇮🇳 India</option>
-                    <option value="TH">🇹🇭 Thailand</option>
-                    <option value="JP">🇯🇵 Japan</option>
-                    <option value="KR">🇰🇷 South Korea</option>
-                    <option value="CN">🇨🇳 China</option>
-                    <option value="CA">🇨🇦 Canada</option>
-                    <option value="AU">🇦🇺 Australia</option>
-                    <option value="DE">🇩🇪 Germany</option>
-                    <option value="FR">🇫🇷 France</option>
+                    <option value="US">United States</option>
+                    <option value="GB">United Kingdom</option>
+                    <option value="MY">Malaysia</option>
+                    <option value="SG">Singapore</option>
+                    <option value="AE">United Arab Emirates</option>
+                    <option value="PK">Pakistan</option>
+                    <option value="IN">India</option>
+                    <option value="TH">Thailand</option>
+                    <option value="JP">Japan</option>
+                    <option value="KR">South Korea</option>
+                    <option value="CN">China</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
                 </select>
                 <button id="refresh-btn" class="px-4 py-2.5 bg-accent text-white rounded-xl text-sm font-semibold hover:bg-red-700 transition-colors">Refresh</button>
             </div>
@@ -169,19 +169,13 @@
     <script>
         /* ============================================================
            FLASHSTREAM — LEAVING SOON ENGINE (FULLY CORRECTED)
-           Fixed: search dropdown reference, brand naming, region flags
+           Fixed: No emojis, backtick NO_POSTER, region flags removed
            ============================================================ */
 
         // ── CONFIGURATION CONSTANTS & ENGINE INITIALIZATION STATE ────────────────
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
         const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='225' viewBox='0 0 150 225'%3E%3Crect width='150' height='225' fill='%231f1f29'/%3E%3C/svg%3E`;
-
-        const REGION_FLAGS = {
-            US: '🇺🇸', GB: '🇬🇧', MY: '🇲🇾', SG: '🇸🇬', AE: '🇦🇪',
-            PK: '🇵🇰', IN: '🇮🇳', TH: '🇹🇭', JP: '🇯🇵', KR: '🇰🇷',
-            CA: '🇨🇦', AU: '🇦🇺', DE: '🇩🇪', FR: '🇫🇷', CN: '🇨🇳'
-        };
 
         let masterExpirationsList = [];
         let filteredExpirationsList = [];
@@ -209,10 +203,9 @@
         }
 
         function updateNavigationRegionBadge(regionCode) {
-            const flagElem = document.getElementById('region-flag');
             const codeElem = document.getElementById('region-code');
-            if (flagElem) flagElem.textContent = REGION_FLAGS[regionCode] || '🌐';
             if (codeElem) codeElem.textContent = regionCode;
+            // region-flag span is hidden – no emojis
         }
 
         function bindFilterEventHandlers() {
