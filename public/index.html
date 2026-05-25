@@ -172,7 +172,7 @@
             <div id="trending-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
         </section>
 
- <!-- LEAVING SOON (dynamic) – temporarily hidden -->
+        <!-- LEAVING SOON (dynamic) – temporarily hidden (remove style to show later) -->
         <section id="leaving-section" hidden style="display: none;" class="max-w-7xl mx-auto px-4 mb-10" aria-labelledby="leaving-heading">
             <div class="flex items-center justify-between mb-4"><h2 id="leaving-heading" class="text-xl font-bold text-white">Leaving Soon</h2><a href="/leaving-soon.html" class="text-xs font-bold text-accent uppercase tracking-wider hover:underline">See all →</a></div>
             <div id="leaving-row" class="flex gap-4 overflow-x-auto scrollbar-hide pb-2" role="list"></div>
@@ -253,8 +253,13 @@
         // ========== FLASHSTREAM INDEX SCRIPT (FULLY CORRECTED) ==========
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3C/svg%3E`;
-// force redeploy 2026-05-25
+        // Percent-encoded NO_POSTER – no single quotes inside the string
+        const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22144%22%20height%3D%22216%22%20viewBox%3D%220%200%20144%20216%22%3E%3Crect%20width%3D%22144%22%20height%3D%22216%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
+        // Fallback handler for broken images
+        function handleImgError(img) {
+            img.onerror = null;
+            img.src = NO_POSTER;
+        }
 
         const PREFS = {
             getRegion: () => localStorage.getItem('user_region') || 'US',
@@ -353,7 +358,7 @@
                     const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                     const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
                     html += '<a href="/movie-detail.html?id=' + item.id + '&type=' + type + '" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById(\'search-dropdown\').hidden=true">';
-                    html += '<img src="' + escapeAttr(poster) + '" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800" onerror="this.src=\'' + NO_POSTER + '\'">';
+                    html += '<img src="' + escapeAttr(poster) + '" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800" onerror="handleImgError(this)">';
                     html += '<div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">' + escapeHtml(title) + '</p><p class="text-xs text-gray-500">' + year + (year ? ' · ' : '') + (type === 'tv' ? 'TV Show' : 'Movie') + '</p></div></a>';
                 }
                 html += '<a href="/discover.html?q=' + encodeURIComponent(q) + '" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center" onclick="document.getElementById(\'search-dropdown\').hidden=true">See all results for "' + escapeHtml(q) + '" →</a>';
@@ -427,7 +432,7 @@
             const hideRatings = localStorage.getItem('hide_ratings') === 'true';
             return '<article class="flex-shrink-0 w-36 group" role="listitem">' +
                 '<div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">' + badge +
-                '<a href="' + href + '"><img src="' + escapeAttr(poster) + '" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="this.src=\'' + NO_POSTER + '\'"></a>' +
+                '<a href="' + href + '"><img src="' + escapeAttr(poster) + '" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="handleImgError(this)"></a>' +
                 '<button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="' + (inWL ? 'true' : 'false') + '" data-id="' + id + '" data-title="' + escapeAttr(title) + '" data-type="' + type + '" data-poster="' + escapeAttr(item.poster_path || '') + '" data-genres=\'' + JSON.stringify(item.genre_ids || []) + '\' onclick="handleWLBtn(event,this)">' +
                 '<svg class="w-4 h-4" fill="' + (inWL ? '#e50914' : 'none') + '" stroke="' + (inWL ? '#e50914' : 'white') + '" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>' +
                 '</button></div>' +
@@ -460,20 +465,21 @@
                     const item = slice[i];
                     const poster = item.poster_path ? (item.poster_path.startsWith('http') ? item.poster_path : TMDB_IMG + 'w342' + item.poster_path) : NO_POSTER;
                     const badge = item.progress_season ? '<span class="absolute bottom-2 left-2 px-1.5 py-0.5 rounded bg-blue-600 text-white text-[10px] font-bold">S' + item.progress_season + ' E' + (item.progress_episode || 1) + '</span>' : '';
-                    html += '<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv"><img src="' + escapeAttr(poster) + '" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="this.src=\'' + NO_POSTER + '\'"></a>' + badge + '</div><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">' + escapeHtml(item.title) + '</p><span class="text-[11px] text-blue-400 font-semibold">Continue</span></a></article>';
+                    html += '<article class="flex-shrink-0 w-36 group"><div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]"><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv"><img src="' + escapeAttr(poster) + '" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="handleImgError(this)"></a>' + badge + '</div><a href="/movie-detail.html?id=' + item.tmdb_id + '&type=tv" class="block mt-2 hover:text-accent"><p class="text-xs font-semibold text-white line-clamp-1">' + escapeHtml(item.title) + '</p><span class="text-[11px] text-blue-400 font-semibold">Continue</span></a></article>';
                 }
                 row.innerHTML = html;
             }
         }
 
-        // ========== LEAVING SOON (uses Worker API) ==========
+        // ========== LEAVING SOON (uses static JSON file, not Worker) ==========
         async function loadLeavingSoon() {
             const region = localStorage.getItem('user_region') || 'US';
             try {
-                const res = await fetch(`${WORKER_URL}/api/leaving-soon?country=${region}`);
+                // FIX: fetch from /leaving-soon.json instead of /data/...
+                const res = await fetch('/leaving-soon.json');
                 if (!res.ok) return;
                 const data = await res.json();
-                const items = data.results || [];
+                const items = data.items || [];
                 localStorage.setItem('leaving_soon_cache', JSON.stringify(items));
                 const today = new Date();
                 const urgent = items.filter(function(i) { const days = Math.ceil((new Date(i.leaving_date) - today) / 86400000); return days > 0 && days <= 30; }).sort(function(a,b){ return new Date(a.leaving_date) - new Date(b.leaving_date); }).slice(0,14);
@@ -569,4 +575,4 @@
         window.handleWLBtn = handleWLBtn;
     </script>
 </body>
-</html><!-- force redeploy -->
+</html>

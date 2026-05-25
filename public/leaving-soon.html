@@ -55,7 +55,7 @@
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
             <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
+                <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
                 <span class="hidden sm:block">FlashStream</span>
             </a>
             <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
@@ -163,7 +163,8 @@
     <script>
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='225' viewBox='0 0 150 225'%3E%3Crect width='150' height='225' fill='%231f1f29'/%3E%3C/svg%3E`;
+        const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%22225%22%20viewBox%3D%220%200%20150%20225%22%3E%3Crect%20width%3D%22150%22%20height%3D%22225%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
+        function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
 
         let masterExpirationsList = [];
         let filteredExpirationsList = [];
@@ -217,7 +218,6 @@
             try { navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...transactionData })); } catch(e) {}
         }
 
-        // FIXED: Fetch from Worker API with country parameter
         async function executeExpirationDataFetch() {
             const loadingSkeleton = document.getElementById('loading-skeleton');
             const resultsGrid = document.getElementById('results-grid');
@@ -241,10 +241,7 @@
                     timestampLabel.textContent = `Last synchronized: ${new Date(responseData.updated).toLocaleString()}`;
                 }
                 
-                dispatchInsightsLog('leaving_soon_index_load', { 
-                    country: countryCode, 
-                    record_count: masterExpirationsList.length 
-                });
+                dispatchInsightsLog('leaving_soon_index_load', { country: countryCode, record_count: masterExpirationsList.length });
                 runLocalFiltersAndCompile();
             } catch (err) {
                 console.error('[Expirations Engine Failure]', err);
@@ -303,7 +300,7 @@
                         <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
                             <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${urgencyBadgeStyle}">${remainingDays}d left</span>
                             <a href="${targetDetailUrl}">
-                                <img src="${escapeAttr(posterPath)}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.src='${NO_POSTER}'">
+                                <img src="${escapeAttr(posterPath)}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="handleImgError(this)">
                             </a>
                             <button class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
                                 data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}"

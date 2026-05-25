@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coming Soon — Upcoming Movies & TV Shows | CineSphere</title>
+  <title>Coming Soon — Upcoming Movies & TV Shows | FlashStream</title>
   <meta name="description" content="Browse upcoming movies and TV shows coming soon to theaters and streaming. Release dates, trailers, and more.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://flashstream.pages.dev/coming-soon.html">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Coming Soon — Upcoming Movies & TV Shows | CineSphere">
+  <meta property="og:title" content="Coming Soon — Upcoming Movies & TV Shows | FlashStream">
   <meta property="og:description" content="Browse upcoming movies and TV shows coming soon to theaters and streaming.">
   <meta property="og:url" content="https://flashstream.pages.dev/coming-soon.html">
   <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
@@ -42,16 +42,16 @@
   <!-- NAVIGATION -->
   <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-      <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="CineSphere home">
-        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
-        <span class="hidden sm:block">CineSphere</span>
+      <a href="/index.html" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
+        <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
+        <span class="hidden sm:block">FlashStream</span>
       </a>
 
       <!-- SEARCH BAR -->
       <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
         <div class="relative">
           <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="nav-search-input" placeholder="Search upcoming movies, TV shows..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search CineSphere" autocomplete="off">
+          <input type="search" id="nav-search-input" placeholder="Search upcoming movies, TV shows..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" autocomplete="off">
         </div>
         <div id="search-dropdown" class="absolute top-full mt-1 left-0 right-0 bg-gray-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50" hidden></div>
       </div>
@@ -67,7 +67,7 @@
 
       <div class="flex items-center gap-2 flex-shrink-0">
         <a href="/settings.html" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-          <span id="region-flag">🌐</span><span id="region-code" class="font-mono text-gray-300">US</span>
+          <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
         </a>
         <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -135,7 +135,9 @@
   <script>
     const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    const NO_POSTER_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='144' height='216' viewBox='0 0 144 216'%3E%3Crect width='144' height='216' fill='%231f1f29'/%3E%3Ctext x='72' y='108' text-anchor='middle' dominant-baseline='middle' font-size='40' fill='%23444'%3E🎬%3C/text%3E%3C/svg%3E";
+    // Percent-encoded NO_POSTER_SVG – no single quotes, no emoji
+    const NO_POSTER_SVG = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22144%22%20height%3D%22216%22%20viewBox%3D%220%200%20144%20216%22%3E%3Crect%20width%3D%22144%22%20height%3D%22216%22%20fill%3D%22%231f1f29%22%2F%3E%3Ctext%20x%3D%2272%22%20y%3D%22108%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20font-size%3D%2240%22%20fill%3D%22%23444%22%3EMOVIE%3C%2Ftext%3E%3C%2Fsvg%3E';
+    function handleImgError(img) { img.onerror = null; img.src = NO_POSTER_SVG; }
 
     let currentPage = 1;
     let totalPages = 1;
@@ -202,7 +204,6 @@
     async function fetchComingSoon() {
       const grid = document.getElementById('results-grid');
       const empty = document.getElementById('empty-state');
-      const count = document.getElementById('results-count');
       
       empty.hidden = true;
       grid.innerHTML = Array(8).fill(0).map(() => `<div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>`).join('');
@@ -317,13 +318,13 @@
         dateBadge = `<span class="release-badge bg-gray-700/90">${formattedDate}</span>`;
       }
       
-      const typeIcon = type === 'tv' ? '📺' : '🎬';
+      const typeIcon = type === 'tv' ? 'TV' : 'Movie';
       
       return `
         <article class="group">
           <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
             <a href="${href}">
-              <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.src='${NO_POSTER_SVG}'">
+              <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="handleImgError(this)">
             </a>
             ${dateBadge}
             <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleCardWatchlist(event, this)">
@@ -440,7 +441,7 @@
           const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
           const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
           return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5" onclick="searchDropdown.hidden=true">
-            ${poster ? `<img src="${poster}" alt="" class="w-7 h-10 object-cover rounded">` : '<div class="w-7 h-10 bg-gray-800 rounded"></div>'}
+            ${poster ? `<img src="${poster}" alt="" class="w-7 h-10 object-cover rounded" onerror="handleImgError(this)">` : '<div class="w-7 h-10 bg-gray-800 rounded"></div>'}
             <div><p class="text-sm font-medium text-white">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
           </a>`;
         }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5" onclick="searchDropdown.hidden=true">See all results →</a>`;
@@ -463,6 +464,7 @@
     // Theme
     function initTheme() {
       if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
     }
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       const isDark = document.documentElement.classList.toggle('dark');
@@ -470,13 +472,12 @@
     });
     initTheme();
     
-    // Region badge
+    // Region badge – no emoji
     const regionFlag = document.getElementById('region-flag');
     const regionCode = document.getElementById('region-code');
     if (regionFlag && regionCode) {
       const region = getRegion();
-      const flags = { US: '🇺🇸', GB: '🇬🇧', AU: '🇦🇺', CA: '🇨🇦', FR: '🇫🇷', DE: '🇩🇪', JP: '🇯🇵', KR: '🇰🇷', IN: '🇮🇳', CN: '🇨🇳', BR: '🇧🇷', SG: '🇸🇬', TH: '🇹🇭' };
-      regionFlag.textContent = flags[region] || '🌐';
+      regionFlag.textContent = '';
       regionCode.textContent = region;
     }
     
