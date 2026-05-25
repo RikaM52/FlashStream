@@ -1,3 +1,4 @@
+
 # FLASHSTREAM SERVER EDGE URL REWRITE MATRIX
 /manifest.json       /manifest.json       200
 /sw.js               /sw.js               200
@@ -5,6 +6,9 @@
 /sitemap.xml         /sitemap.xml         200
 /offline.html        /offline.html        200
 /icons/*             /icons/:splat        200
+
+# Static data files - serve leaving-soon.json from root as /data/leaving-soon.json
+/data/leaving-soon.json  /leaving-soon.json  200
 /data/*              /data/:splat         200
 
 # Strict Local File System Routing Rewrites
@@ -27,3 +31,5 @@
 
 # Homepage structural anchor
 /index.html          /index.html          200
+/                    /index.html          200
+
