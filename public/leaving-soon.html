@@ -140,16 +140,12 @@
             </div>
         </div>
 
-        <!-- LEGAL PLATFORM ACCURACY WARNING -->
         <div class="mb-6 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/40 text-xs text-amber-300 flex items-start gap-2 leading-relaxed" role="note">
             <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <p>Expiration metrics are aggregated via background cache synchronization frameworks and represent historical estimations provided directly by provider portals. Always check your local streaming app console to confirm title availability limits before your viewing session.</p>
         </div>
 
-        <!-- MAIN DYNAMIC CONTENT GRID -->
         <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" role="list" aria-label="Expiring media titles grid cards"></div>
-
-        <!-- TRANSLUCENT INITIAL SHIMMER SKELETONS -->
         <div id="loading-skeleton" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4" aria-hidden="true">
             <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
             <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
@@ -158,8 +154,6 @@
             <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
             <div class="skeleton rounded-xl aspect-[2/3]"></div><div class="skeleton rounded-xl aspect-[2/3]"></div>
         </div>
-
-        <!-- BLANK CONTAINER BACKLOG FALLBACK -->
         <div id="empty-state" hidden class="text-center py-24 border border-dashed border-white/5 rounded-2xl bg-gray-900/10">
             <h2 class="text-xl font-semibold text-white mb-2">No Titles Leaving Soon</h2>
             <p class="text-gray-500 text-sm max-w-sm mx-auto">No expiring entries were found matching your current provider selection rules. Change your location profile or check back later.</p>
@@ -167,12 +161,6 @@
     </main>
 
     <script>
-        /* ============================================================
-           FLASHSTREAM — LEAVING SOON ENGINE (FULLY CORRECTED)
-           Fixed: No emojis, backtick NO_POSTER, region flags removed
-           ============================================================ */
-
-        // ── CONFIGURATION CONSTANTS & ENGINE INITIALIZATION STATE ────────────────
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
         const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='225' viewBox='0 0 150 225'%3E%3Crect width='150' height='225' fill='%231f1f29'/%3E%3C/svg%3E`;
@@ -182,7 +170,6 @@
         let recordsPerPageCount = 24;
         let currentlyRenderedPageLimit = 1;
 
-        /* ── AUTOMATED EVENT INITIALIZATION LIFECYCLES ─────────────────────────── */
         document.addEventListener('DOMContentLoaded', () => {
             initializeUserPreferences();
             setupSearchEngine();
@@ -191,11 +178,8 @@
         });
 
         function initializeUserPreferences() {
-            if (localStorage.getItem('cs-theme') === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
-                document.documentElement.classList.add('dark');
-            }
+            if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
             const activeRegion = localStorage.getItem('user_region') || 'US';
             const countrySelector = document.getElementById('country-select');
             if (countrySelector) countrySelector.value = activeRegion;
@@ -205,27 +189,21 @@
         function updateNavigationRegionBadge(regionCode) {
             const codeElem = document.getElementById('region-code');
             if (codeElem) codeElem.textContent = regionCode;
-            // region-flag span is hidden – no emojis
         }
 
         function bindFilterEventHandlers() {
             document.getElementById('service-select')?.addEventListener('change', runLocalFiltersAndCompile);
             document.getElementById('urgency-filter')?.addEventListener('change', runLocalFiltersAndCompile);
-            
             document.getElementById('country-select')?.addEventListener('change', (e) => {
-                const selectedCountry = e.target.value;
-                localStorage.setItem('user_region', selectedCountry);
-                updateNavigationRegionBadge(selectedCountry);
+                localStorage.setItem('user_region', e.target.value);
+                updateNavigationRegionBadge(e.target.value);
                 executeExpirationDataFetch();
             });
-
             document.getElementById('refresh-btn')?.addEventListener('click', executeExpirationDataFetch);
-            
             document.getElementById('theme-toggle')?.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
                 localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
             });
-
             window.addEventListener('scroll', () => {
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 600) {
                     evaluateAndTriggerInfiniteScrollPageLoad();
@@ -233,25 +211,13 @@
             });
         }
 
-        /* ── ANONYMOUS B2B TREND INTELLIGENCE TELEMETRY LOGS ───────────────────── */
-        function isAnalyticsOptedIn() {
-            return localStorage.getItem('consent_given') === 'true';
-        }
-
+        function isAnalyticsOptedIn() { return localStorage.getItem('consent_given') === 'true'; }
         function dispatchInsightsLog(eventType, transactionData = {}) {
             if (!isAnalyticsOptedIn()) return;
-            try {
-                navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({
-                    event_type: eventType,
-                    client_timestamp: Date.now(),
-                    ...transactionData
-                }));
-            } catch (e) {
-                // telemetry skipped
-            }
+            try { navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...transactionData })); } catch(e) {}
         }
 
-        /* ── MASTER DATA AGGREGATION & CACHE FETCH PIPELINE ────────────────────── */
+        // FIXED: Fetch from Worker API with country parameter
         async function executeExpirationDataFetch() {
             const loadingSkeleton = document.getElementById('loading-skeleton');
             const resultsGrid = document.getElementById('results-grid');
@@ -265,15 +231,14 @@
             try {
                 const targetApiRoute = `${WORKER_URL}/api/leaving-soon?country=${countryCode}`;
                 const responseData = await fetch(targetApiRoute).then(res => {
-                    if (!res.ok) throw new Error(`API error code flag returned ${res.status}`);
+                    if (!res.ok) throw new Error(`API error ${res.status}`);
                     return res.json();
                 });
                 
                 masterExpirationsList = responseData.results || [];
                 const timestampLabel = document.getElementById('last-updated-label');
-                if (timestampLabel) {
-                    const compiledDate = responseData.updated ? new Date(responseData.updated) : new Date();
-                    timestampLabel.textContent = `Last synchronized signature block: ${compiledDate.toLocaleString()}`;
+                if (timestampLabel && responseData.updated) {
+                    timestampLabel.textContent = `Last synchronized: ${new Date(responseData.updated).toLocaleString()}`;
                 }
                 
                 dispatchInsightsLog('leaving_soon_index_load', { 
@@ -284,26 +249,21 @@
             } catch (err) {
                 console.error('[Expirations Engine Failure]', err);
                 if (resultsGrid) {
-                    resultsGrid.innerHTML = `<p class="text-xs font-mono text-red-400 col-span-full text-center py-10">Data matrix synchronization unavailable. Ensure your configuration variables are mapped properly.</p>`;
+                    resultsGrid.innerHTML = `<p class="text-xs font-mono text-red-400 col-span-full text-center py-10">Data matrix synchronization unavailable. Please check your connection.</p>`;
                 }
             } finally {
                 if (loadingSkeleton) loadingSkeleton.hidden = true;
             }
         }
 
-        /* ── RENDERING MATRIX ENGINE CONTROLLERS ───────────────────────────────── */
         function runLocalFiltersAndCompile() {
             const platformFilter = document.getElementById('service-select')?.value || 'all';
             const urgencyDeadline = parseInt(document.getElementById('urgency-filter')?.value || '30', 10);
-            
             filteredExpirationsList = masterExpirationsList.filter(item => {
                 if ((item.days_left || 30) > urgencyDeadline) return false;
-                if (platformFilter !== 'all' && item.platform?.toLowerCase() !== platformFilter.toLowerCase()) {
-                    return false;
-                }
+                if (platformFilter !== 'all' && item.platform?.toLowerCase() !== platformFilter.toLowerCase()) return false;
                 return true;
             });
-            
             currentlyRenderedPageLimit = 1;
             renderWatchlistCanvas(false);
         }
@@ -314,27 +274,21 @@
             renderWatchlistCanvas(true);
         }
 
-        /* ── INTERACTIVE CANVAS COMPILER AND LIST RENDERERS ────────────────── */
         function renderWatchlistCanvas(appendRecords = false) {
             const canvasGrid = document.getElementById('results-grid');
             const emptyFrame = document.getElementById('empty-state');
-            
             if (!canvasGrid) return;
             if (!appendRecords) canvasGrid.innerHTML = '';
-            
             if (filteredExpirationsList.length === 0) {
                 if (emptyFrame) emptyFrame.hidden = false;
                 return;
             }
             if (emptyFrame) emptyFrame.hidden = true;
-            
-            const calculationStartIndex = (currentlyRenderedPageLimit - 1) * recordsPerPageCount;
-            const calculationEndIndex = currentlyRenderedPageLimit * recordsPerPageCount;
-            const recordsPageBatch = filteredExpirationsList.slice(calculationStartIndex, calculationEndIndex);
-            
-            if (recordsPageBatch.length === 0 && appendRecords) return;
-            
-            const htmlCardBuffer = recordsPageBatch.map(item => {
+            const start = (currentlyRenderedPageLimit - 1) * recordsPerPageCount;
+            const end = currentlyRenderedPageLimit * recordsPerPageCount;
+            const batch = filteredExpirationsList.slice(start, end);
+            if (batch.length === 0 && appendRecords) return;
+            const html = batch.map(item => {
                 const id = item.tmdb_id;
                 const title = item.title || 'Unknown Title';
                 const type = item.media_type || 'movie';
@@ -343,22 +297,18 @@
                 const posterPath = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
                 const targetDetailUrl = `/movie-detail.html?id=${id}&type=${type}`;
                 const inWatchlistFlag = verifyLocalWatchlistPresence(id);
-                
-                const urgencyBadgeStyle = remainingDays <= 3
-                    ? 'bg-red-600 badge-pulse text-white'
-                    : (remainingDays <= 7 ? 'bg-red-600 text-white' : 'bg-amber-500 text-black');
-                    
+                const urgencyBadgeStyle = remainingDays <= 3 ? 'bg-red-600 badge-pulse text-white' : (remainingDays <= 7 ? 'bg-red-600 text-white' : 'bg-amber-500 text-black');
                 return `
                     <article class="group bg-gray-900 border border-white/5 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" role="listitem">
                         <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
                             <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${urgencyBadgeStyle}">${remainingDays}d left</span>
-                            <a href="${targetDetailUrl}" onclick="dispatchInsightsLog('leaving_soon_card_click', { mediaId: '${id}', platform: '${escapeAttr(platform)}' })">
+                            <a href="${targetDetailUrl}">
                                 <img src="${escapeAttr(posterPath)}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.src='${NO_POSTER}'">
                             </a>
                             <button class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
                                 data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}"
                                 onclick="toggleLocalWatchlistEvent(event, this)" aria-label="Toggle Watchlist">
-                                <svg class="w-4 h-4" fill="${inWatchlistFlag ? '#e50914' : 'none'}" stroke="${inWatchlistFlag ? '#e50914' : 'currentColor'}" viewBox="0 0 24 24" aria-hidden="true">
+                                <svg class="w-4 h-4" fill="${inWatchlistFlag ? '#e50914' : 'none'}" stroke="${inWatchlistFlag ? '#e50914' : 'currentColor'}" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
                             </button>
@@ -372,35 +322,23 @@
                         </div>
                     </article>`;
             }).join('');
-            
-            if (appendRecords) canvasGrid.innerHTML += htmlCardBuffer;
-            else canvasGrid.innerHTML = htmlCardBuffer;
+            if (appendRecords) canvasGrid.innerHTML += html;
+            else canvasGrid.innerHTML = html;
         }
 
-        /* ── INTERACTIVE WATCHLIST EVENT SYNCHRONIZATION CONTROLS ─────────────── */
-        function getLocalWatchlist() {
-            try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; }
-        }
-
-        function saveLocalWatchlist(listData) {
-            localStorage.setItem('watchlist', JSON.stringify(listData));
-        }
-
-        function verifyLocalWatchlistPresence(id) {
-            return getLocalWatchlist().some(item => String(item.tmdb_id) === String(id));
-        }
+        function getLocalWatchlist() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
+        function saveLocalWatchlist(listData) { localStorage.setItem('watchlist', JSON.stringify(listData)); }
+        function verifyLocalWatchlistPresence(id) { return getLocalWatchlist().some(item => String(item.tmdb_id) === String(id)); }
 
         function toggleLocalWatchlistEvent(event, elementRef) {
             event.preventDefault();
             event.stopPropagation();
-            
             const watchlist = getLocalWatchlist();
             const mediaId = elementRef.dataset.id;
-            const itemIndex = watchlist.findIndex(item => String(item.tmdb_id) === String(mediaId));
-            let itemAddedStatus = false;
-            
-            if (itemIndex > -1) {
-                watchlist.splice(itemIndex, 1);
+            const idx = watchlist.findIndex(item => String(item.tmdb_id) === String(mediaId));
+            let added = false;
+            if (idx > -1) {
+                watchlist.splice(idx, 1);
                 saveLocalWatchlist(watchlist);
                 showToastNotification('Removed from watchlist indices', 'info');
             } else {
@@ -415,77 +353,58 @@
                 });
                 saveLocalWatchlist(watchlist);
                 showToastNotification('Added to tracking dashboard', 'success');
-                itemAddedStatus = true;
+                added = true;
             }
-            
-            const inlineSvg = elementRef.querySelector('svg');
-            if (inlineSvg) {
-                inlineSvg.setAttribute('fill', itemAddedStatus ? '#e50914' : 'none');
-                inlineSvg.setAttribute('stroke', itemAddedStatus ? '#e50914' : 'currentColor');
+            const svg = elementRef.querySelector('svg');
+            if (svg) {
+                svg.setAttribute('fill', added ? '#e50914' : 'none');
+                svg.setAttribute('stroke', added ? '#e50914' : 'currentColor');
             }
-            dispatchInsightsLog('leaving_soon_watchlist_toggle', { mediaId: mediaId, added: itemAddedStatus });
+            dispatchInsightsLog('leaving_soon_watchlist_toggle', { mediaId, added });
         }
 
-        /* ── SEARCH INPUT INTEGRATION DROPDOWN MODULE (FIXED) ─────────────────── */
         function setupSearchEngine() {
-            let queryDebounce = null;
-            const searchInput = document.getElementById('nav-search-input');
-            const dropdownMenu = document.getElementById('search-dropdown');
-            if (!searchInput || !dropdownMenu) return;
-            
-            searchInput.addEventListener('input', () => {
-                clearTimeout(queryDebounce);
-                const queryStr = searchInput.value.trim();
-                if (queryStr.length < 2) { dropdownMenu.hidden = true; return; }
-                
-                queryDebounce = setTimeout(() => {
-                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(queryStr)}&type=multi`)
+            let debounce = null;
+            const input = document.getElementById('nav-search-input');
+            const dropdown = document.getElementById('search-dropdown');
+            if (!input || !dropdown) return;
+            input.addEventListener('input', () => {
+                clearTimeout(debounce);
+                const q = input.value.trim();
+                if (q.length < 2) { dropdown.hidden = true; return; }
+                debounce = setTimeout(() => {
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
                         .then(r => r.json())
                         .then(data => {
                             const entries = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 5);
-                            if (!entries.length) { dropdownMenu.hidden = true; return; }
-                            
-                            dropdownMenu.innerHTML = entries.map(item => {
+                            if (!entries.length) { dropdown.hidden = true; return; }
+                            dropdown.innerHTML = entries.map(item => {
                                 const title = item.title || item.name || '';
                                 const year = (item.release_date || item.first_air_date || '').slice(0, 4);
                                 const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
                                 const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-                                
-                                return `
-                                    <a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
-                                        <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p>
-                                            <p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p>
-                                        </div>
-                                    </a>`;
-                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(queryStr)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
-                            dropdownMenu.hidden = false;
-                        })
-                        .catch(() => { dropdownMenu.hidden = true; });
+                                return `<a href="/movie-detail.html?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
+                                    <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
+                                    <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div>
+                                </a>`;
+                            }).join('') + `<a href="/discover.html?q=${encodeURIComponent(q)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
+                            dropdown.hidden = false;
+                        }).catch(() => dropdown.hidden = true);
                 }, 300);
             });
-            
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('#nav-search-wrap')) dropdownMenu.hidden = true;
-            });
+            document.addEventListener('click', (e) => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
         }
 
-        /* ── DATA SECURITY ESCAPE UTILITIES ───────────────────────────────────── */
-        function escapeHtml(s) {
-            return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        }
-        function escapeAttr(s) {
-            return String(s ?? '').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-        }
-        function showToastNotification(message, notificationType = 'info') {
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function showToastNotification(msg, type = 'info') {
             const container = document.getElementById('toast-container');
             if (!container) return;
-            const toastElement = document.createElement('div');
-            toastElement.className = `px-4 py-2.5 rounded-xl text-sm font-semibold text-white border ${notificationType === 'success' ? 'bg-green-900/90 border-green-600' : 'bg-gray-900/90 border-white/10'}`;
-            toastElement.textContent = message;
-            container.appendChild(toastElement);
-            setTimeout(() => toastElement.remove(), 3000);
+            const el = document.createElement('div');
+            el.className = `px-4 py-2.5 rounded-xl text-sm font-semibold text-white border ${type === 'success' ? 'bg-green-900/90 border-green-600' : 'bg-gray-900/90 border-white/10'}`;
+            el.textContent = msg;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 3000);
         }
     </script>
 </body>
