@@ -200,10 +200,9 @@
   </main>
 
   <script>
-    /* ========== FLASHSTREAM COMMUNITY SCRIPT ========== */
     const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    // FIXED: Use backticks to avoid syntax error
+    // FIXED: backticks
     const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='138' viewBox='0 0 92 138'%3E%3Crect width='92' height='138' fill='%231f1f29'/%3E%3C/svg%3E`;
 
     let activeVoteItem = null;
@@ -212,7 +211,6 @@
     let activeEpAttributes = new Set();
     let wellbeingIntervalTimer = null;
 
-    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
       initializeGlobalLayout();
       setupVotingSearchEngine();
@@ -235,7 +233,6 @@
       const region = localStorage.getItem('user_region') || 'US';
       const codeElem = document.getElementById('region-code');
       if (codeElem) codeElem.textContent = region;
-      // region-flag span is hidden – no emoji
     }
 
     function setupMobileMenu() {
@@ -250,7 +247,6 @@
       }
     }
 
-    // --- MAIN SEARCH (navbar) ---
     function setupMainSearch() {
       let debounce = null;
       const input = document.getElementById('nav-search-input');
@@ -283,7 +279,6 @@
       document.addEventListener('click', (e) => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
     }
 
-    // --- TELEMETRY (privacy opt-out aware) ---
     function isDataTrackingAllowed() { return localStorage.getItem('consent_given') !== 'false'; }
     function transmitAnalyticsBeacon(eventType, metadataPayload = {}) {
       if (!isDataTrackingAllowed()) return;
@@ -292,7 +287,6 @@
       } catch(e) { console.warn('[Analytics] skip'); }
     }
 
-    // --- VOTING FORM CONTROLS ---
     window.selectFixedSentiment = function(btn) {
       document.querySelectorAll('.sentiment-btn').forEach(b => b.classList.remove('active'));
       selectedSentiment = btn.dataset.sentiment;
@@ -327,7 +321,6 @@
       }
       transmitAnalyticsBeacon('community_sentiment_submit', payload);
       showToastMessage('Anonymized metrics logged into system index', 'success');
-      // reset form
       document.getElementById('active-vote-target').hidden = true;
       document.getElementById('voting-search').value = '';
       activeVoteItem = null;
@@ -337,7 +330,6 @@
       document.querySelectorAll('.sentiment-btn, .tool-trope-btn, .ep-attr-btn').forEach(b => b.classList.remove('active'));
     };
 
-    // --- VOTING SEARCH (dropdown) ---
     function setupVotingSearchEngine() {
       let debounce = null;
       const input = document.getElementById('voting-search');
@@ -380,7 +372,6 @@
       transmitAnalyticsBeacon('community_form_engagement_start', { mediaId: item.id, type: item.type });
     };
 
-    // --- DASHBOARD: FETCH TRENDING + EPISODE ANOMALIES (static fallback samples) ---
     async function fetchCommunityDashboardMetrics() {
       try {
         const resp = await fetch(`${WORKER_URL}/api/trending?type=all&window=week`);
@@ -401,7 +392,6 @@
             </div>`;
           }).join('');
         }
-        // Episode anomalies - sample data (can be extended with real analytics)
         document.getElementById('episode-trends-stack').innerHTML = `
           <div class="p-3 bg-black rounded-xl border border-white/5 flex items-center justify-between"><div><p class="font-semibold text-white">Vincenzo</p><p class="text-[10px] text-gray-500">Season 1 · Episode 4</p></div><span class="px-2 py-0.5 rounded bg-purple-900/40 text-purple-300 border border-purple-700/30">Major Plot Twist</span></div>
           <div class="p-3 bg-black rounded-xl border border-white/5 flex items-center justify-between"><div><p class="font-semibold text-white">Love Next Door</p><p class="text-[10px] text-gray-500">Season 1 · Episode 11</p></div><span class="px-2 py-0.5 rounded bg-red-900/40 text-red-300 border border-red-700/30">Cliffhanger Peak</span></div>
@@ -409,7 +399,6 @@
       } catch(err) { console.warn('[Dashboard]', err); }
     }
 
-    // --- WELLBEING TIMER ---
     window.toggleWellbeingTimer = function() {
       const statusLabel = document.getElementById('timer-status');
       const durationSelect = document.getElementById('wellbeing-duration');
@@ -448,7 +437,6 @@
       showToastMessage('Open your mail client to suggest a trope', 'info');
     }
 
-    // --- UTILITIES ---
     function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
     function showToastMessage(text, type = 'success') {
