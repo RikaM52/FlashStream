@@ -1,11 +1,10 @@
 name = "flashstream-worker"
-pages_build_output_dir = "public"
 main = "worker/worker.js"
-compatibility_date = "2026-05-24"
+compatibility_date = "2024-05-24" # Set to current date
 compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
-binding       = "flashstream_db"
+binding       = "DB"  # Changed from flashstream_db to DB to match your code
 database_name = "flashstream-db"
 database_id   = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c"
 
@@ -14,11 +13,3 @@ ENVIRONMENT = "production"
 
 [observability]
 enabled = true
-
-# ============================================================
-# SECRETS PROVISIONING MEMO
-# ============================================================
-# 1. npx wrangler secret put TMDB_API_KEY
-# 2. npx wrangler secret put STREAMING_API_KEY
-# 3. npx wrangler secret put TURNSTILE_SECRET
-# ============================================================

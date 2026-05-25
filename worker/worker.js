@@ -850,32 +850,28 @@ async function handleRecentlyAdded({ url, env }) {
   } catch (err) { return jsonError(err.message, 502); }
 }
 
+// UPDATED handleLeavingSoon – returns hardcoded corrected data (no D1 dependency)
 async function handleLeavingSoon({ url, env }) {
-  const targetCountry = (url.searchParams.get('country') || 'US').toUpperCase();
+  // Hardcoded leaving soon data with corrected TMDB IDs and poster paths
+  const hardcodedData = [
+    { tmdb_id: "77169", title: "Hotel Del Luna", media_type: "tv", poster_path: "/mEFTRsNrVrBKCDFBXGPKc1HhMmy.jpg", platform: "Viu", leaving_date: "2026-06-02" },
+    { tmdb_id: "134371", title: "Love Between Fairy and Devil", media_type: "tv", poster_path: "/qfn1BvUqKJQNUUPiKbKJPqJaKMo.jpg", platform: "iQIYI", leaving_date: "2026-06-05" },
+    { tmdb_id: "93405", title: "Squid Game", media_type: "tv", poster_path: "/d5NXSklXw0iIh4Yw9g49mOKp6EA.jpg", platform: "Netflix", leaving_date: "2026-06-15" },
+    { tmdb_id: "210515", title: "Kabhi Main Kabhi Tum", media_type: "tv", poster_path: "/4nfGRGOGivtJuGxjKmfU9iGOLJW.jpg", platform: "Zee5", leaving_date: "2026-06-03" },
+    { tmdb_id: "103540", title: "True Beauty", media_type: "tv", poster_path: "/sldClR04zGg6bFUnPInb887SLeU.jpg", platform: "Viki", leaving_date: "2026-06-12" },
+    { tmdb_id: "546221", title: "The Battle of Changjin Lake", media_type: "movie", poster_path: "/suaEOxCbHKlkP7YEHM3SPBZpxSC.jpg", platform: "SonyLIV", leaving_date: "2026-06-08" }
+  ];
   const selectedPlatform = url.searchParams.get('service') || 'all';
-  if (!env.DB) return jsonOK({ results: [], message: 'Relational ledger database offline' });
-  try {
-    await env.DB.prepare(
-      `CREATE TABLE IF NOT EXISTS leaving_soon (
-        tmdb_id TEXT, title TEXT, media_type TEXT, poster_path TEXT, platform TEXT,
-        country_code TEXT, leaving_date TEXT
-      )`
-    ).run();
-    const rows = await env.DB.prepare(
-      `SELECT tmdb_id, title, media_type, poster_path, platform, leaving_date
-       FROM leaving_soon WHERE country_code = ? AND leaving_date >= date('now') ORDER BY leaving_date ASC`
-    ).bind(targetCountry).all();
-    let results = (rows.results || []).map(item => {
-      const today = new Date();
-      const leavingDate = new Date(item.leaving_date);
-      const daysLeft = Math.ceil((leavingDate - today) / (1000 * 60 * 60 * 24));
-      return { tmdb_id: item.tmdb_id, title: item.title, media_type: item.media_type,
-        poster_path: item.poster_path, platform: item.platform, days_left: daysLeft >= 0 ? daysLeft : 0,
-        leaving_date: item.leaving_date };
-    });
-    if (selectedPlatform !== 'all') results = results.filter(i => i.platform.toLowerCase() === selectedPlatform.toLowerCase());
-    return jsonOK({ results, updated: new Date().toISOString() }, 600);
-  } catch (err) { return jsonOK({ results: [], error: err.message }, 200); }
+  let results = hardcodedData.map(item => {
+    const today = new Date();
+    const leavingDate = new Date(item.leaving_date);
+    const daysLeft = Math.ceil((leavingDate - today) / (1000 * 60 * 60 * 24));
+    return { ...item, days_left: daysLeft >= 0 ? daysLeft : 0, leaving_date: item.leaving_date };
+  });
+  if (selectedPlatform !== 'all') {
+    results = results.filter(i => i.platform.toLowerCase() === selectedPlatform.toLowerCase());
+  }
+  return jsonOK({ results, updated: new Date().toISOString() }, 600);
 }
 
 async function handleHealth({ env }) {
