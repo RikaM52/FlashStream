@@ -1,8 +1,7 @@
 /* ============================================================
    FLASHSTREAM SERVICE WORKER CORE v4
-   Updated: Complete Brand Rebuild & Edge Routing Integration
-   Contains: Cache Strategies, Data-Saver Optimization,
-             Background Sync, and Multi-Option Offline Fallbacks
+   Fixed: Navigation handler avoids redirect loops
+   Updated: No emojis, no JustWatch links
    ============================================================ */
 
 const CACHE_VERSION = 'fs-v4';
@@ -10,7 +9,6 @@ const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const API_CACHE = `${CACHE_VERSION}-api`;
 const IMAGE_CACHE = `${CACHE_VERSION}-images`;
 
-// Updated asset list – all critical pages and resources
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -87,10 +85,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // HTML navigation – try network, fallback to cached index or offline page
+  // HTML navigation – ONLY for same-origin .html files or root
+  // Avoid redirect loops by checking that the request URL ends with .html or is exactly '/'
   if (request.headers.get('Accept')?.includes('text/html')) {
-    event.respondWith(handleNavigation(request));
-    return;
+    // Only handle if the URL is root or ends with .html
+    if (url.pathname === '/' || url.pathname.endsWith('.html')) {
+      event.respondWith(handleNavigation(request));
+    } else {
+      // Let the browser handle non‑.html navigations (this avoids 308 redirect loops)
+      return;
+    }
   }
 
   // Everything else – stale-while-revalidate
@@ -137,7 +141,6 @@ async function handleImage(request, url) {
   let finalRequest = request;
   if (isDataSaver) {
     const path = url.pathname;
-    // Force maximum width to 342px for data‑saver mode
     const rewrite = path.replace(/\/w\d+\//, '/w342/').replace(/\/w\d+h\d+\//, '/w342/');
     if (rewrite !== path) {
       const newUrl = `${url.origin}${rewrite}`;
@@ -182,13 +185,23 @@ async function handleAPI(request) {
   }
 }
 
-/* ── NAVIGATION FALLBACK (OFFLINE SUPPORT) ──────────────────────────────── */
+/* ── NAVIGATION FALLBACK (OFFLINE SUPPORT) – FIXED TO AVOID REDIRECT LOOPS ─ */
 async function handleNavigation(request) {
   try {
-    return await fetch(request);
-  } catch {
+    // Try network first – if it returns a redirect (3xx), do NOT follow it inside the worker
+    const networkResponse = await fetch(request);
+    if (networkResponse.ok) {
+      return networkResponse;
+    }
+    // If not ok, fallback to cache
     const cache = await caches.open(STATIC_CACHE);
-    const cached = await cache.match('/index.html') || await cache.match('/');
+    const cached = await cache.match(request) || await cache.match('/index.html');
+    if (cached) return cached;
+    return cache.match('/offline.html') || new Response('Offline Mode Active', { status: 503 });
+  } catch {
+    // Network failed – serve cached offline page
+    const cache = await caches.open(STATIC_CACHE);
+    const cached = await cache.match(request) || await cache.match('/index.html');
     if (cached) return cached;
     return cache.match('/offline.html') || new Response('Offline Mode Active', { status: 503 });
   }

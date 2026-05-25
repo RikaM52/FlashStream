@@ -83,7 +83,8 @@
 
   <script>
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Crect width='40' height='60' fill='%231f1f29'/%3E%3Ctext x='20' y='30' text-anchor='middle' dominant-baseline='middle' font-size='16' fill='%23444'%3E🎬%3C/text%3E%3C/svg%3E`;
+    // FIXED: No emoji inside SVG – replaced with simple text "MOVIE" (or you can remove the text element)
+    const NO_POSTER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='60' viewBox='0 0 40 60'%3E%3Crect width='40' height='60' fill='%231f1f29'/%3E%3Ctext x='20' y='30' text-anchor='middle' dominant-baseline='middle' font-size='12' fill='%23666' font-family='monospace'%3EMOVIE%3C/text%3E%3C/svg%3E`;
 
     function initTheme() {
       if (localStorage.getItem('cs-theme') !== 'light') {
@@ -115,19 +116,20 @@
         favorites: 'Favourites'
       };
 
-      const STATUS_ICONS = {
-        want_to_watch: '🕒',
-        watching: '▶️',
-        finished: '✅',
-        dropped: '🚫',
-        rewatch: '🔁',
-        favorites: '❤️'
+      // No emojis – use plain text labels
+      const STATUS_ICON_TEXT = {
+        want_to_watch: '[Want]',
+        watching: '[Watching]',
+        finished: '[Finished]',
+        dropped: '[Dropped]',
+        rewatch: '[Rewatch]',
+        favorites: '[Favorite]'
       };
 
       const show = list.slice(0, 8);
       container.innerHTML = show.map(item => {
         const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
-        const icon = STATUS_ICONS[item.status] || '🕒';
+        const icon = STATUS_ICON_TEXT[item.status] || STATUS_ICON_TEXT.want_to_watch;
         const label = STATUS_LABELS[item.status] || item.status;
         const title = escapeHtml(item.title || 'Unknown');
         return `
