@@ -1,4 +1,5 @@
 # FLASHSTREAM SERVER EDGE URL REWRITE MATRIX
+# Direct file mappings (no Pretty URLs interference)
 /manifest.json       /manifest.json       200
 /sw.js               /sw.js               200
 /robots.txt          /robots.txt          200
@@ -6,28 +7,13 @@
 /offline.html        /offline.html        200
 /icons/*             /icons/:splat        200
 
-# Static data files - serve leaving-soon.json from root as /data/leaving-soon.json
+# Static data file rewrites
 /data/leaving-soon.json  /leaving-soon.json  200
 /data/*              /data/:splat         200
 
-# Strict Local File System Routing Rewrites (clean URLs)
-/discover            /discover.html       200
-/watchlist           /watchlist.html      200
-/leaving-soon        /leaving-soon.html   200
-/coming-soon         /coming-soon.html    200
-/community           /community.html      200
-/settings            /settings.html       200
-/about               /about.html          200
-/privacy             /privacy.html        200
-/terms               /terms.html          200
-
-# Detail sheet parameters map
+# Wildcard routes (map to different filenames – Pretty URLs won't interfere)
 /movie/*             /movie-detail.html   200
 /show/*              /movie-detail.html   200
 /tv/*                /movie-detail.html   200
 /person/*            /movie-detail.html   200
 /collection/*        /collection.html     200
-
-# Homepage structural anchor
-/index.html          /index.html          200
-/                    /index.html          200
