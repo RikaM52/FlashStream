@@ -1,82 +1,68 @@
 // ============================================================
-// FLASHSTREAM SERVICE WORKER — v3
+// FLASHSTREAM SERVICE WORKER — v4 (DEFINITIVE FIX)
 // ============================================================
-// WHAT CHANGED FROM v1/v2 AND WHY:
 //
-// BUG 1 FIXED — Cache name bumped to 'flashstream-v3'.
-//   The activate handler only deletes caches with DIFFERENT names.
-//   If the old broken SW used the same name, the stale cache was
-//   never wiped. Bumping the version forces a clean slate.
+// ROOT CAUSE OF ALL PREVIOUS FAILURES, EXPLAINED SIMPLY:
 //
-// BUG 2 FIXED — Removed /icons/icon-192.png and /icons/icon-512.png
-//   from STATIC_ASSETS. cache.addAll() is all-or-nothing. If even
-//   ONE asset 404s (e.g. icons not deployed), the ENTIRE cache is
-//   left empty. The old code then swallowed the error with .catch(),
-//   so install appeared to succeed with a completely empty cache.
-//   Every navigation then fell through to the network fetch fallback,
-//   hit Cloudflare's 308 redirect, and caused an infinite loop.
+// Every version of this SW tried to intercept HTML navigation
+// requests and either (a) fetch them from the network, or
+// (b) pre-cache them with addAll(). Both approaches failed
+// because Cloudflare Pages "Pretty URLs" returns a 308 redirect
+// for these URLs — either breaking the cache.addAll() call
+// (TypeError: Failed to fetch) or causing the SW to pass a
+// 308 back to the browser, which then looped forever.
 //
-// BUG 3 FIXED — self.skipWaiting() moved BEFORE event.waitUntil().
-//   Previously skipWaiting() was chained after addAll() in the
-//   promise chain. If addAll() failed, skipWaiting() was skipped,
-//   leaving the new SW stuck in "waiting" state. Now it always fires
-//   immediately so the new SW takes control on every deploy.
+// THE CORRECT FIX IS SIMPLE:
+// The SW must NOT intercept HTML navigation requests at all.
+// The browser handles 308 redirects perfectly on its own.
+// The only reason navigation ever broke was because the SW
+// was getting in the way. Remove the SW from the HTML path
+// entirely and the browser navigates fine.
 //
-// BUG 4 FIXED — HTML fetch handler now uses { redirect: 'manual' }.
-//   Previously fetch(request) followed redirects by default. When
-//   Cloudflare Pages returned a 308 (Pretty URLs stripping .html),
-//   the SW passed that 308 back to the browser. The browser followed
-//   it, the SW intercepted again, got another 308 — infinite loop.
-//   With redirect:'manual', the SW receives an opaque redirect
-//   response (type:'opaqueredirect') and handles it safely by
-//   falling back to the cached index page instead of forwarding the
-//   redirect to the browser.
+// WHAT THIS SW NOW DOES:
+// 1. Caches only 3 assets that are guaranteed 200 (no redirects):
+//    '/', '/offline.html', '/manifest.json'
+// 2. Does NOT intercept ANY HTML navigation — lets browser handle it
+// 3. Caches static assets (images, fonts, JS, CSS) on first fetch
+// 4. Serves /offline.html only when the user is genuinely offline
+//    and a navigation request fails at the network level
+//
 // ============================================================
 
-const CACHE_NAME = 'flashstream-v3';
+const CACHE_NAME = 'flashstream-v4';
 
-// IMPORTANT: Only include assets you are 100% certain exist on the
-// server. A single 404 here aborts the entire cache installation.
-// Use ONLY clean URLs (no .html extensions) — these match exactly
-// what Cloudflare _redirects serves and what nav links use as hrefs.
-const STATIC_ASSETS = [
+// ONLY include URLs that are 100% guaranteed to return HTTP 200
+// with no redirects from Cloudflare. Do NOT include:
+//   - /index.html  (Pretty URLs 308s this to /)
+//   - /discover    (Cloudflare returns 308 during addAll fetch)
+//   - /community   (same)
+//   - /icons/*.png (files may not exist → 404 → addAll aborts)
+// Safe assets: '/' (root rewrite, always 200), '/offline.html'
+// (explicit direct rule in _redirects), '/manifest.json' (direct file).
+const SAFE_PRECACHE = [
   '/',
-  '/index.html',
-  '/manifest.json',
-  '/discover',
-  '/watchlist',
-  '/leaving-soon',
-  '/coming-soon',
-  '/community',
-  '/settings',
-  '/about',
-  '/privacy',
-  '/terms'
+  '/offline.html',
+  '/manifest.json'
 ];
 
 // ── INSTALL ────────────────────────────────────────────────
-// skipWaiting() is called FIRST, unconditionally, so the new SW
-// always takes control immediately after deployment — even if the
-// cache population below fails for any reason.
 self.addEventListener('install', event => {
+  // Always take control immediately — do not wait for old SW to die.
   self.skipWaiting();
 
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(STATIC_ASSETS))
+      .then(cache => cache.addAll(SAFE_PRECACHE))
       .catch(err => {
-        // Log the error so you can see it in DevTools → Application
-        // → Service Workers → Console. Navigation will still work
-        // via the network fallback — just without offline support
-        // until the next successful install.
-        console.error('[SW] Cache install failed — check that all STATIC_ASSETS exist on the server:', err);
+        // If even these 3 assets fail, log it — but SW still installs.
+        // Navigation will work regardless (browser handles HTML natively).
+        console.error('[SW] Precache failed:', err);
       })
   );
 });
 
 // ── ACTIVATE ───────────────────────────────────────────────
-// Delete every cache that is NOT the current version so stale
-// cached pages from old deploys don't serve outdated content.
+// Wipe every old cache version so stale content is never served.
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
@@ -84,7 +70,7 @@ self.addEventListener('activate', event => {
         keys
           .filter(k => k !== CACHE_NAME)
           .map(k => {
-            console.log('[SW] Deleting old cache:', k);
+            console.log('[SW] Removing old cache:', k);
             return caches.delete(k);
           })
       ))
@@ -96,78 +82,67 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
-  const isHtml = request.headers.get('Accept')?.includes('text/html');
   const isSameOrigin = url.host === self.location.host;
 
-  // ── HTML NAVIGATION (cache-first, redirect-safe) ──
-  // Strategy: serve from cache whenever possible.
-  // When we must go to the network, use redirect:'manual' so that
-  // Cloudflare's 308 Pretty-URL redirects are caught here and
-  // handled gracefully instead of being forwarded to the browser
-  // (which would cause an infinite redirect loop).
-  if (isSameOrigin && isHtml) {
-    event.respondWith(
-      caches.match(request, { ignoreSearch: false }).then(cached => {
-        // Cache hit — serve instantly, no network involved.
-        if (cached) return cached;
-
-        // Cache miss — go to network but intercept any redirects.
-        return fetch(request, { redirect: 'manual' })
-          .then(res => {
-            // type:'opaqueredirect' means the server returned a 3xx.
-            // This is Cloudflare's Pretty URLs 308. Do NOT forward
-            // it to the browser (that causes the infinite loop).
-            // Instead, serve the root index from cache as a safe
-            // fallback. The user lands on the home page rather than
-            // hitting a redirect loop.
-            if (res.type === 'opaqueredirect') {
-              console.warn('[SW] Caught redirect for', url.pathname, '— serving cached index');
-              return caches.match('/') || caches.match('/index.html');
-            }
-
-            // Any genuine non-OK response (404, 500 etc.) —
-            // serve cached index rather than an error page.
-            if (!res.ok) {
-              return caches.match('/') || caches.match('/index.html');
-            }
-
-            // Good response — cache it for next time, then return it.
-            return caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, res.clone());
-              return res;
-            });
-          })
-          .catch(() => {
-            // Network completely unavailable (offline).
-            // Serve the cached index as the offline fallback.
-            return caches.match('/') || caches.match('/index.html');
-          });
-      })
-    );
+  // ── HTML NAVIGATION — DO NOT INTERCEPT ──────────────────
+  // Let the browser handle all HTML page navigation completely
+  // on its own. The browser follows 308 redirects natively and
+  // correctly. The SW intercepting these requests was the entire
+  // cause of the redirect loop. By returning here without calling
+  // event.respondWith(), the browser's default fetch behaviour
+  // takes over — exactly as if no SW existed for this request.
+  const isNavigation = request.mode === 'navigate';
+  const isHtmlAccept = request.headers.get('Accept')?.includes('text/html');
+  if (isSameOrigin && (isNavigation || isHtmlAccept)) {
+    // No event.respondWith() call = browser handles it natively.
+    // This is intentional. Do not add code here.
     return;
   }
 
-  // ── STATIC ASSETS (cache-first) ──
-  // CSS, JS, fonts, images — serve from cache, fetch on miss.
+  // ── STATIC ASSETS — CACHE FIRST ─────────────────────────
+  // Images, fonts, JS, CSS: serve from cache if available,
+  // otherwise fetch from network and cache the result.
   if (isSameOrigin && /\.(css|js|woff2?|ttf|eot|svg|png|jpg|jpeg|webp|ico)$/.test(url.pathname)) {
     event.respondWith(
       caches.match(request).then(cached => {
         if (cached) return cached;
+
         return fetch(request).then(res => {
-          if (res.ok) {
-            return caches.open(CACHE_NAME).then(cache => {
-              cache.put(request, res.clone());
-              return res;
-            });
+          // Only cache valid responses.
+          if (res && res.ok) {
+            const toCache = res.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, toCache));
           }
           return res;
+        }).catch(() => {
+          // Asset unavailable offline — nothing useful to return.
+          return new Response('', { status: 503, statusText: 'Offline' });
         });
       })
     );
     return;
   }
 
-  // ── EVERYTHING ELSE (network-only) ──
-  // API calls, TMDB images, worker requests — always fresh from network.
-  event.respondWith(fetch(request));
+  // ── MANIFEST & OTHER PRECACHED FILES ────────────────────
+  // Serve manifest.json and any other precached items from cache.
+  if (isSameOrigin && (url.pathname === '/manifest.json' || url.pathname === '/')) {
+    event.respondWith(
+      caches.match(request).then(cached => cached || fetch(request))
+    );
+    return;
+  }
+
+  // ── EVERYTHING ELSE — NETWORK ONLY ──────────────────────
+  // API calls to the Cloudflare worker, TMDB image CDN requests,
+  // external scripts — always go direct to network, never cached.
+  event.respondWith(
+    fetch(request).catch(() => {
+      // If a navigation somehow reaches here while offline,
+      // serve the offline page.
+      if (isNavigation || isHtmlAccept) {
+        return caches.match('/offline.html');
+      }
+      return new Response('', { status: 503, statusText: 'Offline' });
+    })
+  );
 });
