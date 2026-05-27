@@ -62,6 +62,20 @@
         .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
         @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        accent: '#00C4BC'
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="/css/global.css">
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>

@@ -601,80 +601,43 @@
             cursor: pointer;
         }
     </style>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        accent: '#00C4BC'
-                    }
-                }
-            }
-        };
-    </script>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="icon" href="/icons/favicon.ico" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <meta name="theme-color" content="#00C4BC">
 </head>
-<body class="bg-black text-gray-100 min-h-screen">
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-accent transition-colors flex-shrink-0" aria-label="FlashStream home">
-            <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
-            <span class="hidden sm:block">FlashStream</span>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <span class="logo-icon"></span>
+            Watchlist Manager
         </a>
-        <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-            <div class="relative">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
+        <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="discover.html">Discover</a>
+            <a href="watchlist.html">Watchlist</a>
+            <div class="search-container">
+                <input type="text" id="nav-search" placeholder="Search watchlist...">
             </div>
-            <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions" class="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl"></div>
+            <button class="theme-toggle" id="theme-toggle">🌙</button>
+            <span class="region-badge" id="region-badge">US</span>
         </div>
-        <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-            <a href="/discover" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
-            <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-            <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-            <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-            <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
-            <a href="/insights" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Insights</a>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                <span id="region-code" class="font-mono text-gray-300">US</span>
-            </a>
-            <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            </button>
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
-        </div>
-    </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-        <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-        <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-        <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-        <a href="/insights" class="text-gray-300 hover:text-white py-1.5">Insights</a>
-        <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-    </div>
-</nav>
+    </nav>
 
-    <div class="max-w-7xl mx-auto px-4 py-6">
+    <div class="container">
         <div class="header">
-            <h1 class="text-3xl font-bold text-white">My Watchlist</h1>
+            <h1>My Watchlist</h1>
+            <div class="controls">
+                <button id="export-csv">Export CSV</button>
+                <button id="export-json">Export JSON</button>
+                <button id="import-btn">Import JSON</button>
+                <button id="import-csv-btn">Import CSV</button>
+                <button id="share-btn">Share List</button>
+                <button id="clear-all" class="danger-btn">Clear All</button>
+            </div>
         </div>
 
-        <div class="stats-bar grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 mb-6" id="stats-bar"></div>
+        <div class="stats-bar" id="stats-bar"></div>
 
-        <div class="controls flex flex-wrap gap-3 mb-6 p-4 rounded-xl bg-gray-900/50 border border-gray-800">
+        <div class="controls">
             <div class="filter-group">
-                <select id="status-filter" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="status-filter">
                     <option value="all">All Statuses</option>
                     <option value="planning">Planning</option>
                     <option value="watching">Watching</option>
@@ -683,45 +646,45 @@
                     <option value="dropped">Dropped</option>
                     <option value="watchlist">Watchlist</option>
                 </select>
-                <select id="type-filter" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="type-filter">
                     <option value="all">All Types</option>
                     <option value="movie">Movies</option>
                     <option value="tv">TV Shows</option>
                 </select>
-                <select id="genre-filter" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="genre-filter">
                     <option value="all">All Genres</option>
                 </select>
-                <select id="platform-filter" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="platform-filter">
                     <option value="all">All Platforms</option>
                 </select>
-                <input type="date" id="date-added-from" placeholder="Added from" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm">
-                <input type="date" id="date-added-to" placeholder="Added to" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm">
-                <input type="range" id="rating-min" min="0" max="5" step="0.5" value="0" class="w-32 h-1.5 rounded-lg bg-gray-700 accent-accent">
+                <input type="date" id="date-added-from" placeholder="Added from">
+                <input type="date" id="date-added-to" placeholder="Added to">
+                <input type="range" id="rating-min" min="0" max="5" step="0.5" value="0">
                 <span id="rating-min-label">Min Rating: 0</span>
             </div>
             <div class="sort-group">
-                <select id="sort-by" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="sort-by">
                     <option value="date_added">Date Added</option>
                     <option value="title">Title</option>
                     <option value="rating">Rating</option>
                     <option value="date_watched">Date Watched</option>
                     <option value="time_remaining">Time Remaining</option>
                 </select>
-                <button id="sort-asc" class="px-3 py-1.5 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors">↑ ASC</button>
-                <button id="sort-desc" class="px-3 py-1.5 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors">↓ DESC</button>
-                <label class="flex items-center gap-2">
+                <button id="sort-asc">↑ ASC</button>
+                <button id="sort-desc">↓ DESC</button>
+                <label>
                     <input type="checkbox" id="urgent-toggle"> Expiring Soon Only
                 </label>
             </div>
             <div class="bulk-actions">
                 <span>Bulk:</span>
-                <select id="bulk-status" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="bulk-status">
                     <option value="">Change Status</option>
                     <option value="planning">Planning</option>
                     <option value="watching">Watching</option>
                     <option value="completed">Completed</option>
                 </select>
-                <select id="bulk-rating" class="px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm focus:outline-none focus:border-accent">
+                <select id="bulk-rating">
                     <option value="">Set Rating</option>
                     <option value="1">1 Star</option>
                     <option value="2">2 Stars</option>
@@ -729,9 +692,9 @@
                     <option value="4">4 Stars</option>
                     <option value="5">5 Stars</option>
                 </select>
-                <button id="bulk-note-btn" class="px-3 py-1.5 rounded-lg bg-accent text-black font-medium text-sm hover:bg-accent-dark transition-colors">Add Note</button>
-                <button id="bulk-delete" class="px-3 py-1.5 rounded-lg bg-red-600 text-white font-medium text-sm hover:bg-red-700 transition-colors">Delete Selected</button>
-                <button id="bulk-apply" class="px-3 py-1.5 rounded-lg bg-accent text-black font-medium text-sm hover:bg-accent-dark transition-colors">✓ Apply Status</button>
+                <button id="bulk-note-btn">Add Note</button>
+                <button id="bulk-delete">Delete Selected</button>
+                <button id="bulk-apply">✓ Apply Status</button>
             </div>
         </div>
 
@@ -748,8 +711,8 @@
         <div class="modal-content">
             <h3>Add/Edit Note</h3>
             <textarea id="note-text" rows="4" placeholder="Write your notes here..."></textarea>
-            <button id="save-note" class="px-4 py-2 rounded-lg bg-accent text-black font-medium hover:bg-accent-dark transition-colors">Save Note</button>
-            <button id="close-modal" class="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors">Cancel</button>
+            <button id="save-note">Save Note</button>
+            <button id="close-modal">Cancel</button>
         </div>
     </div>
 
@@ -757,8 +720,8 @@
         <div class="modal-content">
             <h3>Add Note to Selected Items</h3>
             <textarea id="bulk-note-text" rows="4" placeholder="Write note for all selected items..."></textarea>
-            <button id="save-bulk-note" class="px-4 py-2 rounded-lg bg-accent text-black font-medium hover:bg-accent-dark transition-colors">Add Note</button>
-            <button id="close-bulk-modal" class="px-4 py-2 rounded-lg bg-gray-700 text-white hover:bg-gray-600 transition-colors">Cancel</button>
+            <button id="save-bulk-note">Add Note</button>
+            <button id="close-bulk-modal">Cancel</button>
         </div>
     </div>
 
@@ -826,7 +789,7 @@
             }
         }
 
-        // B2B Tracking function - SILENT (no console output)
+        // B2B Tracking function
         function trackB2BEvent(eventName, eventData = {}) {
             const trackingData = {
                 event: eventName,
@@ -834,7 +797,7 @@
                 user_id: localStorage.getItem('user_id') || 'anonymous',
                 ...eventData
             };
-            // NO CONSOLE LOG - completely silent
+            console.log('[B2B Track]', trackingData);
             
             // Send to analytics endpoint if available
             if (window.sendAnalytics) {
@@ -952,6 +915,142 @@
             }
         }
 
+        // Export CSV with notes
+        function exportCSV() {
+            const headers = ['Title', 'Type', 'Status', 'Rating', 'Notes', 'Date Added', 'Date Watched', 'Episodes Watched', 'Total Episodes'];
+            const rows = watchlist.map(item => [
+                item.title,
+                item.type,
+                STATUS_NAMES[item.status] || item.status,
+                item.user_rating,
+                item.notes || '',
+                item.date_added,
+                item.date_watched || '',
+                item.episodes_watched || 0,
+                item.total_episodes || ''
+            ]);
+            
+            const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `watchlist_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            trackB2BEvent('watchlist_export_csv', { count: watchlist.length });
+            showToastNotification('CSV exported successfully');
+        }
+
+        // Export JSON (including Trakt format option)
+        function exportJSON(traktFormat = false) {
+            let data;
+            if (traktFormat) {
+                data = watchlist.map(item => ({
+                    ids: { trakt: item.id, imdb: item.imdb_id },
+                    title: item.title,
+                    year: item.year,
+                    type: item.type,
+                    status: item.status,
+                    rating: item.user_rating,
+                    notes: item.notes,
+                    watched: item.status === 'completed',
+                    episodes_watched: item.episodes_watched
+                }));
+            } else {
+                data = watchlist;
+            }
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `watchlist_${traktFormat ? 'trakt_' : ''}${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            trackB2BEvent('watchlist_export_json', { count: watchlist.length, trakt_format: traktFormat });
+            showToastNotification('JSON exported successfully');
+        }
+
+        // Import JSON
+        function importJSON(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        watchlist = [...watchlist, ...imported];
+                        saveWatchlist();
+                        trackB2BEvent('watchlist_import_json', { count: imported.length });
+                        showToastNotification(`Imported ${imported.length} items`);
+                    } else {
+                        throw new Error('Invalid format');
+                    }
+                } catch (error) {
+                    showToastNotification('Invalid JSON file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Import CSV
+        function importCSV(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n');
+                    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                    
+                    const imported = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        const values = lines[i].split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                        const item = {};
+                        headers.forEach((header, idx) => {
+                            item[header.toLowerCase().replace(/\s/g, '_')] = values[idx];
+                        });
+                        
+                        if (item.title) {
+                            imported.push({
+                                id: Date.now() + i + Math.random(),
+                                title: item.title,
+                                type: item.type === 'tv' ? 'tv' : 'movie',
+                                status: item.status || 'watchlist',
+                                user_rating: parseFloat(item.rating) || 0,
+                                notes: item.notes || '',
+                                date_added: new Date().toISOString(),
+                                episodes_watched: parseInt(item.episodes_watched) || 0,
+                                total_episodes: parseInt(item.total_episodes) || 0
+                            });
+                        }
+                    }
+                    
+                    if (imported.length > 0) {
+                        watchlist = [...watchlist, ...imported];
+                        saveWatchlist();
+                        trackB2BEvent('watchlist_import_csv', { count: imported.length });
+                        showToastNotification(`Imported ${imported.length} items from CSV`);
+                    }
+                } catch (error) {
+                    showToastNotification('Invalid CSV file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Clear all watchlist
+        function clearWatchlist() {
+            if (confirm('WARNING: This will delete your ENTIRE watchlist. Are you absolutely sure?')) {
+                trackB2BEvent('watchlist_clear_all', { count: watchlist.length });
+                watchlist = [];
+                selectedItems.clear();
+                saveWatchlist();
+                showToastNotification('Watchlist cleared');
+            }
+        }
+
         // Bulk actions
         function applyBulkStatus(status) {
             const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
@@ -999,6 +1098,7 @@
 
         // Calculate hype score (mock - would call API)
         function getHypeScore(item) {
+            // Mock hype score based on genre and rating
             let score = 50;
             if (item.user_rating > 0) score += item.user_rating * 8;
             if (item.type === 'tv') score += 10;
@@ -1018,6 +1118,7 @@
 
         // Get content advisory
         function getContentAdvisory(item) {
+            // Mock advisory based on genre
             const adultGenres = ['Horror', 'Thriller', 'Crime'];
             if (item.genres && adultGenres.some(g => item.genres.includes(g))) {
                 return 'Adult Content';
@@ -1112,6 +1213,7 @@
         function renderWatchlist() {
             let filtered = [...watchlist];
             
+            // Apply filters
             if (currentFilters.status !== 'all') {
                 filtered = filtered.filter(item => item.status === currentFilters.status);
             }
@@ -1134,12 +1236,15 @@
                 filtered = filtered.filter(item => new Date(item.date_added) <= new Date(currentFilters.dateTo));
             }
             if (currentFilters.urgentOnly) {
+                // Mock expiring soon logic - would check streaming availability dates
                 filtered = filtered.filter(item => {
+                    // Placeholder: items added more than 30 days ago are "expiring soon"
                     const daysSinceAdded = (new Date() - new Date(item.date_added)) / (1000 * 60 * 60 * 24);
                     return daysSinceAdded > 30;
                 });
             }
             
+            // Apply sorting
             filtered.sort((a, b) => {
                 let aVal = a[currentSort.field];
                 let bVal = b[currentSort.field];
@@ -1165,6 +1270,7 @@
                 grid.innerHTML = filtered.map(item => renderCard(item)).join('');
             }
             
+            // Add star click handlers
             document.querySelectorAll('.star-svg').forEach(star => {
                 star.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1188,7 +1294,7 @@
             
             section.style.display = 'block';
             section.innerHTML = `
-                <h2 class="text-xl font-bold text-white mb-4">Continue Watching</h2>
+                <h2>Continue Watching</h2>
                 <div class="continue-watching-grid">
                     ${watching.map(item => `
                         <div class="continue-card" onclick="document.getElementById('watchlist-grid').scrollIntoView({behavior:'smooth'}); changeStatus('${item.id}', 'watching')">
@@ -1219,7 +1325,7 @@
             
             const section = document.getElementById('smart-lists-section');
             section.innerHTML = `
-                <h2 class="text-xl font-bold text-white mb-4">Smart Lists</h2>
+                <h2>Smart Lists</h2>
                 <div class="smart-lists-grid">
                     ${smartLists.map(list => {
                         let items = [...watchlist].filter(list.condition);
@@ -1244,6 +1350,7 @@
                 </div>
             `;
             
+            // Add click tracking
             document.querySelectorAll('.smart-list-card').forEach(card => {
                 card.addEventListener('click', () => {
                     const listName = card.dataset.listName;
@@ -1260,12 +1367,20 @@
 
         // Render recommendations
         async function renderRecommendations() {
+            // Mock recommendations based on watchlist
             const section = document.getElementById('recommendations-section');
             if (watchlist.length === 0) {
                 section.style.display = 'none';
                 return;
             }
             
+            // Get genres from watchlist
+            const genres = new Set();
+            watchlist.forEach(item => {
+                if (item.genres) item.genres.forEach(g => genres.add(g));
+            });
+            
+            // Mock recommendations (would call API)
             const recommendations = [
                 { title: "Dune: Part Two", year: 2024, type: "movie", match: 94 },
                 { title: "The Last of Us", year: 2023, type: "tv", match: 89 },
@@ -1275,7 +1390,7 @@
             
             section.style.display = 'block';
             section.innerHTML = `
-                <h2 class="text-xl font-bold text-white mb-4">Personalized Recommendations</h2>
+                <h2>Personalized Recommendations</h2>
                 <div class="recommendations-grid">
                     ${recommendations.map(rec => `
                         <div class="smart-list-card" onclick="addRecommendedItem({id: 'rec_${Math.random()}', title: '${rec.title}', year: ${rec.year}, type: '${rec.type}'})">
@@ -1305,9 +1420,9 @@
             watchlist.forEach(item => { stats[item.status]++; });
             
             const statsHtml = STATUS_CYCLE.map(status => `
-                <div class="stat-card text-center p-3 rounded-xl bg-gray-900 border border-gray-800 cursor-pointer hover:border-accent transition-all" data-status="${status}">
-                    <div class="stat-count text-accent text-2xl font-bold">${stats[status]}</div>
-                    <div class="stat-label text-gray-400 text-sm">${STATUS_NAMES[status]}</div>
+                <div class="stat-card" data-status="${status}">
+                    <div class="stat-count">${stats[status]}</div>
+                    <div class="stat-label">${STATUS_NAMES[status]}</div>
                 </div>
             `).join('');
             
@@ -1323,9 +1438,9 @@
             const minutes = totalTime % 60;
             
             document.getElementById('stats-bar').innerHTML = statsHtml + `
-                <div class="stat-card text-center p-3 rounded-xl bg-gray-900 border border-gray-800 cursor-pointer hover:border-accent transition-all">
-                    <div class="stat-count text-accent text-2xl font-bold">${hours}h ${minutes}m</div>
-                    <div class="stat-label text-gray-400 text-sm">Estimated Time Left</div>
+                <div class="stat-card">
+                    <div class="stat-count">${hours}h ${minutes}m</div>
+                    <div class="stat-label">Estimated Time Left</div>
                 </div>
             `;
             
@@ -1354,6 +1469,20 @@
                 selectedItems.add(id);
             }
             renderWatchlist();
+        }
+
+        // Share link
+        function copyShareLink() {
+            const data = encodeURIComponent(JSON.stringify(watchlist.map(item => ({
+                id: item.id,
+                title: item.title,
+                type: item.type,
+                status: item.status,
+                user_rating: item.user_rating
+            }))));
+            const url = `${window.location.origin}${window.location.pathname}?shared=${data}`;
+            navigator.clipboard.writeText(url);
+            showToastNotification('Share link copied!');
         }
 
         // Handle shared list
@@ -1386,6 +1515,24 @@
 
         // Setup event listeners
         function setupEventListeners() {
+            document.getElementById('export-csv').onclick = () => exportCSV();
+            document.getElementById('export-json').onclick = () => exportJSON(false);
+            document.getElementById('import-btn').onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => importJSON(e.target.files[0]);
+                input.click();
+            };
+            document.getElementById('import-csv-btn').onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.csv';
+                input.onchange = (e) => importCSV(e.target.files[0]);
+                input.click();
+            };
+            document.getElementById('share-btn').onclick = () => copyShareLink();
+            document.getElementById('clear-all').onclick = () => clearWatchlist();
             document.getElementById('bulk-apply').onclick = () => {
                 const status = document.getElementById('bulk-status').value;
                 if (status) applyBulkStatus(status);
@@ -1412,6 +1559,7 @@
                 document.getElementById('note-modal').classList.remove('active');
             };
             
+            // Filter event listeners
             document.getElementById('status-filter').onchange = (e) => {
                 currentFilters.status = e.target.value;
                 renderWatchlist();
@@ -1421,6 +1569,7 @@
                 renderWatchlist();
             };
             
+            // NEW: Genre filter listener
             const genreFilter = document.getElementById('genre-filter');
             if (genreFilter) {
                 genreFilter.onchange = (e) => {
@@ -1429,6 +1578,7 @@
                 };
             }
             
+            // NEW: Platform filter listener
             const platformFilter = document.getElementById('platform-filter');
             if (platformFilter) {
                 platformFilter.onchange = (e) => {
@@ -1451,6 +1601,7 @@
                 renderWatchlist();
             };
             
+            // NEW: Urgent/Expiring toggle listener
             const urgentToggle = document.getElementById('urgent-toggle');
             if (urgentToggle) {
                 urgentToggle.onchange = (e) => {
@@ -1459,6 +1610,7 @@
                 };
             }
             
+            // NEW: Bulk rating auto-apply listener
             const bulkRatingSelect = document.getElementById('bulk-rating');
             if (bulkRatingSelect) {
                 bulkRatingSelect.onchange = (e) => {
@@ -1472,6 +1624,7 @@
                 };
             }
             
+            // Sort listeners
             document.getElementById('sort-by').onchange = (e) => {
                 currentSort.field = e.target.value;
                 renderWatchlist();
@@ -1485,8 +1638,10 @@
                 renderWatchlist();
             };
             
+            // Search
             document.getElementById('nav-search').oninput = (e) => {
                 const searchTerm = e.target.value.toLowerCase();
+                // Also search in notes
                 const filtered = watchlist.filter(item => 
                     item.title.toLowerCase().includes(searchTerm) || 
                     (item.notes && item.notes.toLowerCase().includes(searchTerm))
@@ -1499,6 +1654,7 @@
                 }
             };
             
+            // Theme toggle
             document.getElementById('theme-toggle').onclick = () => {
                 const root = document.documentElement;
                 const currentBg = getComputedStyle(root).getPropertyValue('--bg-primary').trim();
@@ -1519,6 +1675,7 @@
                 }
             };
             
+            // Mobile menu
             document.getElementById('mobile-menu-btn').onclick = () => {
                 document.getElementById('nav-links').classList.toggle('active');
             };
