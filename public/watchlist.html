@@ -1,463 +1,1704 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Watchlist — Track Movies, TV &amp; Episodes | FlashStream</title>
-    <meta name="description" content="Manage your personal tracking watchlist with episodic counters, custom notes, and smart layout curation filters on FlashStream.">
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icons/icon-192.png" type="image/png">
-    <meta name="theme-color" content="#e50914">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        accent: '#e50914'
-                    }
-                }
-            }
-        };
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Watchlist Manager - Track Your Movies & TV Shows</title>
     <style>
-        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        .skeleton {
-            background: linear-gradient(90deg, #1f1f29 25%, #2a2a38 50%, #1f1f29 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
-        .status-pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
-        [hidden] { display: none !important; }
-        .star-filled { color: #facc15; } .star-empty { color: #4b5563; }
-        .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
-        @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        .progress-bar { height: 4px; border-radius: 2px; background: #374151; overflow: hidden; }
-        .progress-fill { height: 100%; border-radius: 2px; background: #e50914; width: 0%; transition: width 0.3s ease; }
-        #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+
+        :root {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-card: #2a2a2a;
+            --bg-hover: #353535;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent: #00C4BC;
+            --accent-hover: #00C4BC;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #3498db;
+            --danger: #e74c3c;
+            --border: #404040;
+            --star: #ffd700;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        #nav-search {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 20px;
+            width: 250px;
+        }
+
+        .theme-toggle, .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        .region-badge {
+            background: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .stat-card {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .filter-group, .sort-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select, input, button {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            background: var(--accent);
+            border: none;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-left: auto;
+        }
+
+        /* Watchlist Grid */
+        .watchlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card */
+        .watchlist-card {
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .watchlist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .card-poster {
+            position: relative;
+            aspect-ratio: 2/3;
+            overflow: hidden;
+        }
+
+        .card-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-poster {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .badge-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .lifecycle-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .lifecycle-badge.new { background: var(--success); color: #000; }
+        .lifecycle-badge.upcoming { background: var(--info); color: #fff; }
+        .lifecycle-badge.returning { background: var(--warning); color: #000; }
+        .lifecycle-badge.ended { background: var(--danger); color: #fff; }
+
+        .content-advisory {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .card-actions button {
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .card-info {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-selector {
+            width: 100%;
+            margin: 0.5rem 0;
+            font-size: 0.8rem;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 0.25rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
+        }
+
+        .star-svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: var(--star);
+            stroke-width: 1.5;
+            transition: fill 0.2s;
+        }
+
+        .star-svg.filled {
+            fill: var(--star);
+        }
+
+        .hype-meter {
+            margin: 0.5rem 0;
+        }
+
+        .hype-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .hype-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), var(--warning), var(--accent));
+            transition: width 0.3s;
+        }
+
+        .hype-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .episode-tracker {
+            margin: 0.5rem 0;
+        }
+
+        .episode-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .episode-controls button {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .note-preview {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Smart Lists */
+        .smart-lists-section {
+            margin-bottom: 2rem;
+        }
+
+        .smart-lists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .smart-list-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .smart-list-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .smart-list-add {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* Continue Watching */
+        .continue-watching-section {
+            margin-bottom: 2rem;
+        }
+
+        .continue-watching-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .continue-card {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .continue-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Recommendations */
+        .recommendations-section {
+            margin-bottom: 2rem;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+            }
+            .nav-links.active {
+                display: flex;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .bulk-actions {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .checkbox-select {
+            position: absolute;
+            top: 10px;
+            right: 50px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
     </style>
 </head>
-<body class="bg-black text-gray-100 min-h-screen">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
-
-    <!-- MAIN NAVIGATION -->
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-            <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-                <span class="text-accent text-2xl" aria-hidden="true">◈</span>
-                <span class="hidden sm:block">FlashStream</span>
-            </a>
-            <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-                <div class="relative">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off" aria-label="Search metadata catalogs">
-                </div>
-                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+<body>
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <span class="logo-icon"></span>
+            Watchlist Manager
+        </a>
+        <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
+        <div class="nav-links" id="nav-links">
+            <a href="discover.html">Discover</a>
+            <a href="watchlist.html">Watchlist</a>
+            <div class="search-container">
+                <input type="text" id="nav-search" placeholder="Search watchlist...">
             </div>
-            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-                <a href="/watchlist" class="text-white font-semibold">Watchlist</a>
-                <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
-                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-                <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
-            </div>
-            <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
-                </a>
-                <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-                </button>
-                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                </button>
-            </div>
-        </div>
-        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-            <a href="/watchlist" class="text-white font-semibold py-1.5">Watchlist</a>
-            <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+            <button class="theme-toggle" id="theme-toggle">🌙</button>
+            <span class="region-badge" id="region-badge">US</span>
         </div>
     </nav>
 
-    <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
-
-    <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
-        <!-- HEADER -->
-        <div class="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-white/5 pb-6">
-            <div>
-                <h1 class="text-3xl font-bold text-white">My Watchlist</h1>
-                <p class="text-sm text-gray-500 mt-1">Stored locally on your device – secure decentralized layout controls active natively.</p>
-            </div>
-            <div class="flex gap-2 flex-wrap">
-                <button onclick="exportCSV()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Export CSV</button>
-                <button onclick="exportJSON()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Export JSON</button>
-                <label class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors cursor-pointer select-none">
-                    Import JSON <input type="file" id="import-input" accept=".json" class="hidden" onchange="importJSON(event)">
-                </label>
-                <button onclick="copyShareLink()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 border border-white/10 hover:bg-gray-700 text-gray-300 transition-colors">Share Link</button>
-                <button onclick="clearWatchlist()" class="px-4 py-2 text-sm rounded-xl bg-red-900/30 border border-red-800/50 hover:bg-red-900/50 text-red-400 transition-colors">Clear All</button>
+    <div class="container">
+        <div class="header">
+            <h1>My Watchlist</h1>
+            <div class="controls">
+                <button id="export-csv">Export CSV</button>
+                <button id="export-json">Export JSON</button>
+                <button id="import-btn">Import JSON</button>
+                <button id="import-csv-btn">Import CSV</button>
+                <button id="share-btn">Share List</button>
+                <button id="clear-all" class="danger-btn">Clear All</button>
             </div>
         </div>
 
-        <!-- STATS BAR -->
-        <div id="stats-bar" class="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-6"></div>
+        <div class="stats-bar" id="stats-bar"></div>
 
-        <!-- FILTERS & SORTING -->
-        <div class="flex flex-col lg:flex-row gap-3 mb-6">
-            <div class="relative flex-1 max-w-sm" id="wl-search-wrap">
-                <input type="search" id="wl-search" placeholder="Search your watchlist…" class="w-full bg-gray-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent pl-9" oninput="debounceRender()" aria-label="Search watchlist items">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            </div>
-            <div class="flex gap-2 flex-wrap items-center">
-                <select id="filter-status" aria-label="Filter by status" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
-                    <option value="all">All statuses</option>
-                    <option value="want_to_watch">Want to Watch</option>
+        <div class="controls">
+            <div class="filter-group">
+                <select id="status-filter">
+                    <option value="all">All Statuses</option>
+                    <option value="planning">Planning</option>
                     <option value="watching">Watching</option>
-                    <option value="finished">Finished</option>
+                    <option value="completed">Completed</option>
+                    <option value="on-hold">On Hold</option>
                     <option value="dropped">Dropped</option>
-                    <option value="rewatch">Rewatch</option>
-                    <option value="favorites">Favorites</option>
+                    <option value="watchlist">Watchlist</option>
                 </select>
-                <select id="filter-type" aria-label="Filter by type" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
-                    <option value="all">All types</option>
+                <select id="type-filter">
+                    <option value="all">All Types</option>
                     <option value="movie">Movies</option>
                     <option value="tv">TV Shows</option>
                 </select>
-                <select id="filter-genre" aria-label="Filter by genre" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
-                    <option value="all">All genres</option>
+                <select id="genre-filter">
+                    <option value="all">All Genres</option>
                 </select>
-                <select id="filter-platform" aria-label="Filter by streaming platform" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
-                    <option value="all">All platforms</option>
+                <select id="platform-filter">
+                    <option value="all">All Platforms</option>
                 </select>
-                <select id="sort-by" aria-label="Sort by" class="bg-gray-900 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="renderWatchlist()">
-                    <option value="date_added">Date Added (newest)</option>
-                    <option value="title">Title A-Z</option>
-                    <option value="rating">My Rating</option>
+                <input type="date" id="date-added-from" placeholder="Added from">
+                <input type="date" id="date-added-to" placeholder="Added to">
+                <input type="range" id="rating-min" min="0" max="5" step="0.5" value="0">
+                <span id="rating-min-label">Min Rating: 0</span>
+            </div>
+            <div class="sort-group">
+                <select id="sort-by">
+                    <option value="date_added">Date Added</option>
+                    <option value="title">Title</option>
+                    <option value="rating">Rating</option>
                     <option value="date_watched">Date Watched</option>
-                    <option value="time_remaining">Remaining Time (TV)</option>
+                    <option value="time_remaining">Time Remaining</option>
                 </select>
-                <label class="flex items-center gap-2 text-xs text-gray-400 font-medium cursor-pointer ml-2 select-none">
-                    <input type="checkbox" id="toggle-urgent" class="accent-red-600 rounded" onchange="renderWatchlist()"> Expiring Soon Only
+                <button id="sort-asc">↑ ASC</button>
+                <button id="sort-desc">↓ DESC</button>
+                <label>
+                    <input type="checkbox" id="urgent-toggle"> Expiring Soon Only
                 </label>
             </div>
-        </div>
-
-        <!-- BULK ACTION BAR -->
-        <div id="bulk-bar" hidden class="flex items-center gap-3 mb-4 p-3 rounded-xl bg-gray-900 border border-white/10 flex-wrap">
-            <span id="bulk-count" class="text-sm text-gray-400"></span>
-            <select id="bulk-status-select" aria-label="Bulk change status" class="bg-gray-800 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-gray-300 focus:outline-none">
-                <option value="">Change status…</option>
-                <option value="want_to_watch">Want to Watch</option>
-                <option value="watching">Watching</option>
-                <option value="finished">Finished</option>
-                <option value="dropped">Dropped</option>
-                <option value="rewatch">Rewatch</option>
-                <option value="favorites">Favorites</option>
-            </select>
-            <button onclick="applyBulkStatus()" class="px-3 py-1.5 text-xs rounded-lg bg-accent text-white hover:bg-red-700 transition-colors">Apply</button>
-            <button onclick="deleteBulkSelected()" class="px-3 py-1.5 text-xs rounded-lg bg-red-900/40 border border-red-700/40 text-red-400 hover:bg-red-900/60 transition-colors">Delete Selected</button>
-            <button onclick="clearSelection()" class="px-3 py-1.5 text-xs rounded-lg bg-gray-700 text-gray-300 hover:bg-gray-600 transition-colors">Clear</button>
-        </div>
-
-        <!-- CONTINUE WATCHING SECTION -->
-        <div id="continue-section" hidden class="mb-10">
-            <h2 class="text-xl font-bold text-white mb-4">Continue Watching</h2>
-            <div id="continue-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-
-        <!-- MAIN GRID -->
-        <p id="results-info" class="text-sm text-gray-500 mb-4"></p>
-        <div id="watchlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4" role="list"></div>
-
-        <!-- EMPTY STATE -->
-        <div id="empty-state" hidden class="text-center py-24">
-            <div class="text-6xl mb-4">📋</div>
-            <h2 class="text-xl font-semibold text-white mb-2">Your watchlist is empty</h2>
-            <p class="text-gray-400 mb-6">Start adding movies and TV shows to track what you want to watch.</p>
-            <a href="/discover" class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors">Browse titles</a>
-        </div>
-
-        <!-- SMART LISTS -->
-        <div id="smart-lists-section" class="mt-12">
-            <h2 class="text-xl font-bold text-white mb-4">Smart Lists</h2>
-            <div id="smart-lists-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-        </div>
-    </main>
-
-    <!-- NOTE MODAL -->
-    <div id="note-modal" hidden class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" role="dialog">
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Notes</h3>
-            <textarea id="note-textarea" rows="4" placeholder="Add your notes…" class="w-full bg-black border border-white/10 rounded-xl px-4 py-3 text-sm text-gray-300 focus:outline-none focus:border-accent resize-none mb-4"></textarea>
-            <div class="flex gap-3 justify-end">
-                <button onclick="closeNoteModal()" class="px-4 py-2 text-sm rounded-xl bg-gray-800 text-gray-400 hover:bg-gray-700 transition-colors">Cancel</button>
-                <button onclick="saveNote()" class="px-4 py-2 text-sm rounded-xl bg-accent text-white hover:bg-red-700 transition-colors">Save</button>
+            <div class="bulk-actions">
+                <span>Bulk:</span>
+                <select id="bulk-status">
+                    <option value="">Change Status</option>
+                    <option value="planning">Planning</option>
+                    <option value="watching">Watching</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="bulk-rating">
+                    <option value="">Set Rating</option>
+                    <option value="1">1 Star</option>
+                    <option value="2">2 Stars</option>
+                    <option value="3">3 Stars</option>
+                    <option value="4">4 Stars</option>
+                    <option value="5">5 Stars</option>
+                </select>
+                <button id="bulk-note-btn">Add Note</button>
+                <button id="bulk-delete">Delete Selected</button>
+                <button id="bulk-apply">✓ Apply Status</button>
             </div>
+        </div>
+
+        <div class="continue-watching-section" id="continue-watching-section"></div>
+
+        <div class="smart-lists-section" id="smart-lists-section"></div>
+
+        <div class="recommendations-section" id="recommendations-section"></div>
+
+        <div class="watchlist-grid" id="watchlist-grid"></div>
+    </div>
+
+    <div class="modal" id="note-modal">
+        <div class="modal-content">
+            <h3>Add/Edit Note</h3>
+            <textarea id="note-text" rows="4" placeholder="Write your notes here..."></textarea>
+            <button id="save-note">Save Note</button>
+            <button id="close-modal">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="bulk-note-modal">
+        <div class="modal-content">
+            <h3>Add Note to Selected Items</h3>
+            <textarea id="bulk-note-text" rows="4" placeholder="Write note for all selected items..."></textarea>
+            <button id="save-bulk-note">Add Note</button>
+            <button id="close-bulk-modal">Cancel</button>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURATION ====================
-        const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
-        const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        // Percent-encoded NO_POSTER – no single quotes, safe for onerror
-        const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22180%22%20viewBox%3D%220%200%20120%20180%22%3E%3Crect%20width%3D%22120%22%20height%3D%22180%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
-        const STATUS_LABELS = { want_to_watch:'Want to Watch', watching:'Watching', finished:'Finished', dropped:'Dropped', rewatch:'Rewatch', favorites:'Favorites' };
-        const STATUS_COLOURS = { want_to_watch:'bg-blue-900/40 text-blue-300', watching:'bg-yellow-900/40 text-yellow-300', finished:'bg-green-900/40 text-green-300', dropped:'bg-red-900/40 text-red-300', rewatch:'bg-purple-900/40 text-purple-300', favorites:'bg-pink-900/40 text-pink-300' };
-        function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
+        // Storage keys
+        const STORAGE_KEY = 'watchlist_manager';
+        
+        // Status cycle
+        const STATUS_CYCLE = ['watchlist', 'planning', 'watching', 'completed', 'on-hold', 'dropped'];
+        const STATUS_NAMES = {
+            'watchlist': 'Watchlist',
+            'planning': 'Planning',
+            'watching': 'Watching',
+            'completed': 'Completed',
+            'on-hold': 'On Hold',
+            'dropped': 'Dropped'
+        };
 
-        let selectedIds = new Set();
-        let editingNoteId = null;
-        let renderDebounce = null;
+        // Global state
+        let watchlist = [];
+        let selectedItems = new Set();
+        let currentNoteItem = null;
+        let currentSort = { field: 'date_added', order: 'desc' };
+        let currentFilters = {
+            status: 'all',
+            type: 'all',
+            genre: 'all',
+            platform: 'all',
+            dateFrom: null,
+            dateTo: null,
+            minRating: 0,
+            urgentOnly: false
+        };
 
-        function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
-        function saveWL(list) { localStorage.setItem('watchlist', JSON.stringify(list)); }
-
-        // ==================== STATS ====================
-        function renderStats() {
-            const list = getWL();
-            const counts = { all: list.length, want_to_watch:0, watching:0, finished:0, dropped:0, rewatch:0, favorites:0 };
-            list.forEach(i => { if (counts[i.status] !== undefined) counts[i.status]++; });
-            const items = [
-                { key:'all', label:'Total', colour:'text-white' },
-                { key:'want_to_watch', label:'Want', colour:'text-blue-400' },
-                { key:'watching', label:'Watching', colour:'text-yellow-400' },
-                { key:'finished', label:'Finished', colour:'text-green-400' },
-                { key:'favorites', label:'Favs', colour:'text-pink-400' },
-                { key:'dropped', label:'Dropped', colour:'text-red-400' }
-            ];
-            const bar = document.getElementById('stats-bar');
-            if (bar) bar.innerHTML = items.map(it => `<button onclick="filterByStatus('${it.key}')" class="text-center p-3 rounded-xl bg-gray-900 border border-white/10 hover:border-white/25 transition-all cursor-pointer"><p class="text-2xl font-bold ${it.colour}">${counts[it.key]}</p><p class="text-[11px] text-gray-500 font-medium mt-0.5">${it.label}</p></button>`).join('');
+        // Load watchlist from localStorage
+        function loadWatchlist() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    watchlist = JSON.parse(stored);
+                } else {
+                    watchlist = [];
+                }
+                renderAll();
+            } catch (e) {
+                console.error('Error loading watchlist:', e);
+                showToastNotification('Error loading watchlist', 'error');
+                watchlist = [];
+                renderAll();
+            }
         }
-        function filterByStatus(statusKey) { document.getElementById('filter-status').value = statusKey; renderWatchlist(); }
-        function debounceRender() { clearTimeout(renderDebounce); renderDebounce = setTimeout(renderWatchlist, 250); }
 
-        // ==================== POPULATE FILTERS ====================
-        function populateFilters() {
-            const list = getWL();
-            const region = localStorage.getItem('user_region') || 'US';
-            const genresSet = new Map();
-            const platformsSet = new Map();
-            list.forEach(item => {
-                (item.genre_ids || []).forEach(gid => { if (!genresSet.has(gid)) genresSet.set(gid, item.genres?.find(g=>g.id===gid)?.name || gid); });
-                const providers = item.watch_providers?.[region]?.flatrate || [];
-                providers.forEach(p => { if (!platformsSet.has(p.provider_id)) platformsSet.set(p.provider_id, p.provider_name); });
+        // Save watchlist to localStorage
+        function saveWatchlist() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist));
+                trackB2BEvent('watchlist_save', { count: watchlist.length });
+                renderAll();
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showToastNotification('Storage quota exceeded. Please export and clear some items.', 'error');
+                } else {
+                    showToastNotification('Error saving watchlist', 'error');
+                }
+            }
+        }
+
+        // B2B Tracking function
+        function trackB2BEvent(eventName, eventData = {}) {
+            const trackingData = {
+                event: eventName,
+                timestamp: new Date().toISOString(),
+                user_id: localStorage.getItem('user_id') || 'anonymous',
+                ...eventData
+            };
+            console.log('[B2B Track]', trackingData);
+            
+            // Send to analytics endpoint if available
+            if (window.sendAnalytics) {
+                window.sendAnalytics(trackingData);
+            } else {
+                // Store for later sending
+                let events = JSON.parse(localStorage.getItem('b2b_events') || '[]');
+                events.push(trackingData);
+                localStorage.setItem('b2b_events', JSON.stringify(events.slice(-100)));
+            }
+        }
+
+        // Add to watchlist
+        function addToWatchlist(item) {
+            if (!watchlist.find(w => w.id === item.id)) {
+                watchlist.unshift({
+                    ...item,
+                    status: 'watchlist',
+                    user_rating: 0,
+                    notes: '',
+                    episodes_watched: 0,
+                    date_added: new Date().toISOString(),
+                    date_watched: null
+                });
+                saveWatchlist();
+                trackB2BEvent('watchlist_add', { item_id: item.id, title: item.title });
+                showToastNotification(`Added "${item.title}" to watchlist`);
+            }
+        }
+
+        // Remove from watchlist
+        function removeItem(id) {
+            const item = watchlist.find(w => w.id === id);
+            trackB2BEvent('watchlist_remove', { item_id: id, title: item?.title });
+            watchlist = watchlist.filter(w => w.id !== id);
+            selectedItems.delete(id);
+            saveWatchlist();
+            showToastNotification('Item removed from watchlist');
+        }
+
+        // Change status
+        function changeStatus(id, newStatus) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                const oldStatus = item.status;
+                item.status = newStatus;
+                if (newStatus === 'completed' && !item.date_watched) {
+                    item.date_watched = new Date().toISOString();
+                }
+                saveWatchlist();
+                trackB2BEvent('watchlist_status_change', { 
+                    item_id: id, 
+                    title: item.title,
+                    old_status: oldStatus,
+                    new_status: newStatus
+                });
+                showToastNotification(`Status changed to ${STATUS_NAMES[newStatus]}`);
+            }
+        }
+
+        // Set rating
+        function setRating(id, rating) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                item.user_rating = rating;
+                saveWatchlist();
+                trackB2BEvent('watchlist_rating_change', { 
+                    item_id: id, 
+                    title: item.title,
+                    rating: rating 
+                });
+                showToastNotification(`Rating set to ${rating} stars`);
+            }
+        }
+
+        // Save note
+        function saveNote(id, note) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                item.notes = note;
+                saveWatchlist();
+                trackB2BEvent('watchlist_note_save', { 
+                    item_id: id, 
+                    title: item.title,
+                    note_length: note?.length || 0 
+                });
+                showToastNotification('Note saved');
+            }
+        }
+
+        // Increment episode
+        function incrementEpisode(id, delta) {
+            const item = watchlist.find(w => w.id === id);
+            if (item && item.type === 'tv') {
+                const newCount = Math.max(0, Math.min(item.total_episodes || Infinity, (item.episodes_watched || 0) + delta));
+                const oldCount = item.episodes_watched;
+                item.episodes_watched = newCount;
+                
+                if (newCount >= (item.total_episodes || Infinity) && item.status !== 'completed') {
+                    item.status = 'completed';
+                    item.date_watched = new Date().toISOString();
+                } else if (newCount > 0 && item.status === 'watchlist') {
+                    item.status = 'watching';
+                }
+                
+                saveWatchlist();
+                trackB2BEvent('watchlist_episode_change', { 
+                    item_id: id, 
+                    title: item.title,
+                    delta: delta,
+                    old_count: oldCount,
+                    new_count: newCount
+                });
+                showToastNotification(`${delta > 0 ? '+' : ''}${delta} episode${Math.abs(delta) !== 1 ? 's' : ''}`);
+            }
+        }
+
+        // Export CSV with notes
+        function exportCSV() {
+            const headers = ['Title', 'Type', 'Status', 'Rating', 'Notes', 'Date Added', 'Date Watched', 'Episodes Watched', 'Total Episodes'];
+            const rows = watchlist.map(item => [
+                item.title,
+                item.type,
+                STATUS_NAMES[item.status] || item.status,
+                item.user_rating,
+                item.notes || '',
+                item.date_added,
+                item.date_watched || '',
+                item.episodes_watched || 0,
+                item.total_episodes || ''
+            ]);
+            
+            const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `watchlist_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            trackB2BEvent('watchlist_export_csv', { count: watchlist.length });
+            showToastNotification('CSV exported successfully');
+        }
+
+        // Export JSON (including Trakt format option)
+        function exportJSON(traktFormat = false) {
+            let data;
+            if (traktFormat) {
+                data = watchlist.map(item => ({
+                    ids: { trakt: item.id, imdb: item.imdb_id },
+                    title: item.title,
+                    year: item.year,
+                    type: item.type,
+                    status: item.status,
+                    rating: item.user_rating,
+                    notes: item.notes,
+                    watched: item.status === 'completed',
+                    episodes_watched: item.episodes_watched
+                }));
+            } else {
+                data = watchlist;
+            }
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `watchlist_${traktFormat ? 'trakt_' : ''}${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            trackB2BEvent('watchlist_export_json', { count: watchlist.length, trakt_format: traktFormat });
+            showToastNotification('JSON exported successfully');
+        }
+
+        // Import JSON
+        function importJSON(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        watchlist = [...watchlist, ...imported];
+                        saveWatchlist();
+                        trackB2BEvent('watchlist_import_json', { count: imported.length });
+                        showToastNotification(`Imported ${imported.length} items`);
+                    } else {
+                        throw new Error('Invalid format');
+                    }
+                } catch (error) {
+                    showToastNotification('Invalid JSON file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Import CSV
+        function importCSV(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n');
+                    const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                    
+                    const imported = [];
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        const values = lines[i].split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                        const item = {};
+                        headers.forEach((header, idx) => {
+                            item[header.toLowerCase().replace(/\s/g, '_')] = values[idx];
+                        });
+                        
+                        if (item.title) {
+                            imported.push({
+                                id: Date.now() + i + Math.random(),
+                                title: item.title,
+                                type: item.type === 'tv' ? 'tv' : 'movie',
+                                status: item.status || 'watchlist',
+                                user_rating: parseFloat(item.rating) || 0,
+                                notes: item.notes || '',
+                                date_added: new Date().toISOString(),
+                                episodes_watched: parseInt(item.episodes_watched) || 0,
+                                total_episodes: parseInt(item.total_episodes) || 0
+                            });
+                        }
+                    }
+                    
+                    if (imported.length > 0) {
+                        watchlist = [...watchlist, ...imported];
+                        saveWatchlist();
+                        trackB2BEvent('watchlist_import_csv', { count: imported.length });
+                        showToastNotification(`Imported ${imported.length} items from CSV`);
+                    }
+                } catch (error) {
+                    showToastNotification('Invalid CSV file', 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Clear all watchlist
+        function clearWatchlist() {
+            if (confirm('WARNING: This will delete your ENTIRE watchlist. Are you absolutely sure?')) {
+                trackB2BEvent('watchlist_clear_all', { count: watchlist.length });
+                watchlist = [];
+                selectedItems.clear();
+                saveWatchlist();
+                showToastNotification('Watchlist cleared');
+            }
+        }
+
+        // Bulk actions
+        function applyBulkStatus(status) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            itemsToUpdate.forEach(item => {
+                item.status = status;
+                if (status === 'completed' && !item.date_watched) {
+                    item.date_watched = new Date().toISOString();
+                }
             });
-            const genreSelect = document.getElementById('filter-genre');
-            if (genreSelect) {
-                genreSelect.innerHTML = '<option value="all">All genres</option>';
-                genresSet.forEach((name, id) => { genreSelect.innerHTML += `<option value="${id}">${escapeHtml(name)}</option>`; });
+            saveWatchlist();
+            trackB2BEvent('watchlist_bulk_status', { count: itemsToUpdate.length, status });
+            showToastNotification(`Updated ${itemsToUpdate.length} items to ${STATUS_NAMES[status]}`);
+        }
+
+        function applyBulkRating(rating) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            itemsToUpdate.forEach(item => {
+                item.user_rating = parseFloat(rating);
+            });
+            saveWatchlist();
+            trackB2BEvent('watchlist_bulk_rating', { count: itemsToUpdate.length, rating });
+            showToastNotification(`Set rating for ${itemsToUpdate.length} items`);
+        }
+
+        function applyBulkNote(note) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            itemsToUpdate.forEach(item => {
+                item.notes = (item.notes ? item.notes + '\n\n' : '') + note;
+            });
+            saveWatchlist();
+            trackB2BEvent('watchlist_bulk_note', { count: itemsToUpdate.length });
+            showToastNotification(`Added note to ${itemsToUpdate.length} items`);
+        }
+
+        function deleteBulkSelected() {
+            const count = selectedItems.size;
+            if (confirm(`Delete ${count} selected item${count !== 1 ? 's' : ''}?`)) {
+                trackB2BEvent('watchlist_bulk_delete', { count });
+                watchlist = watchlist.filter(item => !selectedItems.has(item.id));
+                selectedItems.clear();
+                saveWatchlist();
+                showToastNotification(`Deleted ${count} items`);
             }
-            const platformSelect = document.getElementById('filter-platform');
-            if (platformSelect) {
-                platformSelect.innerHTML = '<option value="all">All platforms</option>';
-                platformsSet.forEach((name, id) => { platformSelect.innerHTML += `<option value="${id}">${escapeHtml(name)}</option>`; });
+        }
+
+        // Calculate hype score (mock - would call API)
+        function getHypeScore(item) {
+            // Mock hype score based on genre and rating
+            let score = 50;
+            if (item.user_rating > 0) score += item.user_rating * 8;
+            if (item.type === 'tv') score += 10;
+            score += Math.random() * 20;
+            return Math.min(100, Math.max(0, Math.floor(score)));
+        }
+
+        // Get lifecycle badge
+        function getLifecycleBadge(item) {
+            const currentYear = new Date().getFullYear();
+            if (item.year > currentYear) return { type: 'upcoming', text: 'UPCOMING' };
+            if (item.year === currentYear) return { type: 'new', text: 'NEW' };
+            if (item.type === 'tv' && item.status === 'watching') return { type: 'returning', text: 'RETURNING' };
+            if (item.status === 'completed') return { type: 'ended', text: 'ENDED' };
+            return null;
+        }
+
+        // Get content advisory
+        function getContentAdvisory(item) {
+            // Mock advisory based on genre
+            const adultGenres = ['Horror', 'Thriller', 'Crime'];
+            if (item.genres && adultGenres.some(g => item.genres.includes(g))) {
+                return 'Adult Content';
             }
+            return null;
         }
 
-        // ==================== VIEWING HISTORY SYNC ====================
-        function updateViewingHistory(item) {
-            if (item.type !== 'tv') return;
-            const history = (() => { try { return JSON.parse(localStorage.getItem('viewing_history') || '[]'); } catch { return []; } })();
-            const idx = history.findIndex(h => String(h.tmdb_id) === String(item.tmdb_id));
-            const entry = { tmdb_id: item.tmdb_id, type: 'tv', title: item.title, poster_path: item.poster_path, progress_season: item.progress_season || 1, progress_episode: item.progress_episode || 0, completed: item.status === 'finished', last_updated: Date.now() };
-            if (idx > -1) history[idx] = entry; else history.push(entry);
-            localStorage.setItem('viewing_history', JSON.stringify(history));
+        // Render stars as SVG
+        function renderStars(rating, itemId) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let starsHtml = '<div class="rating-stars">';
+            
+            for (let i = 1; i <= 5; i++) {
+                const filled = i <= fullStars;
+                const halfFilled = !filled && hasHalfStar && i === fullStars + 1;
+                starsHtml += `
+                    <svg class="star-svg ${filled || halfFilled ? 'filled' : ''}" data-rating="${i}" data-id="${itemId}" viewBox="0 0 24 24" width="20" height="20">
+                        <polygon points="12,17.3 18.2,21 16.1,14.2 22,9.5 14.9,8.9 12,2.5 9.1,8.9 2,9.5 7.9,14.2 5.8,21" fill="${filled || halfFilled ? '#ffd700' : 'none'}" stroke="#ffd700" stroke-width="1.5"/>
+                    </svg>
+                `;
+            }
+            
+            starsHtml += `<span style="font-size:0.7rem; margin-left:0.5rem;">${Math.round(rating * 20)}%</span>`;
+            starsHtml += '</div>';
+            return starsHtml;
         }
 
-        // ==================== EPISODE TRACKING ====================
-        function incrementEpisode(id, offset) {
-            const list = getWL();
-            const idx = list.findIndex(i => String(i.tmdb_id) === String(id));
-            if (idx === -1) return;
-            const item = list[idx];
-            if (item.type !== 'tv') return;
-            let currentEp = item.progress_episode || 0;
-            const totalEp = item.number_of_episodes || 0;
-            let newEp = Math.max(0, currentEp + offset);
-            if (totalEp > 0 && newEp > totalEp) newEp = totalEp;
-            item.progress_episode = newEp;
-            if (newEp === totalEp && totalEp > 0) { item.status = 'finished'; item.date_watched = Date.now(); showToastNotification('Series completed!', 'success'); }
-            else if (item.status !== 'watching' && newEp > 0) { item.status = 'watching'; }
-            saveWL(list);
-            updateViewingHistory(item);
-            renderStats();
-            renderWatchlist();
-            showToastNotification(`Episode ${newEp} of ${totalEp || '?'} logged`, 'info');
-        }
-        function updateProgressBar(item) { const total = item.number_of_episodes || 0; const current = item.progress_episode || 0; return total > 0 ? (current / total) * 100 : 0; }
-
-        // ==================== CARD RENDER ====================
+        // Render card with all features
         function renderCard(item) {
-            const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
-            const sc = STATUS_COLOURS[item.status] || 'bg-gray-700 text-gray-300';
-            const label = STATUS_LABELS[item.status] || item.status;
-            const href = `/movie-detail?id=${item.tmdb_id}&type=${item.type || 'movie'}`;
-            const stars = renderStars(item.user_rating || 0, item.tmdb_id);
-            const isSelected = selectedIds.has(String(item.tmdb_id));
-            let leavingBadge = '';
-            try { const cache = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); if (cache.some(c => String(c.tmdb_id) === String(item.tmdb_id))) leavingBadge = `<span class="absolute top-2 right-2 bg-red-600 text-white text-[9px] px-1.5 py-0.5 font-bold rounded badge-pulse z-10 uppercase">URGENT</span>`; } catch(e) {}
-            const episodeControls = (item.type === 'tv') ? `<div class="border-t border-white/5 px-3 py-2 flex items-center justify-between gap-2"><span class="text-xs text-gray-400 font-mono">Progress: S${item.progress_season || 1} E${item.progress_episode || 0}</span><div class="flex gap-1"><button onclick="incrementEpisode('${item.tmdb_id}', -1)" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-xs flex items-center justify-center font-bold text-gray-300">-</button><button onclick="incrementEpisode('${item.tmdb_id}', 1)" class="w-6 h-6 rounded bg-gray-800 hover:bg-gray-700 text-xs flex items-center justify-center font-bold text-gray-300">+</button></div></div>` : '';
-            const progressBar = (item.type === 'tv' && item.number_of_episodes > 0) ? `<div class="progress-bar mt-2"><div class="progress-fill" style="width: ${updateProgressBar(item)}%"></div></div>` : '';
-            return `<article class="rounded-2xl bg-gray-900 border border-white/10 overflow-hidden flex flex-col relative ${isSelected ? 'ring-2 ring-accent' : ''}" data-id="${item.tmdb_id}" role="listitem">${leavingBadge}<div class="flex gap-3 p-3"><label class="flex-shrink-0 mt-1 select-none"><input type="checkbox" class="item-checkbox accent-red-600 w-4 h-4 mt-0.5 cursor-pointer" data-id="${item.tmdb_id}" ${isSelected ? 'checked' : ''} onchange="toggleSelect('${item.tmdb_id}')" aria-label="Select title for batch actions"></label><a href="${href}" class="flex-shrink-0"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="60" height="90" class="w-14 h-20 object-cover rounded-lg bg-black/40" onerror="handleImgError(this)"></a><div class="flex-1 min-w-0"><a href="${href}" class="font-semibold text-white hover:text-accent transition-colors line-clamp-2 text-sm leading-snug block">${escapeHtml(item.title)}</a><p class="text-xs text-gray-500 mt-0.5">${item.type === 'tv' ? 'TV Series' : 'Movie'}${item.date_added ? ' · Added ' + relativeDate(item.date_added) : ''}</p><span class="status-pill ${sc} mt-1.5">${escapeHtml(label)}</span></div></div>${progressBar}<div class="px-3 pb-2 flex-1 flex flex-col justify-end"><div class="flex items-center justify-between gap-2">${stars}<div class="flex gap-1"><button onclick="openNoteModal('${item.tmdb_id}')" class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700 transition-colors" title="Edit manual annotation logs">${item.notes ? 'Note' : '+ Note'}</button><button onclick="removeItem('${item.tmdb_id}')" class="text-xs px-2 py-1 rounded-lg bg-gray-800 text-red-400 hover:bg-red-950/40 transition-colors" title="Scrub title from dashboard tracking">✕</button></div></div>${item.notes ? `<p class="text-xs text-gray-500 mt-1.5 line-clamp-2 italic leading-relaxed">"${escapeHtml(item.notes)}"</p>` : ''}</div><div class="border-t border-white/5 px-3 py-2"><select onchange="changeStatus('${item.tmdb_id}', this.value)" class="w-full bg-gray-800 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-accent">${Object.entries(STATUS_LABELS).map(([k,v]) => `<option value="${k}" ${k===item.status?'selected':''}>${v}</option>`).join('')}</select></div>${episodeControls}</article>`;
+            const hypeScore = getHypeScore(item);
+            const lifecycleBadge = getLifecycleBadge(item);
+            const advisory = getContentAdvisory(item);
+            const isSelected = selectedItems.has(item.id);
+            const progressPercent = item.type === 'tv' && item.total_episodes ? 
+                ((item.episodes_watched || 0) / item.total_episodes) * 100 : 0;
+            
+            return `
+                <div class="watchlist-card" data-id="${item.id}">
+                    <div class="card-poster">
+                        ${item.poster ? 
+                            `<img src="${item.poster}" alt="${item.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">` : 
+                            `<div class="no-poster"></div>`
+                        }
+                        <div class="badge-container">
+                            ${lifecycleBadge ? `<span class="lifecycle-badge ${lifecycleBadge.type}">${lifecycleBadge.text}</span>` : ''}
+                        </div>
+                        ${advisory ? `<div class="content-advisory">${advisory}</div>` : ''}
+                        <div class="card-actions">
+                            <button onclick="toggleSelect('${item.id}')" class="checkbox-select">${isSelected ? '✓' : '□'}</button>
+                            <button onclick="if(confirm('Delete?')) removeItem('${item.id}')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-meta">${item.year || 'N/A'} • ${item.type === 'tv' ? 'TV Show' : 'Movie'}</div>
+                        
+                        <select class="status-selector" onchange="changeStatus('${item.id}', this.value)">
+                            ${STATUS_CYCLE.map(s => `<option value="${s}" ${item.status === s ? 'selected' : ''}>${STATUS_NAMES[s]}</option>`).join('')}
+                        </select>
+                        
+                        ${renderStars(item.user_rating || 0, item.id)}
+                        
+                        <div class="hype-meter">
+                            <div class="hype-bar">
+                                <div class="hype-fill" style="width: ${hypeScore}%"></div>
+                            </div>
+                            <div class="hype-label">Hype Score: ${hypeScore}%</div>
+                        </div>
+                        
+                        ${item.type === 'tv' ? `
+                            <div class="episode-tracker">
+                                <div class="episode-controls">
+                                    <button onclick="incrementEpisode('${item.id}', -1)">-</button>
+                                    <span>Episodes: ${item.episodes_watched || 0} / ${item.total_episodes || '?'}</span>
+                                    <button onclick="incrementEpisode('${item.id}', 1)">+</button>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${item.notes ? `<div class="note-preview" onclick="openNoteModal('${item.id}')">${item.notes.substring(0, 50)}${item.notes.length > 50 ? '...' : ''}</div>` : 
+                            `<div class="note-preview" onclick="openNoteModal('${item.id}')">Add note</div>`}
+                    </div>
+                </div>
+            `;
         }
-        function renderStars(rating, id) { return `<div class="flex gap-0.5 items-center">${[1,2,3,4,5].map(n => `<button onclick="setRating('${id}',${n})" class="text-lg leading-none ${rating>=n ? 'star-filled' : 'star-empty'} hover:text-yellow-400 transition-all focus:outline-none" aria-label="${n} star${n>1?'s':''}">★</button>`).join('')}</div>`; }
-        function setRating(id, rating) { const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].user_rating = list[idx].user_rating === rating ? 0 : rating; saveWL(list); renderWatchlist(); } }
-        function changeStatus(id, status) { const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].status = status; if (status === 'finished') list[idx].date_watched = Date.now(); saveWL(list); if (list[idx].type === 'tv') updateViewingHistory(list[idx]); renderStats(); renderWatchlist(); showToastNotification(`Status: ${STATUS_LABELS[status]} updated`, 'success'); } }
-        function removeItem(id) { const list = getWL().filter(i => String(i.tmdb_id) !== String(id)); saveWL(list); selectedIds.delete(String(id)); renderStats(); renderWatchlist(); showToastNotification('Removed from tracking profile dashboard', 'info'); }
 
-        // ==================== CONTINUE WATCHING ROW ====================
+        // Render watchlist with filters and sorting
+        function renderWatchlist() {
+            let filtered = [...watchlist];
+            
+            // Apply filters
+            if (currentFilters.status !== 'all') {
+                filtered = filtered.filter(item => item.status === currentFilters.status);
+            }
+            if (currentFilters.type !== 'all') {
+                filtered = filtered.filter(item => item.type === currentFilters.type);
+            }
+            if (currentFilters.genre !== 'all' && currentFilters.genre) {
+                filtered = filtered.filter(item => item.genres && item.genres.includes(currentFilters.genre));
+            }
+            if (currentFilters.platform !== 'all' && currentFilters.platform) {
+                filtered = filtered.filter(item => item.platform === currentFilters.platform);
+            }
+            if (currentFilters.minRating > 0) {
+                filtered = filtered.filter(item => (item.user_rating || 0) >= currentFilters.minRating);
+            }
+            if (currentFilters.dateFrom) {
+                filtered = filtered.filter(item => new Date(item.date_added) >= new Date(currentFilters.dateFrom));
+            }
+            if (currentFilters.dateTo) {
+                filtered = filtered.filter(item => new Date(item.date_added) <= new Date(currentFilters.dateTo));
+            }
+            if (currentFilters.urgentOnly) {
+                // Mock expiring soon logic - would check streaming availability dates
+                filtered = filtered.filter(item => {
+                    // Placeholder: items added more than 30 days ago are "expiring soon"
+                    const daysSinceAdded = (new Date() - new Date(item.date_added)) / (1000 * 60 * 60 * 24);
+                    return daysSinceAdded > 30;
+                });
+            }
+            
+            // Apply sorting
+            filtered.sort((a, b) => {
+                let aVal = a[currentSort.field];
+                let bVal = b[currentSort.field];
+                if (currentSort.field === 'time_remaining') {
+                    aVal = a.type === 'tv' ? ((a.total_episodes || 0) - (a.episodes_watched || 0)) * 45 : 0;
+                    bVal = b.type === 'tv' ? ((b.total_episodes || 0) - (b.episodes_watched || 0)) * 45 : 0;
+                }
+                if (currentSort.field === 'rating') {
+                    aVal = a.user_rating || 0;
+                    bVal = b.user_rating || 0;
+                }
+                if (currentSort.order === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+            
+            const grid = document.getElementById('watchlist-grid');
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="empty-state"><p>Your watchlist is empty</p><p style="font-size:0.9rem; margin-top:0.5rem;">Start adding movies and TV shows to track them!</p></div>`;
+            } else {
+                grid.innerHTML = filtered.map(item => renderCard(item)).join('');
+            }
+            
+            // Add star click handlers
+            document.querySelectorAll('.star-svg').forEach(star => {
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const rating = parseInt(star.dataset.rating);
+                    const id = star.dataset.id;
+                    setRating(id, rating);
+                });
+            });
+        }
+
+        // Render continue watching
         function renderContinueWatching() {
-            const list = getWL();
-            const inProgress = list.filter(i => i.type === 'tv' && i.status === 'watching');
-            const section = document.getElementById('continue-section');
-            const grid = document.getElementById('continue-grid');
-            if (!inProgress.length) { if (section) section.hidden = true; return; }
-            if (section) section.hidden = false;
-            if (grid) {
-                grid.innerHTML = inProgress.slice(0,6).map(item => {
-                    const totalEp = item.number_of_episodes || 0;
-                    const currentEp = item.progress_episode || 0;
-                    const pct = totalEp > 0 ? (currentEp / totalEp) * 100 : 0;
-                    const remaining = totalEp > 0 ? (totalEp - currentEp) * 45 : '?';
-                    const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER;
-                    return `<div class="p-4 rounded-xl bg-gray-900 border border-white/10 flex gap-4 items-center"><a href="/movie-detail?id=${item.tmdb_id}&type=tv" class="flex-shrink-0"><img src="${escapeAttr(poster)}" class="w-12 h-18 object-cover rounded-lg bg-black" alt="" onerror="handleImgError(this)"></a><div class="flex-1 min-w-0"><a href="/movie-detail?id=${item.tmdb_id}&type=tv" class="font-semibold text-white hover:text-accent text-sm block truncate">${escapeHtml(item.title)}</a><p class="text-xs text-gray-500 mt-0.5">Next up: S${item.progress_season || 1} E${currentEp+1}</p><div class="w-full bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-accent h-full rounded-full transition-all" style="width: ${pct}%"></div></div><div class="flex justify-between text-[10px] text-gray-400 mt-1"><span>${Math.round(pct)}% complete</span><span>~${remaining} min left</span></div></div></div>`;
-                }).join('');
+            const watching = watchlist.filter(item => item.status === 'watching' && 
+                (item.type !== 'tv' || (item.episodes_watched || 0) < (item.total_episodes || Infinity)));
+            
+            const section = document.getElementById('continue-watching-section');
+            if (watching.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            section.innerHTML = `
+                <h2>Continue Watching</h2>
+                <div class="continue-watching-grid">
+                    ${watching.map(item => `
+                        <div class="continue-card" onclick="document.getElementById('watchlist-grid').scrollIntoView({behavior:'smooth'}); changeStatus('${item.id}', 'watching')">
+                            <button class="continue-remove" onclick="event.stopPropagation(); incrementEpisode('${item.id}', -1)">✕</button>
+                            <div class="card-info">
+                                <div class="card-title">${item.title}</div>
+                                ${item.type === 'tv' ? `<div>Episodes: ${item.episodes_watched || 0} / ${item.total_episodes || '?'}</div>` : ''}
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${item.type === 'tv' && item.total_episodes ? ((item.episodes_watched || 0) / item.total_episodes) * 100 : 50}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render smart lists with add to watchlist
+        function renderSmartLists() {
+            const smartLists = [
+                { name: 'Trending', condition: (item) => true, limit: 5 },
+                { name: 'Highest Rated', condition: (item) => item.user_rating >= 4, limit: 5 },
+                { name: 'Recently Added', condition: (item) => true, limit: 5, sort: 'date_added' },
+                { name: 'Binge Worthy', condition: (item) => item.type === 'tv' && item.total_episodes > 20, limit: 5 },
+                { name: 'Movie Marathon', condition: (item) => item.type === 'movie' && item.status === 'planning', limit: 5 },
+                { name: 'Need to Finish', condition: (item) => item.status === 'watching', limit: 5 }
+            ];
+            
+            const section = document.getElementById('smart-lists-section');
+            section.innerHTML = `
+                <h2>Smart Lists</h2>
+                <div class="smart-lists-grid">
+                    ${smartLists.map(list => {
+                        let items = [...watchlist].filter(list.condition);
+                        if (list.sort === 'date_added') {
+                            items.sort((a,b) => new Date(b.date_added) - new Date(a.date_added));
+                        } else if (list.name === 'Highest Rated') {
+                            items.sort((a,b) => (b.user_rating || 0) - (a.user_rating || 0));
+                        }
+                        items = items.slice(0, list.limit);
+                        
+                        return `
+                            <div class="smart-list-card" data-list-name="${list.name}">
+                                <div class="card-title">${list.name}</div>
+                                <div class="card-meta">${items.length} items</div>
+                                <div class="smart-list-add" onclick="event.stopPropagation(); addRandomFromList('${list.name}')">+</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.7rem;">
+                                    ${items.slice(0, 3).map(item => item.title).join(', ')}${items.length > 3 ? '...' : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            // Add click tracking
+            document.querySelectorAll('.smart-list-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const listName = card.dataset.listName;
+                    trackB2BEvent('smart_list_click', { list_name: listName });
+                });
+            });
+        }
+
+        // Add random from smart list
+        function addRandomFromList(listName) {
+            showToastNotification(`Add from ${listName} - Feature coming soon!`);
+            trackB2BEvent('smart_list_add_click', { list_name: listName });
+        }
+
+        // Render recommendations
+        async function renderRecommendations() {
+            // Mock recommendations based on watchlist
+            const section = document.getElementById('recommendations-section');
+            if (watchlist.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            // Get genres from watchlist
+            const genres = new Set();
+            watchlist.forEach(item => {
+                if (item.genres) item.genres.forEach(g => genres.add(g));
+            });
+            
+            // Mock recommendations (would call API)
+            const recommendations = [
+                { title: "Dune: Part Two", year: 2024, type: "movie", match: 94 },
+                { title: "The Last of Us", year: 2023, type: "tv", match: 89 },
+                { title: "Oppenheimer", year: 2023, type: "movie", match: 92 },
+                { title: "Succession", year: 2023, type: "tv", match: 87 }
+            ];
+            
+            section.style.display = 'block';
+            section.innerHTML = `
+                <h2>Personalized Recommendations</h2>
+                <div class="recommendations-grid">
+                    ${recommendations.map(rec => `
+                        <div class="smart-list-card" onclick="addRecommendedItem({id: 'rec_${Math.random()}', title: '${rec.title}', year: ${rec.year}, type: '${rec.type}'})">
+                            <div class="card-title">${rec.title}</div>
+                            <div class="card-meta">${rec.year} • ${rec.type === 'tv' ? 'TV' : 'Movie'}</div>
+                            <div class="hype-meter">
+                                <div class="hype-bar">
+                                    <div class="hype-fill" style="width: ${rec.match}%"></div>
+                                </div>
+                                <div class="hype-label">${rec.match}% Match</div>
+                            </div>
+                            <div class="smart-list-add">+</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function addRecommendedItem(item) {
+            addToWatchlist(item);
+        }
+
+        // Render stats
+        function renderStats() {
+            const stats = {};
+            STATUS_CYCLE.forEach(status => { stats[status] = 0; });
+            watchlist.forEach(item => { stats[item.status]++; });
+            
+            const statsHtml = STATUS_CYCLE.map(status => `
+                <div class="stat-card" data-status="${status}">
+                    <div class="stat-count">${stats[status]}</div>
+                    <div class="stat-label">${STATUS_NAMES[status]}</div>
+                </div>
+            `).join('');
+            
+            const totalTime = watchlist.reduce((total, item) => {
+                if (item.type === 'tv' && item.status === 'watching') {
+                    const remaining = (item.total_episodes || 0) - (item.episodes_watched || 0);
+                    return total + (remaining * 45);
+                }
+                return total;
+            }, 0);
+            
+            const hours = Math.floor(totalTime / 60);
+            const minutes = totalTime % 60;
+            
+            document.getElementById('stats-bar').innerHTML = statsHtml + `
+                <div class="stat-card">
+                    <div class="stat-count">${hours}h ${minutes}m</div>
+                    <div class="stat-label">Estimated Time Left</div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.stat-card[data-status]').forEach(card => {
+                card.addEventListener('click', () => {
+                    currentFilters.status = card.dataset.status;
+                    document.getElementById('status-filter').value = card.dataset.status;
+                    renderWatchlist();
+                });
+            });
+        }
+
+        // Open note modal
+        function openNoteModal(id) {
+            currentNoteItem = id;
+            const item = watchlist.find(w => w.id === id);
+            document.getElementById('note-text').value = item?.notes || '';
+            document.getElementById('note-modal').classList.add('active');
+        }
+
+        // Toggle select
+        function toggleSelect(id) {
+            if (selectedItems.has(id)) {
+                selectedItems.delete(id);
+            } else {
+                selectedItems.add(id);
+            }
+            renderWatchlist();
+        }
+
+        // Share link
+        function copyShareLink() {
+            const data = encodeURIComponent(JSON.stringify(watchlist.map(item => ({
+                id: item.id,
+                title: item.title,
+                type: item.type,
+                status: item.status,
+                user_rating: item.user_rating
+            }))));
+            const url = `${window.location.origin}${window.location.pathname}?shared=${data}`;
+            navigator.clipboard.writeText(url);
+            showToastNotification('Share link copied!');
+        }
+
+        // Handle shared list
+        function handleSharedList() {
+            const params = new URLSearchParams(window.location.search);
+            const shared = params.get('shared');
+            if (shared) {
+                try {
+                    const imported = JSON.parse(decodeURIComponent(shared));
+                    if (Array.isArray(imported) && imported.length > 0) {
+                        watchlist = [...watchlist, ...imported];
+                        saveWatchlist();
+                        showToastNotification(`Imported ${imported.length} items from shared link`);
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch(e) {
+                    console.error('Failed to parse shared list');
+                }
             }
         }
 
-        // ==================== MAIN RENDER ====================
-        function renderWatchlist() {
-            let list = getWL();
-            const search = document.getElementById('wl-search').value.trim().toLowerCase();
-            const status = document.getElementById('filter-status').value;
-            const type = document.getElementById('filter-type').value;
-            const genre = document.getElementById('filter-genre').value;
-            const platform = document.getElementById('filter-platform').value;
-            const sortBy = document.getElementById('sort-by').value;
-            const urgentOnly = document.getElementById('toggle-urgent').checked;
-            if (search) list = list.filter(i => i.title?.toLowerCase().includes(search));
-            if (status !== 'all') list = list.filter(i => i.status === status);
-            if (type !== 'all') list = list.filter(i => i.type === type);
-            if (genre !== 'all') list = list.filter(i => (i.genre_ids || []).map(String).includes(genre));
-            if (platform !== 'all') { const region = localStorage.getItem('user_region') || 'US'; list = list.filter(i => (i.watch_providers?.[region]?.flatrate || []).some(p => String(p.provider_id) === platform)); }
-            if (urgentOnly) { try { const cache = JSON.parse(localStorage.getItem('leaving_soon_cache') || '[]'); const urgentIds = new Set(cache.map(c => String(c.tmdb_id))); list = list.filter(i => urgentIds.has(String(i.tmdb_id))); } catch(e) { list = []; } }
-            list.sort((a,b) => {
-                if (sortBy === 'title') return (a.title || '').localeCompare(b.title || '');
-                if (sortBy === 'rating') return (b.user_rating || 0) - (a.user_rating || 0);
-                if (sortBy === 'date_watched') return (b.date_watched || 0) - (a.date_watched || 0);
-                if (sortBy === 'time_remaining') { const remA = a.type === 'tv' ? ((a.number_of_episodes || 12) - (a.progress_episode || 0)) * 45 : 0; const remB = b.type === 'tv' ? ((b.number_of_episodes || 12) - (b.progress_episode || 0)) * 45 : 0; return remB - remA; }
-                return (b.date_added || 0) - (a.date_added || 0);
-            });
-            const info = document.getElementById('results-info'); if (info) info.textContent = `${list.length} title${list.length !== 1 ? 's' : ''} tracked`;
-            const grid = document.getElementById('watchlist-grid'); const empty = document.getElementById('empty-state');
-            if (!list.length) { if (grid) grid.innerHTML = ''; if (empty) empty.hidden = false; renderSmartLists(); renderContinueWatching(); return; }
-            if (empty) empty.hidden = true; if (grid) grid.innerHTML = list.map(renderCard).join('');
-            updateBulkBar(); renderSmartLists(); renderContinueWatching();
+        // Show toast notification
+        function showToastNotification(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
-        // ==================== SMART LISTS ====================
-        function renderSmartLists() {
-            const list = getWL();
-            const smarts = [
-                { title: 'Quick Watch (Under 90 min)', items: list.filter(i => i.status === 'want_to_watch' && i.type === 'movie').slice(0,8), desc: 'Short movies from your Want to Watch backlog' },
-                { title: 'Recently Finished', items: list.filter(i => i.status === 'finished').sort((a,b)=>(b.date_watched||0)-(a.date_watched||0)).slice(0,8), desc: 'Titles you completed most recently' },
-                { title: 'Favorites Portfolio', items: list.filter(i => i.status === 'favorites').slice(0,8), desc: 'Your highly favored entertainment assets' },
-                { title: 'Oldest in Backlog', items: list.filter(i => i.status === 'want_to_watch').sort((a,b)=>(a.date_added||0)-(b.date_added||0)).slice(0,8), desc: 'Curation rows added longest ago' },
-                { title: 'Top Rated by You', items: list.filter(i => i.user_rating).sort((a,b)=>(b.user_rating||0)-(a.user_rating||0)).slice(0,8), desc: 'Your highest evaluated rating indicators' },
-                { title: 'Ready to Rewatch', items: list.filter(i => i.status === 'rewatch').slice(0,8), desc: 'Titles flagged for rewatch cycles' }
-            ].filter(s => s.items.length > 0);
-            const container = document.getElementById('smart-lists-grid');
-            if (!smarts.length) { document.getElementById('smart-lists-section').hidden = true; return; }
-            document.getElementById('smart-lists-section').hidden = false;
-            if (container) container.innerHTML = smarts.map(s => `<div class="p-4 rounded-2xl bg-gray-900 border border-white/10"><h3 class="font-semibold text-white mb-1">${escapeHtml(s.title)}</h3><p class="text-xs text-gray-500 mb-3">${escapeHtml(s.desc)}</p><div class="flex gap-2 overflow-x-auto scrollbar-hide pb-1">${s.items.map(item => { const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER; return `<a href="/movie-detail?id=${item.tmdb_id}&type=${item.type||'movie'}" aria-label="${escapeAttr(item.title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" width="40" height="60" class="w-10 h-14 object-cover rounded-lg hover:scale-105 transition-transform flex-shrink-0" onerror="handleImgError(this)"></a>`; }).join('')}</div></div>`).join('');
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('export-csv').onclick = () => exportCSV();
+            document.getElementById('export-json').onclick = () => exportJSON(false);
+            document.getElementById('import-btn').onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => importJSON(e.target.files[0]);
+                input.click();
+            };
+            document.getElementById('import-csv-btn').onclick = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.csv';
+                input.onchange = (e) => importCSV(e.target.files[0]);
+                input.click();
+            };
+            document.getElementById('share-btn').onclick = () => copyShareLink();
+            document.getElementById('clear-all').onclick = () => clearWatchlist();
+            document.getElementById('bulk-apply').onclick = () => {
+                const status = document.getElementById('bulk-status').value;
+                if (status) applyBulkStatus(status);
+            };
+            document.getElementById('bulk-delete').onclick = () => deleteBulkSelected();
+            document.getElementById('bulk-note-btn').onclick = () => {
+                document.getElementById('bulk-note-modal').classList.add('active');
+            };
+            document.getElementById('save-bulk-note').onclick = () => {
+                const note = document.getElementById('bulk-note-text').value;
+                if (note) applyBulkNote(note);
+                document.getElementById('bulk-note-modal').classList.remove('active');
+                document.getElementById('bulk-note-text').value = '';
+            };
+            document.getElementById('close-bulk-modal').onclick = () => {
+                document.getElementById('bulk-note-modal').classList.remove('active');
+            };
+            document.getElementById('save-note').onclick = () => {
+                const note = document.getElementById('note-text').value;
+                if (currentNoteItem) saveNote(currentNoteItem, note);
+                document.getElementById('note-modal').classList.remove('active');
+            };
+            document.getElementById('close-modal').onclick = () => {
+                document.getElementById('note-modal').classList.remove('active');
+            };
+            
+            // Filter event listeners
+            document.getElementById('status-filter').onchange = (e) => {
+                currentFilters.status = e.target.value;
+                renderWatchlist();
+            };
+            document.getElementById('type-filter').onchange = (e) => {
+                currentFilters.type = e.target.value;
+                renderWatchlist();
+            };
+            
+            // NEW: Genre filter listener
+            const genreFilter = document.getElementById('genre-filter');
+            if (genreFilter) {
+                genreFilter.onchange = (e) => {
+                    currentFilters.genre = e.target.value;
+                    renderWatchlist();
+                };
+            }
+            
+            // NEW: Platform filter listener
+            const platformFilter = document.getElementById('platform-filter');
+            if (platformFilter) {
+                platformFilter.onchange = (e) => {
+                    currentFilters.platform = e.target.value;
+                    renderWatchlist();
+                };
+            }
+            
+            document.getElementById('date-added-from').onchange = (e) => {
+                currentFilters.dateFrom = e.target.value;
+                renderWatchlist();
+            };
+            document.getElementById('date-added-to').onchange = (e) => {
+                currentFilters.dateTo = e.target.value;
+                renderWatchlist();
+            };
+            document.getElementById('rating-min').onchange = (e) => {
+                currentFilters.minRating = parseFloat(e.target.value);
+                document.getElementById('rating-min-label').textContent = `Min Rating: ${currentFilters.minRating}`;
+                renderWatchlist();
+            };
+            
+            // NEW: Urgent/Expiring toggle listener
+            const urgentToggle = document.getElementById('urgent-toggle');
+            if (urgentToggle) {
+                urgentToggle.onchange = (e) => {
+                    currentFilters.urgentOnly = e.target.checked;
+                    renderWatchlist();
+                };
+            }
+            
+            // NEW: Bulk rating auto-apply listener
+            const bulkRatingSelect = document.getElementById('bulk-rating');
+            if (bulkRatingSelect) {
+                bulkRatingSelect.onchange = (e) => {
+                    if (e.target.value && selectedItems.size > 0) {
+                        applyBulkRating(e.target.value);
+                        e.target.value = '';
+                    } else if (e.target.value && selectedItems.size === 0) {
+                        showToastNotification('No items selected', 'warning');
+                        e.target.value = '';
+                    }
+                };
+            }
+            
+            // Sort listeners
+            document.getElementById('sort-by').onchange = (e) => {
+                currentSort.field = e.target.value;
+                renderWatchlist();
+            };
+            document.getElementById('sort-asc').onclick = () => {
+                currentSort.order = 'asc';
+                renderWatchlist();
+            };
+            document.getElementById('sort-desc').onclick = () => {
+                currentSort.order = 'desc';
+                renderWatchlist();
+            };
+            
+            // Search
+            document.getElementById('nav-search').oninput = (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                // Also search in notes
+                const filtered = watchlist.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm) || 
+                    (item.notes && item.notes.toLowerCase().includes(searchTerm))
+                );
+                const grid = document.getElementById('watchlist-grid');
+                if (filtered.length === 0) {
+                    grid.innerHTML = `<div class="empty-state"><p>No matching items found</p></div>`;
+                } else {
+                    grid.innerHTML = filtered.map(item => renderCard(item)).join('');
+                }
+            };
+            
+            // Theme toggle
+            document.getElementById('theme-toggle').onclick = () => {
+                const root = document.documentElement;
+                const currentBg = getComputedStyle(root).getPropertyValue('--bg-primary').trim();
+                if (currentBg === '#121212') {
+                    root.style.setProperty('--bg-primary', '#ffffff');
+                    root.style.setProperty('--bg-secondary', '#f5f5f5');
+                    root.style.setProperty('--bg-card', '#e8e8e8');
+                    root.style.setProperty('--text-primary', '#000000');
+                    root.style.setProperty('--text-secondary', '#666666');
+                    root.style.setProperty('--border', '#cccccc');
+                } else {
+                    root.style.setProperty('--bg-primary', '#121212');
+                    root.style.setProperty('--bg-secondary', '#1e1e1e');
+                    root.style.setProperty('--bg-card', '#2a2a2a');
+                    root.style.setProperty('--text-primary', '#ffffff');
+                    root.style.setProperty('--text-secondary', '#b3b3b3');
+                    root.style.setProperty('--border', '#404040');
+                }
+            };
+            
+            // Mobile menu
+            document.getElementById('mobile-menu-btn').onclick = () => {
+                document.getElementById('nav-links').classList.toggle('active');
+            };
         }
 
-        // ==================== BULK ACTIONS ====================
-        function toggleSelect(id) { if (selectedIds.has(String(id))) selectedIds.delete(String(id)); else selectedIds.add(String(id)); updateBulkBar(); const article = document.querySelector(`[data-id="${id}"]`); if (article) article.classList.toggle('ring-2', selectedIds.has(String(id))); }
-        function updateBulkBar() { const bar = document.getElementById('bulk-bar'); const cnt = document.getElementById('bulk-count'); if (bar && cnt) { bar.hidden = selectedIds.size === 0; cnt.textContent = `${selectedIds.size} selected`; } }
-        function clearSelection() { selectedIds.clear(); document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false); document.querySelectorAll('[data-id]').forEach(art => art.classList.remove('ring-2')); updateBulkBar(); }
-        function applyBulkStatus() { const status = document.getElementById('bulk-status-select').value; if (!status || !selectedIds.size) return; const list = getWL(); selectedIds.forEach(id => { const idx = list.findIndex(i => String(i.tmdb_id) === String(id)); if (idx > -1) { list[idx].status = status; if (status === 'finished') list[idx].date_watched = Date.now(); } }); saveWL(list); clearSelection(); renderStats(); renderWatchlist(); showToastNotification('Batch status metrics updated', 'success'); }
-        function deleteBulkSelected() { if (!selectedIds.size) return; if (!confirm(`Permanently scrub ${selectedIds.size} selected tracking profiles?`)) return; const list = getWL().filter(i => !selectedIds.has(String(i.tmdb_id))); saveWL(list); clearSelection(); renderStats(); renderWatchlist(); showToastNotification('Deleted selected profile indices', 'info'); }
-
-        // ==================== EXPORT / IMPORT / SHARE ====================
-        function exportCSV() { const list = getWL(); if (!list.length) { showToastNotification('Watchlist ledger is empty', 'info'); return; } const rows = [['tmdb_id','type','title','status','user_rating','notes','date_added','date_watched','progress_episode','progress_season']]; list.forEach(i => rows.push([i.tmdb_id, i.type, `"${(i.title || '').replace(/"/g, '""')}"`, i.status, i.user_rating || '', `"${(i.notes || '').replace(/"/g, '""')}"`, i.date_added ? new Date(i.date_added).toISOString().slice(0,10) : '', i.date_watched ? new Date(i.date_watched).toISOString().slice(0,10) : '', i.progress_episode || 0, i.progress_season || 1])); dl('flashstream-watchlist.csv', 'text/csv', rows.map(r => r.join(',')).join('\n')); showToastNotification('CSV profile data bundle downloaded', 'success'); }
-        function exportJSON() { const list = getWL(); if (!list.length) { showToastNotification('Watchlist dataset is empty', 'info'); return; } dl('flashstream-watchlist.json', 'application/json', JSON.stringify(list, null, 2)); showToastNotification('JSON structured preferences backup generated', 'success'); }
-        function importJSON(event) { const fileList = event.target.files; if (!fileList || fileList.length === 0) return; const file = fileList[0]; const reader = new FileReader(); reader.onload = e => { try { const data = JSON.parse(e.target.result); if (!Array.isArray(data)) throw new Error(); const existing = getWL(); const existingIds = new Set(existing.map(i => String(i.tmdb_id))); let added = 0; data.forEach(item => { if (!item.tmdb_id || !item.title) return; if (existingIds.has(String(item.tmdb_id))) return; existing.push({ ...item, tmdb_id: String(item.tmdb_id), date_added: item.date_added || Date.now() }); added++; }); saveWL(existing); renderStats(); renderWatchlist(); showToastNotification(`Successfully synchronized ${added} profile entries`, 'success'); } catch(e) { showToastNotification('Invalid preference JSON ledger document format', 'error'); } event.target.value = ''; }; reader.readAsText(file); }
-        function dl(filename, mime, content) { const a = document.createElement('a'); a.href = `data:${mime};charset=utf-8,${encodeURIComponent(content)}`; a.download = filename; a.click(); }
-        function copyShareLink() { const list = getWL().slice(0,50); const mini = list.map(i => ({ i: i.tmdb_id, t: i.type, n: i.title, p: i.poster_path, s: i.status })); const token = btoa(encodeURIComponent(JSON.stringify(mini))); navigator.clipboard?.writeText(`${location.origin}/watchlist?shared=${token}`).then(() => showToastNotification('Share link token copied to device clipboard', 'success')).catch(() => showToastNotification('Copy URL parameters layout manually', 'info')); }
-        function handleSharedList() { const token = new URLSearchParams(location.search).get('shared'); if (!token) return; try { const decoded = JSON.parse(decodeURIComponent(atob(token))); if (!Array.isArray(decoded)) return; if (!confirm(`Synchronize shared profile watchlist with ${decoded.length} entries?`)) return; const existing = getWL(); const existingIds = new Set(existing.map(i => String(i.tmdb_id))); let added = 0; decoded.forEach(d => { if (existingIds.has(String(d.i))) return; existing.push({ tmdb_id: String(d.i), type: d.t || 'movie', title: d.n || 'Unknown', poster_path: d.p || null, status: d.s || 'want_to_watch', date_added: Date.now() }); added++; }); if (added) { saveWL(existing); renderStats(); renderWatchlist(); showToastNotification(`Imported ${added} custom data rows from share link parameters`, 'success'); } } catch(e) { showToastNotification('Corrupt share parameter validation token phrase', 'error'); } }
-        function clearWatchlist() { if (!confirm('Scrub all matching watchlist records? This trajectory cannot be reversed.')) return; localStorage.removeItem('watchlist'); selectedIds.clear(); renderStats(); renderWatchlist(); showToastNotification('Personal profile tracking backlog completely cleared', 'info'); }
-
-        // ==================== NOTES MODAL ====================
-        function openNoteModal(id) { editingNoteId = id; const item = getWL().find(i => String(i.tmdb_id) === String(id)); document.getElementById('note-textarea').value = item?.notes || ''; document.getElementById('note-modal').hidden = false; setTimeout(() => document.getElementById('note-textarea').focus(), 50); }
-        function closeNoteModal() { document.getElementById('note-modal').hidden = true; editingNoteId = null; }
-        function saveNote() { if (!editingNoteId) return; const list = getWL(); const idx = list.findIndex(i => String(i.tmdb_id) === String(editingNoteId)); if (idx > -1) { list[idx].notes = document.getElementById('note-textarea').value.trim() || null; saveWL(list); } closeNoteModal(); renderWatchlist(); showToastNotification('Annotation modifications synchronized', 'success'); }
-
-        // ==================== UTILITIES ====================
-        function relativeDate(ts) { const days = Math.floor((Date.now() - ts) / 86400000); if (days < 1) return 'today'; if (days < 7) return `${days}d ago`; if (days < 30) return `${Math.floor(days / 7)}w ago`; if (days < 365) return `${Math.floor(days / 30)}mo ago`; return `${Math.floor(days / 365)}y ago`; }
-        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-        function showToastNotification(msg, type='success') { const c = { success:'bg-green-800 border-green-600', error:'bg-red-900 border-red-700', info:'bg-blue-900 border-blue-700' }; const el = document.createElement('div'); el.className = `pointer-events-auto max-w-sm w-full px-4 py-3 rounded-xl border text-sm font-medium shadow-xl ${c[type]} transform transition-all duration-300 translate-x-full opacity-0`; el.textContent = msg; document.getElementById('toast-container').appendChild(el); requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('translate-x-full','opacity-0'))); setTimeout(() => { el.classList.add('translate-x-full','opacity-0'); setTimeout(() => el.remove(),350); },3000); }
-
-        // ==================== SEARCH DROPDOWN (FIXED) ====================
-        function setupSearchEngine() {
-            let queryDebounce = null;
-            const searchInput = document.getElementById('nav-search-input');
-            const dropdownMenu = document.getElementById('search-dropdown');
-            if (!searchInput || !dropdownMenu) return;
-            searchInput.addEventListener('input', () => {
-                clearTimeout(queryDebounce);
-                const q = searchInput.value.trim();
-                if (q.length < 2) { dropdownMenu.hidden = true; return; }
-                queryDebounce = setTimeout(() => {
-                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
-                        .then(r => r.json())
-                        .then(data => {
-                            const entries = (data.results || []).filter(r => r.media_type !== 'person').slice(0,5);
-                            if (!entries.length) { dropdownMenu.hidden = true; return; }
-                            dropdownMenu.innerHTML = entries.map(item => {
-                                const title = item.title || item.name || '';
-                                const year = (item.release_date || item.first_air_date || '').slice(0,4);
-                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-                                return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-colors border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true"><div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type.toUpperCase()}</p></div></a>`;
-                            }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-2.5 text-xs text-accent hover:bg-white/5 font-semibold text-center border-t border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">See all results →</a>`;
-                            dropdownMenu.hidden = false;
-                        })
-                        .catch(() => { dropdownMenu.hidden = true; });
-                }, 300);
-            });
-            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdownMenu.hidden = true; });
+        // Render all sections
+        function renderAll() {
+            renderStats();
+            renderContinueWatching();
+            renderSmartLists();
+            renderRecommendations();
+            renderWatchlist();
         }
 
-        // ==================== THEME, REGION, MOBILE ====================
-        function initTheme() { if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark'); else document.documentElement.classList.add('dark'); }
-        document.getElementById('theme-toggle')?.addEventListener('click', () => { const isDark = document.documentElement.classList.toggle('dark'); localStorage.setItem('cs-theme', isDark ? 'dark' : 'light'); });
-        document.getElementById('note-modal')?.addEventListener('click', e => { if (e.target === document.getElementById('note-modal')) closeNoteModal(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNoteModal(); });
-        document.getElementById('mobile-menu-btn')?.addEventListener('click', () => { const m = document.getElementById('mobile-menu'); if (m) m.hidden = !m.hidden; });
-        const region = localStorage.getItem('user_region') || 'US';
-        const regionFlag = document.getElementById('region-flag'); if (regionFlag) regionFlag.textContent = '';
-        const regionCode = document.getElementById('region-code'); if (regionCode) regionCode.textContent = region;
-
-        initTheme();
-        setupSearchEngine();
-        handleSharedList();
-        renderStats();
-        populateFilters();
-        renderWatchlist();
+        // Initialize
+        function init() {
+            loadWatchlist();
+            setupEventListeners();
+            handleSharedList();
+            trackB2BEvent('watchlist_page_view', { count: watchlist.length });
+        }
+        
+        init();
     </script>
 </body>
 </html>

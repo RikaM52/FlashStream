@@ -15,19 +15,19 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png" type="image/png">
-  <meta name="theme-color" content="#e50914">
+  <meta name="theme-color" content="#00C4BC">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#e50914'}}}};</script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
   <style>
     .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
     .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
     .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
     .skeleton{background:linear-gradient(90deg,#1f1f29 25%,#2a2a38 50%,#1f1f29 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    :focus-visible{outline:2px solid #e50914;outline-offset:3px;border-radius:4px}
+    :focus-visible{outline:2px solid #00C4BC;outline-offset:3px;border-radius:4px}
     .chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.15s;color:#9ca3af;background:transparent;white-space:nowrap}
     .chip:hover{border-color:rgba(255,255,255,0.4);color:#fff}
-    .chip.active{background:#e50914;border-color:#e50914;color:#fff}
+    .chip.active{background:#00C4BC;border-color:#00C4BC;color:#fff}
     .filter-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:8px}
     [hidden]{display:none!important}
     #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
@@ -328,7 +328,7 @@
             </a>
             ${dateBadge}
             <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleCardWatchlist(event, this)">
-              <svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24">
+              <svg class="w-4 h-4" fill="${inWL ? '#00C4BC' : 'none'}" stroke="${inWL ? '#00C4BC' : 'white'}" viewBox="0 0 24 24">
                 <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
             </button>
@@ -379,8 +379,8 @@
       });
       const svg = btn.querySelector('svg');
       if (svg) {
-        svg.setAttribute('fill', added ? '#e50914' : 'none');
-        svg.setAttribute('stroke', added ? '#e50914' : 'white');
+        svg.setAttribute('fill', added ? '#00C4BC' : 'none');
+        svg.setAttribute('stroke', added ? '#00C4BC' : 'white');
       }
       btn.setAttribute('aria-pressed', String(added));
     }

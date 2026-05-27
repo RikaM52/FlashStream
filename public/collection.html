@@ -14,7 +14,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icons/icon-192.png" type="image/png">
-    <meta name="theme-color" content="#e50914">
+    <meta name="theme-color" content="#00C4BC">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -22,7 +22,7 @@
             theme: {
                 extend: {
                     colors: {
-                        accent: '#e50914'
+                        accent: '#00C4BC'
                     }
                 }
             }
@@ -39,7 +39,7 @@
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        :focus-visible { outline: 2px solid #00C4BC; outline-offset: 3px; border-radius: 4px; }
         [hidden] { display: none !important; }
         #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
     </style>
@@ -232,7 +232,7 @@
                             <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)} Poster" loading="lazy" width="200" height="300" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="handleImgError(this)">
                         </a>
                         <button onclick="handleWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" data-id="${id}" data-title="${escapeAttr(title)}" data-poster="${escapeAttr(film.poster_path || '')}" aria-label="${isAlreadyInWatchlist ? 'Remove from' : 'Add to'} watchlist">
-                            <svg class="w-4 h-4" fill="${isAlreadyInWatchlist ? '#e50914' : 'none'}" stroke="${isAlreadyInWatchlist ? '#e50914' : 'white'}" viewBox="0 0 24 24" aria-hidden="true">
+                            <svg class="w-4 h-4" fill="${isAlreadyInWatchlist ? '#00C4BC' : 'none'}" stroke="${isAlreadyInWatchlist ? '#00C4BC' : 'white'}" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                             </svg>
                         </button>
@@ -278,8 +278,8 @@
 
             const inlineSvg = buttonElement.querySelector('svg');
             if (inlineSvg) {
-                inlineSvg.setAttribute('fill', isAddingAction ? '#e50914' : 'none');
-                inlineSvg.setAttribute('stroke', isAddingAction ? '#e50914' : 'white');
+                inlineSvg.setAttribute('fill', isAddingAction ? '#00C4BC' : 'none');
+                inlineSvg.setAttribute('stroke', isAddingAction ? '#00C4BC' : 'white');
             }
             buttonElement.setAttribute('aria-label', `${isAddingAction ? 'Remove from' : 'Add to'} watchlist`);
         };

@@ -15,7 +15,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icons/icon-192.png" type="image/png">
-    <meta name="theme-color" content="#e50914">
+    <meta name="theme-color" content="#00C4BC">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -39,7 +39,7 @@
             theme: {
                 extend: {
                     colors: {
-                        accent: '#e50914'
+                        accent: '#00C4BC'
                     }
                 }
             }
@@ -56,7 +56,7 @@
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
+        :focus-visible { outline: 2px solid #00C4BC; outline-offset: 3px; border-radius: 4px; }
         #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         [hidden] { display: none !important; }
         .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
@@ -394,7 +394,7 @@
             try { parsedGenres = JSON.parse(btn.dataset.genres || '[]'); } catch(e) {}
             const added = toggleWL({ tmdb_id: btn.dataset.id, type: btn.dataset.type, title: btn.dataset.title, poster_path: btn.dataset.poster, genre_ids: parsedGenres });
             const svg = btn.querySelector('svg');
-            if (svg) { svg.setAttribute('fill', added ? '#e50914' : 'none'); svg.setAttribute('stroke', added ? '#e50914' : 'white'); }
+            if (svg) { svg.setAttribute('fill', added ? '#00C4BC' : 'none'); svg.setAttribute('stroke', added ? '#00C4BC' : 'white'); }
             btn.setAttribute('aria-pressed', String(added));
         }
 
@@ -434,7 +434,7 @@
                 '<div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">' + badge +
                 '<a href="' + href + '"><img src="' + escapeAttr(poster) + '" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105" onerror="handleImgError(this)"></a>' +
                 '<button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="' + (inWL ? 'true' : 'false') + '" data-id="' + id + '" data-title="' + escapeAttr(title) + '" data-type="' + type + '" data-poster="' + escapeAttr(item.poster_path || '') + '" data-genres=\'' + JSON.stringify(item.genre_ids || []) + '\' onclick="handleWLBtn(event,this)">' +
-                '<svg class="w-4 h-4" fill="' + (inWL ? '#e50914' : 'none') + '" stroke="' + (inWL ? '#e50914' : 'white') + '" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>' +
+                '<svg class="w-4 h-4" fill="' + (inWL ? '#00C4BC' : 'none') + '" stroke="' + (inWL ? '#00C4BC' : 'white') + '" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>' +
                 '</button></div>' +
                 '<a href="' + href + '" class="block mt-2 hover:text-accent"><h3 class="text-xs font-semibold text-white line-clamp-1">' + escapeHtml(title) + '</h3>' +
                 '<div class="flex items-center gap-1 mt-0.5 text-xs text-gray-400"><span>' + year + '</span>' + (!hideRatings && score ? '<span class="text-yellow-400">★ ' + score + '</span>' : '') + '</div></a>' +

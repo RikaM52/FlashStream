@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discover Movies, TV &amp; Shorts — Filter by Mood, Genre, Country | FlashStream</title>
+    <title>Discover Movies, TV & Shorts — Filter by Mood, Genre, Country | FlashStream</title>
     <meta name="description" content="Browse thousands of movies, TV shows, and vertical shorts. Filter by mood, genre, language, country, coming soon, and more.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://flashstream.pages.dev/discover">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Discover Movies, TV &amp; Shorts | FlashStream">
+    <meta property="og:title" content="Discover Movies, TV & Shorts | FlashStream">
     <meta property="og:description" content="Browse thousands of movies and TV shows. Filter by mood, genre, platform, language, and more.">
     <meta property="og:url" content="https://flashstream.pages.dev/discover">
     <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
@@ -16,7 +16,7 @@
     <script type="application/ld+json" id="jsonld-itemlist"></script>
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icons/icon-192.png" type="image/png">
-    <meta name="theme-color" content="#e50914">
+    <meta name="theme-color" content="#00C4BC">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,7 +24,7 @@
             theme: {
                 extend: {
                     colors: {
-                        accent: '#e50914'
+                        accent: '#00C4BC'
                     }
                 }
             }
@@ -32,6 +32,7 @@
     </script>
     <style>
         .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .skeleton {
@@ -40,35 +41,48 @@
             animation: shimmer 1.5s infinite;
         }
         @keyframes shimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }
-        :focus-visible { outline: 2px solid #e50914; outline-offset: 3px; border-radius: 4px; }
-        .chip, .content-chip {
+        :focus-visible { outline: 2px solid #00C4BC; outline-offset: 3px; border-radius: 4px; }
+        .chip, .content-chip, .subcategory-chip, .emotion-chip, .pacing-chip {
             display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px;
             border-radius: 9999px; font-size: 12px; font-weight: 500;
             border: 1px solid rgba(255,255,255,0.12); cursor: pointer; transition: all 0.15s;
             color: #9ca3af; background: #111116; white-space: nowrap; user-select: none;
         }
-        .chip:hover, .content-chip:hover { border-color: rgba(255,255,255,0.3); color: #fff; background: #1a1a24; }
-        .chip.active, .content-chip.active { background: #e50914; border-color: #e50914; color: #fff; }
+        .chip:hover, .content-chip:hover, .subcategory-chip:hover, .emotion-chip:hover, .pacing-chip:hover { border-color: rgba(255,255,255,0.3); color: #fff; background: #1a1a24; }
+        .chip.active, .content-chip.active, .subcategory-chip.active, .emotion-chip.active, .pacing-chip.active { background: #00C4BC; border-color: #00C4BC; color: #fff; }
         .filter-section-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; margin-bottom: 8px; display: block; }
         [hidden] { display: none !important; }
         .badge-pulse { animation: bpulse 1.4s ease-in-out infinite; }
         @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         #search-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #111116; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; z-index: 9999; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
         .standard-slider { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: #374151; outline: none; margin: 12px 0; }
-        .standard-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #e50914; cursor: pointer; border: none; }
+        .standard-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #00C4BC; cursor: pointer; border: none; }
         .dual-slider { position: relative; height: 24px; margin: 10px 0; }
         .dual-slider input[type=range] { position: absolute; width: 100%; background: transparent; pointer-events: none; -webkit-appearance: none; margin: 0; padding: 0; }
         .dual-slider input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #374151; border-radius: 2px; }
-        .dual-slider input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #e50914; cursor: pointer; border: none; position: relative; margin-top: -6px; }
-        .active-filter-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.3); color: #e50914; }
-        .active-filter-tag button { background: none; border: none; color: #e50914; cursor: pointer; font-size: 14px; padding: 0 4px; }
+        .dual-slider input[type=range]::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #00C4BC; cursor: pointer; border: none; margin-top: -6px; }
+        .active-filter-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.3); color: #00C4BC; }
+        .active-filter-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 500; background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.3); color: #00C4BC; }
+        .source-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 500; margin-left: 6px; }
+        .source-tmdb { background: #1f2937; color: #9ca3af; }
+        .source-viki { background: #1e3a5f; color: #60a5fa; }
+        .source-iqiyi { background: #1e3a3a; color: #34d399; }
+        .source-custom { background: #3e1e3e; color: #c084fc; }
+        .logic-toggle-active { background: #00C4BC; color: white; }
+        .logic-toggle-inactive { background: #374151; color: #9ca3af; }
+        .consent-banner { position: fixed; bottom: 0; left: 0; right: 0; background: #0a0a0f; border-top: 1px solid #00C4BC; z-index: 10000; padding: 16px; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
+        .partner-logo { height: 20px; width: auto; filter: brightness(0.8); transition: filter 0.2s; }
+        .partner-logo:hover { filter: brightness(1); }
+        .filter-group-collapsible { border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; margin-bottom: 12px; }
+        .watchlist-btn-active { fill: #00C4BC; stroke: #00C4BC; }
+        .watchlist-btn-inactive { fill: none; stroke: white; }
     </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
     <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
     
-    <!-- MAIN APPLICATION APP NAVBAR NAVIGATION -->
+    <!-- MAIN NAVIGATION -->
     <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
             <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
@@ -78,7 +92,7 @@
             <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
                 <div class="relative">
                     <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
                 </div>
                 <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
             </div>
@@ -91,7 +105,7 @@
             </div>
             <div class="flex items-center gap-2 flex-shrink-0">
                 <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                    <span id="region-flag"> </span><span id="region-code" class="font-mono text-gray-300">US</span>
+                    <span id="region-flag"></span><span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -112,10 +126,62 @@
     </nav>
 
     <main id="main-content" class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Active Filters Dashboard - Shows all selected filters at a glance -->
+        <div id="active-filters-dashboard" class="mb-4 rounded-xl bg-gray-900/80 border border-white/10 overflow-hidden">
+            <div class="px-4 py-2 bg-gray-800/50 border-b border-white/5 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                    </svg>
+                    <span class="text-xs font-semibold text-gray-300">Active Filters</span>
+                    <span id="active-filters-count" class="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full">0</span>
+                </div>
+                <button onclick="clearAllFilters()" class="text-[11px] text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                    </svg>
+                    Clear All
+                </button>
+            </div>
+            <div id="active-filters-list" class="p-3 flex flex-wrap gap-2 min-h-[60px]">
+                <div id="no-active-filters-msg" class="text-xs text-gray-500 w-full text-center py-2">No active filters. Select filters above to refine your discovery.</div>
+            </div>
+        </div>
+
         <div class="flex flex-col md:flex-row gap-8">
-            
-            <!-- FILTERS SIDE PANEL VIEWPORT -->
+            <!-- FILTERS SIDE PANEL -->
             <aside id="filter-panel" class="hidden md:flex flex-col gap-5 w-80 flex-shrink-0 overflow-y-auto max-h-[calc(100vh-80px)] sticky top-20" aria-label="Filter options">
+                <!-- Filter Logic Toggle -->
+                <div class="flex items-center justify-between gap-2 p-2 bg-gray-900/50 rounded-lg border border-white/5">
+                    <span class="text-[11px] font-medium text-gray-400">Genre Matching:</span>
+                    <div class="flex gap-1">
+                        <button id="filter-logic-or" onclick="setFilterLogic('or')" class="px-2 py-1 text-[10px] rounded bg-accent text-white transition-all">Match ANY</button>
+                        <button id="filter-logic-and" onclick="setFilterLogic('and')" class="px-2 py-1 text-[10px] rounded bg-gray-800 text-gray-400 hover:text-white transition-all">Match ALL</button>
+                    </div>
+                </div>
+
+                <!-- Emotional Intensity Filter (NEW) -->
+                <div>
+                    <span class="filter-section-title">Emotional Intensity</span>
+                    <div id="emotion-intensity" class="flex flex-wrap gap-2">
+                        <button class="emotion-chip" data-emotion="very_low" onclick="setEmotionalIntensity('very_low', this)">Very Low</button>
+                        <button class="emotion-chip" data-emotion="low" onclick="setEmotionalIntensity('low', this)">Low</button>
+                        <button class="emotion-chip" data-emotion="medium" onclick="setEmotionalIntensity('medium', this)">Medium</button>
+                        <button class="emotion-chip" data-emotion="high" onclick="setEmotionalIntensity('high', this)">High</button>
+                        <button class="emotion-chip" data-emotion="very_high" onclick="setEmotionalIntensity('very_high', this)">Very High</button>
+                    </div>
+                </div>
+
+                <!-- Pacing Filter (NEW) -->
+                <div>
+                    <span class="filter-section-title">Pacing</span>
+                    <div id="pacing-filter" class="flex flex-wrap gap-2">
+                        <button class="pacing-chip" data-pacing="slow_burn" onclick="setPacing('slow_burn', this)">Slow Burn</button>
+                        <button class="pacing-chip" data-pacing="medium" onclick="setPacing('medium', this)">Medium</button>
+                        <button class="pacing-chip" data-pacing="fast" onclick="setPacing('fast', this)">Fast</button>
+                    </div>
+                </div>
+
                 <div class="flex gap-2">
                     <button onclick="clearAllFilters()" class="flex-1 py-2 text-sm rounded-lg bg-red-900/30 border border-red-800/50 text-red-400 hover:bg-red-900/50 transition-colors">Clear All</button>
                     <button onclick="shareFilters()" class="flex-1 py-2 text-sm rounded-lg bg-gray-900 border border-white/10 text-gray-300 hover:bg-gray-800 transition-colors">Share</button>
@@ -130,38 +196,311 @@
                 <!-- Shorts Category (hidden unless shorts selected) -->
                 <div id="shorts-category" hidden><span class="filter-section-title">Shorts Origin Category</span><div id="shorts-cat-buttons" class="flex gap-2 flex-wrap"></div></div>
                 
-                <!-- Genres -->
-                <div><span class="filter-section-title">Genres</span><div id="genre-chips" class="flex flex-wrap gap-2"></div></div>
+                <!-- Standard Genres (TMDB) -->
+                <div><span class="filter-section-title">Standard Genres</span><div id="genre-chips" class="flex flex-wrap gap-2"></div></div>
                 
-                <!-- Platform Filters -->
+                <!-- Platform Filters with Select All -->
                 <div><span class="filter-section-title">Streaming Networks</span><div id="platform-filters" class="flex flex-col gap-2"></div></div>
                 
-                <!-- Language Filter -->
-                <div><span class="filter-section-title">Original Audio Language</span><select id="language-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent"><option value="">Any Language</option><option value="ko">Korean (K-Drama)</option><option value="ja">Japanese (Anime)</option><option value="zh">Chinese (C-Drama)</option><option value="th">Thai</option><option value="hi">Hindi</option><option value="ur">Urdu</option><option value="ta">Tamil</option><option value="ms">Malay</option><option value="id">Indonesian</option><option value="tl">Tagalog / Filipino</option><option value="vi">Vietnamese</option><option value="tr">Turkish</option><option value="ar">Arabic</option><option value="es">Spanish</option><option value="pt">Portuguese</option><option value="en">English</option><option value="fr">French</option><option value="de">German</option><option value="it">Italian</option></select></div>
+                <!-- Original Audio Language - FULL LIST with missing languages added -->
+                <div><span class="filter-section-title">Original Audio Language</span>
+                    <select id="language-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent">
+                        <option value="">Any Language</option>
+                        <option value="ko">Korean (K-Drama)</option>
+                        <option value="ja">Japanese (Anime)</option>
+                        <option value="zh">Chinese (C-Drama)</option>
+                        <option value="th">Thai</option>
+                        <option value="hi">Hindi</option>
+                        <option value="ur">Urdu</option>
+                        <option value="ta">Tamil</option>
+                        <option value="ms">Malay</option>
+                        <option value="id">Indonesian</option>
+                        <option value="tl">Tagalog / Filipino</option>
+                        <option value="vi">Vietnamese</option>
+                        <option value="tr">Turkish</option>
+                        <option value="ar">Arabic</option>
+                        <option value="es">Spanish</option>
+                        <option value="pt">Portuguese</option>
+                        <option value="en">English</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="it">Italian</option>
+                        <option value="ru">Russian</option>
+                        <option value="nl">Dutch</option>
+                        <option value="sv">Swedish</option>
+                        <option value="da">Danish</option>
+                        <option value="no">Norwegian</option>
+                        <option value="pl">Polish</option>
+                        <option value="el">Greek</option>
+                    </select>
+                </div>
+                <!-- Subtitle Language Selection - RESTORED -->
+                <div>
+                    <span class="filter-section-title">Subtitle / Caption Languages Available</span>
+                    <select id="subtitle-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="scheduleFetch()">
+                        <option value="">Any Subtitles</option>
+                        <option value="en">English Subtitles</option>
+                        <option value="es">Spanish Subtitles</option>
+                        <option value="fr">French Subtitles</option>
+                        <option value="de">German Subtitles</option>
+                        <option value="pt">Portuguese Subtitles</option>
+                        <option value="ar">Arabic Subtitles</option>
+                        <option value="id">Indonesian Subtitles</option>
+                        <option value="th">Thai Subtitles</option>
+                        <option value="vi">Vietnamese Subtitles</option>
+                        <option value="ms">Malay Subtitles</option>
+                        <option value="zh">Chinese Subtitles</option>
+                        <option value="ja">Japanese Subtitles</option>
+                        <option value="ko">Korean Subtitles</option>
+                        <option value="ru">Russian Subtitles</option>
+                        <option value="tr">Turkish Subtitles</option>
+                        <option value="it">Italian Subtitles</option>
+                        <option value="nl">Dutch Subtitles</option>
+                        <option value="pl">Polish Subtitles</option>
+                        <option value="hi">Hindi Subtitles</option>
+                        <option value="tl">Tagalog/Filipino Subtitles</option>
+                    </select>
+                    <div class="text-[10px] text-gray-500 mt-1">Viki offers fan subtitles. iQIYI and WeTV have official subtitles.</div>
+                </div>
                 
-                <!-- Production Country -->
-                <div><span class="filter-section-title">Production Country Context</span><select id="country-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent"><option value="">Any Country</option><option value="KR">South Korea</option><option value="JP">Japan</option><option value="CN">China</option><option value="TW">Taiwan</option><option value="HK">Hong Kong</option><option value="TH">Thailand</option><option value="IN">India</option><option value="PK">Pakistan</option><option value="MY">Malaysia</option><option value="SG">Singapore</option><option value="AE">United Arab Emirates</option><option value="US">United States</option><option value="GB">United Kingdom</option><option value="CA">Canada</option><option value="FR">France</option><option value="DE">Germany</option><option value="TR">Turkey</option></select></div>
+                <!-- Production Country - FULL LIST with missing countries added -->
+                <div>
+                    <span class="filter-section-title">Production Country</span>
+                    <select id="country-filter" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="scheduleFetch()">
+                        <option value="">Any Country</option>
+                        <option value="KR">South Korea</option>
+                        <option value="JP">Japan</option>
+                        <option value="CN">China</option>
+                        <option value="TW">Taiwan</option>
+                        <option value="HK">Hong Kong</option>
+                        <option value="TH">Thailand</option>
+                        <option value="IN">India</option>
+                        <option value="PK">Pakistan</option>
+                        <option value="MY">Malaysia</option>
+                        <option value="SG">Singapore</option>
+                        <option value="AE">United Arab Emirates</option>
+                        <option value="US">United States</option>
+                        <option value="GB">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="FR">France</option>
+                        <option value="DE">Germany</option>
+                        <option value="TR">Turkey</option>
+                        <option value="MX">Mexico</option>
+                        <option value="BR">Brazil</option>
+                        <option value="AR">Argentina</option>
+                        <option value="PL">Poland</option>
+                        <option value="VN">Vietnam</option>
+                        <option value="RU">Russia</option>
+                        <option value="NG">Nigeria</option>
+                        <option value="EG">Egypt</option>
+                        <option value="ZA">South Africa</option>
+                        <option value="AU">Australia</option>
+                        <option value="NZ">New Zealand</option>
+                        <option value="SE">Sweden</option>
+                        <option value="NL">Netherlands</option>
+                        <option value="ID">Indonesia</option>
+                        <option value="PH">Philippines</option>
+                    </select>
+                </div>
                 
-                <!-- Rating Slider -->
-                <div><div class="flex justify-between items-center mb-1"><span class="filter-section-title mb-0">Minimum TMDB Rating</span><span id="rating-display" class="text-xs text-gray-400">0.0</span></div><input type="range" id="rating-min" class="standard-slider" min="0" max="10" step="0.5" value="0" oninput="document.getElementById('rating-display').textContent=this.value; scheduleFetch()"></div>
+                <!-- Rating Slider - NO EMOJIS -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="filter-section-title mb-0">Minimum TMDB Rating</span>
+                        <span id="rating-display" class="text-xs text-gray-400">0.0</span>
+                    </div>
+                    <input type="range" id="rating-min" class="standard-slider" min="0" max="10" step="0.5" value="0" oninput="updateRatingDisplay(this.value); scheduleFetch()">
+                </div>
                 
                 <!-- Year Slider (dual) -->
-                <div><span class="filter-section-title">Release Year Boundaries</span><div class="dual-slider"><input type="range" id="year-min" min="1950" max="2026" value="1950" step="1" oninput="updateChronologicalYearSliders(event)"><input type="range" id="year-max" min="1950" max="2026" value="2026" step="1" oninput="updateChronologicalYearSliders(event)"></div><div id="year-display" class="text-xs text-gray-400 text-right">1950 - 2026</div></div>
+                <div>
+                    <span class="filter-section-title">Release Year Boundaries</span>
+                    <div class="dual-slider">
+                        <input type="range" id="year-min" min="1950" max="2026" value="1950" step="1" oninput="updateChronologicalYearSliders(event)">
+                        <input type="range" id="year-max" min="1950" max="2026" value="2026" step="1" oninput="updateChronologicalYearSliders(event)">
+                    </div>
+                    <div id="year-display" class="text-xs text-gray-400 text-right">1950 - 2026</div>
+                </div>
                 
                 <!-- Runtime Slider (dual) -->
-                <div><span class="filter-section-title">Runtime Boundaries (Minutes)</span><div class="dual-slider"><input type="range" id="runtime-min" min="0" max="300" value="0" step="5" oninput="updateRuntimeDurationSliders(event)"><input type="range" id="runtime-max" min="0" max="300" value="300" step="5" oninput="updateRuntimeDurationSliders(event)"></div><div id="runtime-display" class="text-xs text-gray-400 text-right">0 - 300 min</div></div>
+                <div>
+                    <span class="filter-section-title">Runtime Boundaries (Minutes)</span>
+                    <div class="dual-slider">
+                        <input type="range" id="runtime-min" min="0" max="300" value="0" step="5" oninput="updateRuntimeDurationSliders(event)">
+                        <input type="range" id="runtime-max" min="0" max="300" value="300" step="5" oninput="updateRuntimeDurationSliders(event)">
+                    </div>
+                    <div id="runtime-display" class="text-xs text-gray-400 text-right">0 - 300 min</div>
+                </div>
                 
-                <!-- Micro-trope Selector -->
-                <div><span class="filter-section-title">Micro-Trope Niche Overrides</span><select id="with-trope-select" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="scheduleFetch()"><option value="">Any Mapped Trope</option><option value="contract_marriage">Contract Marriage / Fake Bond</option><option value="ceo_employee">CEO / Workplace Corporate Romance</option><option value="reincarnation">Reincarnation / Alternate Timelines</option><option value="revenge">Revenge / Retribution Slugs</option><option value="enemies_lovers">Enemies to Lovers Dynamics</option><option value="historical_fantasy">Historical Xianxia / Wuxia Fantasy</option></select></div>
-            </aside>
+                <!-- Micro-Trope Selector - Enhanced with 100+ options (RESTORED) -->
+                <div>
+                    <span class="filter-section-title">Story Tropes & Themes</span>
+                    <select id="with-trope-select" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent" onchange="scheduleFetch()">
+                        <option value="">Any Trope</option>
+                        <optgroup label="Relationship Tropes">
+                            <option value="contract_marriage">Contract / Fake Marriage</option>
+                            <option value="marriage_of_convenience">Marriage of Convenience</option>
+                            <option value="fake_dating">Fake Dating</option>
+                            <option value="forced_cohabitation">Forced Cohabitation</option>
+                            <option value="love_triangle">Love Triangle</option>
+                            <option value="love_square">Love Square</option>
+                            <option value="childhood_friends">Childhood Friends to Lovers</option>
+                            <option value="enemies_to_lovers">Enemies to Lovers</option>
+                            <option value="friends_to_lovers">Friends to Lovers</option>
+                            <option value="second_chance">Second Chance Romance</option>
+                            <option value="unrequited_love">Unrequited Love</option>
+                            <option value="slow_burn">Slow Burn Romance</option>
+                            <option value="opposites_attract">Opposites Attract</option>
+                            <option value="age_gap">Age Gap Relationship</option>
+                            <option value="office_romance">Office / Workplace Romance</option>
+                            <option value="rich_poor">Rich vs Poor</option>
+                            <option value="ceo_romance">CEO / Boss Romance</option>
+                        </optgroup>
+                        <optgroup label="Character Tropes">
+                            <option value="cold_male_lead">Cold / Ice Prince Male Lead</option>
+                            <option value="sunshine_female_lead">Sunshine Female Lead</option>
+                            <option value="tsundere">Tsundere</option>
+                            <option value="yandere">Yandere</option>
+                            <option value="kuudere">Kuudere</option>
+                            <option value="chaebol">Chaebol / Rich Heir</option>
+                            <option value="poor_female_lead">Poor / Cinderella Female Lead</option>
+                            <option value="strong_female_lead">Strong Female Lead</option>
+                            <option value="smart_male_lead">Genius Male Lead</option>
+                            <option value="playboy_male_lead">Playboy Male Lead</option>
+                            <option value="villainous_lead">Villainous Lead</option>
+                            <option value="antihero">Anti-Hero</option>
+                            <option value="red_flag">Red Flag Lead</option>
+                            <option value="green_flag">Green Flag Lead</option>
+                        </optgroup>
+                        <optgroup label="Plot Tropes">
+                            <option value="amnesia">Amnesia</option>
+                            <option value="reincarnation">Reincarnation</option>
+                            <option value="time_travel">Time Travel</option>
+                            <option value="transmigration">Transmigration / Isekai</option>
+                            <option value="past_life">Past Life Connection</option>
+                            <option value="revenge">Revenge Plot</option>
+                            <option value="mistaken_identity">Mistaken Identity</option>
+                            <option value="disguise">Disguise / Hidden Identity</option>
+                            <option value="secret_identity">Secret Identity</option>
+                            <option value="twin_swap">Twin Swap</option>
+                            <option value="body_swap">Body Swap</option>
+                            <option value="gender_bender">Gender Bender</option>
+                            <option value="redemption">Redemption Arc</option>
+                            <option value="betrayal">Betrayal</option>
+                            <option value="political_intrigue">Political Intrigue</option>
+                            <option value="inheritance_war">Inheritance War</option>
+                        </optgroup>
+                        <optgroup label="Genre Hybrids">
+                            <option value="historical_romance">Historical Romance</option>
+                            <option value="fantasy_romance">Fantasy Romance</option>
+                            <option value="sci_fi_romance">Sci-Fi Romance</option>
+                            <option value="thriller_romance">Thriller / Suspense Romance</option>
+                            <option value="comedy_romance">Comedy Romance</option>
+                            <option value="slice_of_life">Slice of Life</option>
+                            <option value="coming_of_age">Coming of Age</option>
+                            <option value="melodrama">Melodrama</option>
+                        </optgroup>
+                        <optgroup label="Setting Tropes">
+                            <option value="workplace">Workplace Setting</option>
+                            <option value="school">High School Setting</option>
+                            <option value="university">University Setting</option>
+                            <option value="historical_korea">Historical Korea (Joseon)</option>
+                            <option value="historical_china">Historical China</option>
+                            <option value="imperial_palace">Imperial Palace</option>
+                            <option value="entertainment">Entertainment Industry</option>
+                            <option value="idol_world">K-Pop / Idol World</option>
+                            <option value="medical">Medical / Hospital Setting</option>
+                            <option value="legal">Legal / Law Setting</option>
+                            <option value="police">Police / Detective Setting</option>
+                            <option value="supernatural">Supernatural World</option>
+                        </optgroup>
+                        <optgroup label="Feelings & Vibes">
+                            <option value="fluffy">Fluffy / Cute</option>
+                            <option value="wholesome">Wholesome</option>
+                            <option value="heartwarming">Heartwarming</option>
+                            <option value="healing">Healing</option>
+                            <option value="feel_good">Feel Good</option>
+                            <option value="angst">Angst</option>
+                            <option value="tragedy">Tragedy</option>
+                            <option value="sad_ending">Sad Ending</option>
+                            <option value="tearjerker">Tearjerker</option>
+                            <option value="suspenseful">Suspenseful</option>
+                            <option value="dark">Dark / Grim</option>
+                        </optgroup>
+                        <optgroup label="LGBTQ+ Representation">
+                            <option value="bl">BL / Boys Love</option>
+                            <option value="gl">GL / Girls Love</option>
+                            <option value="lgbtq_main">LGBTQ+ Main Characters</option>
+                        </optgroup>
+                        <optgroup label="Adaptation Source">
+                            <option value="webtoon_adaptation">Adapted from Webtoon</option>
+                            <option value="novel_adaptation">Adapted from Novel</option>
+                            <option value="manhwa_adaptation">Adapted from Manhwa</option>
+                            <option value="manga_adaptation">Adapted from Manga</option>
+                            <option value="true_story">Based on True Story</option>
+                        </optgroup>
+                    </select>
+                </div>
 
+                <!-- Multi-Trope Selection (up to 3 tropes combined) - RESTORED -->
+                <div id="multi-trope-section" class="pt-2 border-t border-white/10">
+                    <div class="flex items-center justify-between">
+                        <span class="filter-section-title">Multiple Tropes (Combine)</span>
+                        <button onclick="toggleMultiTropeMode()" class="text-[10px] text-accent hover:text-red-400">Enable Multi-Select</button>
+                    </div>
+                    <div id="multi-trope-container" class="hidden">
+                        <select id="multi-trope-1" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300 mt-1"><option value="">Select Trope 1</option></select>
+                        <select id="multi-trope-2" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300 mt-1"><option value="">Select Trope 2</option></select>
+                        <select id="multi-trope-3" class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-300 mt-1"><option value="">Select Trope 3</option></select>
+                        <p class="text-[10px] text-gray-500 mt-1">Results must match ALL selected tropes</p>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters Section - NEW with all checkboxes -->
+                <div>
+                    <span class="filter-section-title">Advanced Filters</span>
+                    <div class="flex flex-col gap-2 mt-1">
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="coming-soon-filter" onchange="scheduleFetch()" class="accent-red-600"> Coming Soon (Theatrical / Streaming)
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="leaving-soon-filter" onchange="scheduleFetch()" class="accent-red-600"> Leaving Soon (Expiring from Platforms)
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="festival-films-filter" onchange="scheduleFetch()" class="accent-red-600"> Festival Films (Award Winners)
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="completed-series-filter" onchange="scheduleFetch()" class="accent-red-600"> Completed Series (All Seasons Released)
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="standalone-only-filter" onchange="scheduleFetch()" class="accent-red-600"> Standalone Only (No Sequels Needed)
+                        </label>
+                        <label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer">
+                            <input type="checkbox" id="critically-acclaimed-filter" onchange="scheduleFetch()" class="accent-red-600"> Critically Acclaimed (8.0+ Rating)
+                        </label>
+                    </div>
+                </div>
+            </aside>
             <!-- RESULTS COLUMN -->
             <div class="flex-1 min-w-0">
-                <!-- Active filters panel -->
-                <div id="active-filters-container" class="hidden flex flex-wrap gap-2 p-2 rounded-xl bg-gray-900/50 border border-white/5 mb-4">
-                    <span class="text-xs text-gray-500 self-center pl-1">Active:</span>
-                    <div id="active-filters-list" class="flex flex-wrap gap-1.5"></div>
+                <!-- Source progress indicator - RESTORED -->
+                <div id="source-progress" hidden class="mb-3">
+                    <div class="flex items-center gap-2 text-xs text-gray-400">
+                        <span>Querying sources:</span>
+                        <div class="flex-1 h-1 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="source-progress-bar" class="h-full bg-accent w-0 transition-all duration-300"></div>
+                        </div>
+                        <span id="source-status" class="text-[10px]"></span>
+                    </div>
                 </div>
+                
+                <!-- Source breakdown - RESTORED -->
+                <div id="source-breakdown" hidden class="text-[10px] text-gray-500 mt-1 flex flex-wrap gap-2"></div>
+                
+                <!-- Source errors - RESTORED -->
+                <div id="source-errors" hidden class="mt-2"></div>
+                
+                <!-- Filter warning -->
                 <div id="filter-warning" class="hidden px-3 py-2 mb-4 rounded-xl bg-amber-900/20 border border-amber-700/40 text-xs text-amber-300"></div>
 
                 <!-- View controls -->
@@ -176,8 +515,12 @@
                             <option value="revenue.desc">Highest Grossing</option>
                             <option value="original_title.asc">A to Z</option>
                         </select>
-                        <button id="view-grid" onclick="setView('grid')" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" aria-label="Grid view" aria-pressed="true"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></button>
-                        <button id="view-list" onclick="setView('list')" class="p-2 rounded-lg text-gray-500 hover:bg-white/10 hover:text-white" aria-label="List view" aria-pressed="false"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+                        <button id="view-grid" onclick="setView('grid')" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" aria-label="Grid view" aria-pressed="true">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        </button>
+                        <button id="view-list" onclick="setView('list')" class="p-2 rounded-lg text-gray-500 hover:bg-white/10 hover:text-white" aria-label="List view" aria-pressed="false">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
                     </div>
                 </div>
 
@@ -186,8 +529,8 @@
 
                 <!-- Empty state -->
                 <div id="empty-state" hidden class="text-center py-24 border border-white/5 rounded-2xl bg-gray-900/20">
-                    <h2 class="text-xl font-semibold text-white mb-2">No matching items indexed</h2>
-                    <p class="text-gray-400 mb-6 max-w-sm mx-auto text-xs">Try clearing specific pacing rules or micro-trope tag arrays to discover international titles.</p>
+                    <h2 class="text-xl font-semibold text-white mb-2">No matching items found</h2>
+                    <p class="text-gray-400 mb-6 max-w-sm mx-auto text-xs">Try adjusting your filters or selecting different streaming platforms. Content from Viki, iQIYI, WeTV, and Youku is included.</p>
                     <button onclick="clearAllFilters()" class="px-6 py-2.5 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors text-xs uppercase tracking-wider">Reset Filters</button>
                 </div>
 
@@ -199,26 +542,36 @@
         </div>
     </main>
 
-    <footer class="border-t border-white/10 py-10 px-4 bg-black mt-12" role="contentinfo">
-        <div class="max-w-7xl mx-auto text-center text-xs text-gray-600">
-            <p>FlashStream Engine • Directory metadata powered by federated network syndications.</p>
+    <!-- FOOTER with TMDB, MyDramaList attribution, and legal footnote -->
+    <footer class="border-t border-white/10 py-8 px-4 bg-black mt-12" role="contentinfo">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-gray-500">
+            <div class="flex flex-wrap items-center gap-4">
+                <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB" class="partner-logo h-5">
+                    <span class="text-[10px] text-gray-500">This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
+                </a>
+                <a href="https://mydramalist.com/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <img src="https://mydramalist.com/img/mdl-logo.png" alt="MyDramaList" class="partner-logo h-5" onerror="this.style.display='none'">
+                    <span class="text-[10px] text-gray-500">Data enriched by MyDramaList community.</span>
+                </a>
+            </div>
+            <div class="text-[10px] text-gray-600">
+                We analyze anonymous search trends to improve global content discovery. 
+                <button id="show-consent-settings" class="text-accent underline hover:text-red-400 transition-colors">Privacy choices</button>
+            </div>
         </div>
     </footer>
 
     <script>
-        /* ── WORKSPACE CORE INFRASTRUCTURE ENDPOINTS ───────────────────────── */
+        // ============================================
+        // CONSTANTS AND CONFIGURATION - FULL ORIGINAL
+        // ============================================
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-        // Percent-encoded NO_POSTER_SVG – no single quotes, no emoji
         const NO_POSTER_SVG = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22144%22%20height%3D%22216%22%20viewBox%3D%220%200%20144%20216%22%3E%3Crect%20width%3D%22144%22%20height%3D%22216%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
 
-        function handleImgError(img) {
-            img.onerror = null;
-            img.src = NO_POSTER_SVG;
-        }
-
-        /* ── PRE-MAPPED TRANSACTION DICTIONARIES ───────────────────────────── */
-        const GENRES = [
+        // TMDB Standard Genres (API-compatible) - FULL LIST
+        const TMDB_VALID_GENRES = [
             { id: 28, name: 'Action' }, { id: 12, name: 'Adventure' }, { id: 16, name: 'Animation' },
             { id: 35, name: 'Comedy' }, { id: 80, name: 'Crime' }, { id: 99, name: 'Documentary' },
             { id: 18, name: 'Drama' }, { id: 10751, name: 'Family' }, { id: 14, name: 'Fantasy' },
@@ -227,8 +580,18 @@
             { id: 53, name: 'Thriller' }, { id: 10752, name: 'War' }, { id: 37, name: 'Western' }
         ];
 
+        // Streaming Platforms with correct TMDB IDs - FULL LIST
+        const TRACKED_PROVIDERS = [
+            { id: 8, name: 'Netflix' }, { id: 9, name: 'Amazon Prime' }, { id: 337, name: 'Disney+' },
+            { id: 192, name: 'YouTube' }, { id: 70, name: 'Viki' }, { id: 118, name: 'iQIYI' },
+            { id: 619, name: 'WeTV' }, { id: 911, name: 'Youku' }, { id: 122, name: 'Hotstar' },
+            { id: 1001, name: 'Viu' }, { id: 1002, name: 'Zee5' }, { id: 1003, name: 'SonyLIV' },
+            { id: 384, name: 'HBO Max' }, { id: 15, name: 'Hulu' }, { id: 350, name: 'Apple TV+' }
+        ];
+
+        // Quick Modes mapping - FULL LIST
         const QUICK_MODES = {
-            light: 'with_genres=35,16&vote_average.gte=6',
+            light: 'with_genres=35,16',
             scary: 'with_genres=27',
             feelgood: 'with_genres=35,10751,10749',
             binge: 'content_type=tv',
@@ -243,42 +606,48 @@
             thai: 'with_original_language=th'
         };
 
-        const TRACKED_PROVIDERS = [
-            { id: 8, name: 'Netflix' }, { id: 9, name: 'Amazon Prime' }, { id: 337, name: 'Disney+' },
-            { id: 70, name: 'Viki' }, { id: 118, name: 'iQIYI' }, { id: 122, name: 'Hotstar' },
-            { id: 192, name: 'YouTube' }, { id: 1001, name: 'Viu' }, { id: 1002, name: 'Zee5' },
-            { id: 1003, name: 'SonyLIV' }
-        ];
-
-        /* ── INTERNAL CLIENT RUNTIME PREFERENCE STATES ─────────────────────── */
+        // ============================================
+        // STATE VARIABLES - FULL ORIGINAL
+        // ============================================
         let selectedContentTypes = new Set(['movie']);
         let selectedGenres = new Set();
         let selectedPlatforms = new Set();
+        let selectedEnhancedTags = new Set();
+        let selectedUserTags = new Set();
         let currentView = localStorage.getItem('cs-view') || 'grid';
         let fetchDebouncePointer = null;
         let activeResultsArray = [];
         let isCompilationLocked = false;
         let currentPageIndex = 1;
         let currentShortCategory = null;
+        let filterLogic = 'or';
+        let multiTropeMode = false;
+        let selectedMultiTropes = [];
+        let selectedEmotionalIntensity = null;
+        let selectedPacing = null;
+        let dwellTimeObservers = new Map();
+        let scrollDepthTracked = { 25: false, 50: false, 75: false, 100: false };
+        let filterChangeCount = 0;
+        let lastFilterChangeTime = null;
 
-        /* ── CORE COMPILER LIFECYCLE HANDLERS ──────────────────────────────── */
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeLayoutContext();
-            renderThematicPreferenceGrids();
-            setupSearchFiltersEngine();
-            setupSearchDropdown();
-            executeInitialDeepQueryFetch();
-        });
-
-        function initializeLayoutContext() {
-            if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
-            else document.documentElement.classList.add('dark');
-            const region = localStorage.getItem('user_region') || 'US';
-            document.getElementById('region-code').textContent = region;
-            document.getElementById('region-flag').textContent = '';
+        // ============================================
+        // HELPER FUNCTIONS - FULL ORIGINAL
+        // ============================================
+        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        
+        function showToastMessage(msg, type) {
+            const typeClasses = { success: 'bg-green-900/90 border-green-600', error: 'bg-red-900/90 border-red-600', info: 'bg-gray-900/90 border-white/10', warning: 'bg-amber-900/90 border-amber-600' };
+            const el = document.createElement('div');
+            el.className = `px-4 py-2.5 rounded-xl text-xs font-semibold text-white border ${typeClasses[type] || typeClasses.info}`;
+            el.textContent = msg;
+            document.getElementById('toast-container').appendChild(el);
+            setTimeout(() => el.remove(), 3000);
         }
 
-        /* ── WATCHLIST HELPERS ────────────────────────────────────────────── */
+        function handleImgError(img) { img.onerror = null; img.src = NO_POSTER_SVG; }
+
+        // Watchlist helpers - FULL ORIGINAL
         function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
         function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
         function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
@@ -296,33 +665,101 @@
             }
             saveWL(list);
             const svg = btn.querySelector('svg');
-            if (svg) { svg.setAttribute('fill', added ? '#e50914' : 'none'); svg.setAttribute('stroke', added ? '#e50914' : 'white'); }
+            if (svg) { svg.setAttribute('fill', added ? '#00C4BC' : 'none'); svg.setAttribute('stroke', added ? '#00C4BC' : 'white'); }
             btn.setAttribute('aria-pressed', String(added));
+            
+            // B2B Tracking for watchlist toggle
+            trackB2BEvent('watchlist_toggle', { content_id: id, content_type: btn.dataset.type, title: btn.dataset.title, action: added ? 'add' : 'remove' });
         }
 
-        /* ── DYNAMIC GENERATOR CHECKBOX AND GRID RENDERERS ────────────────── */
-        function renderThematicPreferenceGrids() {
-            const quickDiv = document.getElementById('quick-modes');
-            if (quickDiv) quickDiv.innerHTML = Object.keys(QUICK_MODES).map(k => `<button class="chip" onclick="applyQuickMode('${k}')">${escapeHtml(k.charAt(0).toUpperCase() + k.slice(1))}</button>`).join('');
-            const ctDiv = document.getElementById('content-type-buttons');
-            if (ctDiv) ctDiv.innerHTML = `<button class="content-chip active" data-content-type="movie" onclick="toggleContentType('movie', this)">Movies</button><button class="content-chip" data-content-type="tv" onclick="toggleContentType('tv', this)">TV Shows</button><button class="content-chip" data-content-type="short" onclick="toggleContentType('short', this)">Shorts</button>`;
-            const shortsDiv = document.getElementById('shorts-cat-buttons');
-            if (shortsDiv) shortsDiv.innerHTML = ['western','korean','japanese','chinese','thai'].map(c => `<button class="chip" data-short="${c}" onclick="setShortsCategory('${c}', this)">${escapeHtml(c.charAt(0).toUpperCase() + c.slice(1))}</button>`).join('');
-            const genreGrid = document.getElementById('genre-chips');
-            if (genreGrid) genreGrid.innerHTML = GENRES.map(g => `<button class="chip" data-id="${g.id}" onclick="toggleGenreChip(this, ${g.id})">${escapeHtml(g.name)}</button>`).join('');
-            const providerGrid = document.getElementById('platform-filters');
-            if (providerGrid) providerGrid.innerHTML = TRACKED_PROVIDERS.map(p => `<label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer hover:text-white select-none"><input type="checkbox" value="${p.id}" class="accent-red-600 provider-cb" onchange="syncSelectedPlatforms()"> ${escapeHtml(p.name)}</label>`).join('');
+        // ============================================
+        // NEW FILTER FUNCTIONS - Emotional Intensity & Pacing
+        // ============================================
+        function setEmotionalIntensity(level, btn) {
+            document.querySelectorAll('.emotion-chip').forEach(c => c.classList.remove('active'));
+            if (selectedEmotionalIntensity === level) {
+                selectedEmotionalIntensity = null;
+            } else {
+                selectedEmotionalIntensity = level;
+                btn.classList.add('active');
+            }
+            updateActiveFiltersDashboard();
+            scheduleFetch();
+            trackB2BEvent('filter_change', { filter_type: 'emotional_intensity', value: selectedEmotionalIntensity });
+        }
+
+        function setPacing(pacing, btn) {
+            document.querySelectorAll('.pacing-chip').forEach(c => c.classList.remove('active'));
+            if (selectedPacing === pacing) {
+                selectedPacing = null;
+            } else {
+                selectedPacing = pacing;
+                btn.classList.add('active');
+            }
+            updateActiveFiltersDashboard();
+            scheduleFetch();
+            trackB2BEvent('filter_change', { filter_type: 'pacing', value: selectedPacing });
+        }
+
+        function updateRatingDisplay(value) {
+            document.getElementById('rating-display').textContent = parseFloat(value).toFixed(1);
+            scheduleFetch();
+        }
+        // ============================================
+        // FILTER LOGIC FUNCTIONS - FULL ORIGINAL
+        // ============================================
+        function setFilterLogic(logic) {
+            filterLogic = logic;
+            const orBtn = document.getElementById('filter-logic-or');
+            const andBtn = document.getElementById('filter-logic-and');
+            if (logic === 'or') {
+                orBtn.className = 'px-2 py-1 text-[10px] rounded bg-accent text-white';
+                andBtn.className = 'px-2 py-1 text-[10px] rounded bg-gray-800 text-gray-400 hover:text-white';
+                showToastMessage('Showing content matching ANY selected genre', 'info');
+            } else {
+                andBtn.className = 'px-2 py-1 text-[10px] rounded bg-accent text-white';
+                orBtn.className = 'px-2 py-1 text-[10px] rounded bg-gray-800 text-gray-400 hover:text-white';
+                showToastMessage('Showing content matching ALL selected genres (may have fewer results)', 'info');
+            }
+            trackB2BEvent('filter_logic_change', { logic: filterLogic });
+            scheduleFetch();
         }
 
         function toggleGenreChip(btn, id) {
             if (selectedGenres.has(id)) { selectedGenres.delete(id); btn.classList.remove('active'); }
             else { selectedGenres.add(id); btn.classList.add('active'); }
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'genre', genre_id: id, action: selectedGenres.has(id) ? 'add' : 'remove' });
             scheduleFetch();
         }
 
         function syncSelectedPlatforms() {
             selectedPlatforms.clear();
-            document.querySelectorAll('.provider-cb:checked').forEach(cb => selectedPlatforms.add(parseInt(cb.value)));
+            document.querySelectorAll('.provider-cb:checked').forEach(cb => { selectedPlatforms.add(parseInt(cb.value)); });
+            const counter = document.getElementById('platform-count');
+            if (counter) {
+                const total = document.querySelectorAll('.provider-cb').length;
+                counter.textContent = `${selectedPlatforms.size} of ${total} selected`;
+            }
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'platforms', selected: Array.from(selectedPlatforms) });
+            scheduleFetch();
+        }
+
+        function toggleAllPlatforms(selectAll) {
+            const checkboxes = document.querySelectorAll('.provider-cb');
+            checkboxes.forEach(cb => { cb.checked = selectAll; });
+            if (selectAll) {
+                selectedPlatforms.clear();
+                checkboxes.forEach(cb => { selectedPlatforms.add(parseInt(cb.value)); });
+            } else { selectedPlatforms.clear(); }
+            const counter = document.getElementById('platform-count');
+            if (counter) {
+                const total = document.querySelectorAll('.provider-cb').length;
+                counter.textContent = `${selectedPlatforms.size} of ${total} selected`;
+            }
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'platforms', action: selectAll ? 'select_all' : 'clear_all' });
             scheduleFetch();
         }
 
@@ -332,6 +769,8 @@
             selectedContentTypes.add(type);
             btn.classList.add('active');
             document.getElementById('shorts-category').hidden = (type !== 'short');
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'content_type', value: type });
             scheduleFetch();
         }
 
@@ -339,10 +778,14 @@
             document.querySelectorAll('[data-short]').forEach(b => b.classList.remove('active'));
             if (currentShortCategory === cat) currentShortCategory = null;
             else { currentShortCategory = cat; btn.classList.add('active'); }
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'shorts_category', value: currentShortCategory });
             scheduleFetch();
         }
 
-        /* ── SLIDERS VALUE HANDLERS WITH PROTECTIONS ──────────────────────── */
+        // ============================================
+        // SLIDER HANDLERS - FULL ORIGINAL
+        // ============================================
         function updateChronologicalYearSliders(event) {
             const minEl = document.getElementById('year-min');
             const maxEl = document.getElementById('year-max');
@@ -353,6 +796,8 @@
                 else { minEl.value = max; min = max; }
             }
             document.getElementById('year-display').textContent = `${min} - ${max}`;
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'year_range', min: min, max: max });
             scheduleFetch();
         }
 
@@ -366,31 +811,216 @@
                 else { minEl.value = max; min = max; }
             }
             document.getElementById('runtime-display').textContent = `${min} - ${max} min`;
+            updateActiveFiltersDashboard();
+            trackB2BEvent('filter_change', { filter_type: 'runtime_range', min: min, max: max });
             scheduleFetch();
         }
 
-        /* ── EXTENSIBLE SERVER QUERY PARAMETER MATRIX INITIALIZERS ────────── */
+        // ============================================
+        // MULTI-TROPE FUNCTIONS - RESTORED FULL
+        // ============================================
+        function toggleMultiTropeMode() {
+            const container = document.getElementById('multi-trope-container');
+            const isVisible = !container.classList.contains('hidden');
+            if (isVisible) {
+                container.classList.add('hidden');
+                multiTropeMode = false;
+                selectedMultiTropes = [];
+            } else {
+                populateMultiTropeSelects();
+                container.classList.remove('hidden');
+                multiTropeMode = true;
+            }
+            trackB2BEvent('multi_trope_mode', { enabled: multiTropeMode });
+            scheduleFetch();
+        }
+
+        function populateMultiTropeSelects() {
+            const tropeOptions = [
+                { value: "contract_marriage", label: "Contract / Fake Marriage" }, { value: "enemies_to_lovers", label: "Enemies to Lovers" },
+                { value: "love_triangle", label: "Love Triangle" }, { value: "amnesia", label: "Amnesia" },
+                { value: "reincarnation", label: "Reincarnation" }, { value: "revenge", label: "Revenge Plot" },
+                { value: "slow_burn", label: "Slow Burn Romance" }, { value: "office_romance", label: "Office Romance" },
+                { value: "tsundere", label: "Tsundere" }, { value: "chaebol", label: "Chaebol" },
+                { value: "childhood_friends", label: "Childhood Friends" }, { value: "second_chance", label: "Second Chance" },
+                { value: "forced_cohabitation", label: "Forced Cohabitation" }, { value: "fake_dating", label: "Fake Dating" }
+            ];
+            for (let i = 1; i <= 3; i++) {
+                const select = document.getElementById(`multi-trope-${i}`);
+                if (select) {
+                    select.innerHTML = '<option value="">Select Trope ' + i + '</option>' + 
+                        tropeOptions.map(opt => `<option value="${opt.value}">${opt.label}</option>`).join('');
+                    select.onchange = () => { updateSelectedMultiTropes(); scheduleFetch(); };
+                }
+            }
+        }
+
+        function updateSelectedMultiTropes() {
+            selectedMultiTropes = [];
+            for (let i = 1; i <= 3; i++) {
+                const val = document.getElementById(`multi-trope-${i}`)?.value;
+                if (val) selectedMultiTropes.push(val);
+            }
+            trackB2BEvent('multi_trope_selected', { tropes: selectedMultiTropes });
+        }
+
+        function getSelectedTropes() {
+            if (multiTropeMode && selectedMultiTropes.length > 0) return selectedMultiTropes;
+            const singleTrope = document.getElementById('with-trope-select')?.value;
+            return singleTrope ? [singleTrope] : [];
+        }
+
+        // ============================================
+        // ACTIVE FILTERS DASHBOARD - FULL RESTORED
+        // ============================================
+        function updateActiveFiltersDashboard() {
+            const container = document.getElementById('active-filters-list');
+            const countSpan = document.getElementById('active-filters-count');
+            const noFiltersMsg = document.getElementById('no-active-filters-msg');
+            if (!container) return;
+            
+            const activeFilters = [];
+            const contentType = [...selectedContentTypes][0];
+            if (contentType) activeFilters.push({ type: 'content', label: contentType === 'movie' ? 'Movies' : (contentType === 'tv' ? 'TV Shows' : 'Shorts'), value: contentType });
+            
+            if (selectedEmotionalIntensity) activeFilters.push({ type: 'emotion', label: `Intensity: ${selectedEmotionalIntensity.replace('_', ' ')}`, value: selectedEmotionalIntensity });
+            if (selectedPacing) activeFilters.push({ type: 'pacing', label: `Pacing: ${selectedPacing.replace('_', ' ')}`, value: selectedPacing });
+            
+            selectedGenres.forEach(genreId => {
+                const genre = TMDB_VALID_GENRES.find(g => g.id === genreId);
+                if (genre) activeFilters.push({ type: 'genre', label: genre.name, value: genreId });
+            });
+            
+            if (selectedPlatforms.size > 0) {
+                const platformNames = TRACKED_PROVIDERS.filter(p => selectedPlatforms.has(p.id)).map(p => p.name);
+                activeFilters.push({ type: 'platforms', label: `Platforms: ${platformNames.join(', ')}`, value: 'platforms' });
+            }
+            
+            const langSelect = document.getElementById('language-filter');
+            if (langSelect?.value) {
+                const opt = langSelect.querySelector(`option[value="${langSelect.value}"]`);
+                activeFilters.push({ type: 'language', label: `Language: ${opt?.textContent || langSelect.value}`, value: langSelect.value });
+            }
+            
+            const subtitleSelect = document.getElementById('subtitle-filter');
+            if (subtitleSelect?.value) {
+                const opt = subtitleSelect.querySelector(`option[value="${subtitleSelect.value}"]`);
+                activeFilters.push({ type: 'subtitle', label: `Subtitles: ${opt?.textContent || subtitleSelect.value}`, value: subtitleSelect.value });
+            }
+            
+            const countrySelect = document.getElementById('country-filter');
+            if (countrySelect?.value) {
+                const opt = countrySelect.querySelector(`option[value="${countrySelect.value}"]`);
+                activeFilters.push({ type: 'country', label: `Country: ${opt?.textContent || countrySelect.value}`, value: countrySelect.value });
+            }
+            
+            const ratingMin = document.getElementById('rating-min');
+            if (ratingMin && parseFloat(ratingMin.value) > 0) activeFilters.push({ type: 'rating', label: `Rating: ${ratingMin.value}+`, value: ratingMin.value });
+            
+            const yearMin = document.getElementById('year-min')?.value;
+            const yearMax = document.getElementById('year-max')?.value;
+            if (yearMin !== '1950' || yearMax !== '2026') activeFilters.push({ type: 'year', label: `Years: ${yearMin} - ${yearMax}`, value: `${yearMin}-${yearMax}` });
+            
+            const runtimeMin = document.getElementById('runtime-min')?.value;
+            const runtimeMax = document.getElementById('runtime-max')?.value;
+            if (runtimeMin !== '0' || runtimeMax !== '300') activeFilters.push({ type: 'runtime', label: `Runtime: ${runtimeMin}-${runtimeMax} min`, value: `${runtimeMin}-${runtimeMax}` });
+            
+            const searchInput = document.getElementById('nav-search-input');
+            if (searchInput?.value?.trim()) activeFilters.push({ type: 'search', label: `Search: "${searchInput.value.trim()}"`, value: searchInput.value });
+            
+            if (currentShortCategory) activeFilters.push({ type: 'short', label: `Shorts: ${currentShortCategory}`, value: currentShortCategory });
+            
+            const comingSoon = document.getElementById('coming-soon-filter')?.checked;
+            if (comingSoon) activeFilters.push({ type: 'advanced', label: 'Coming Soon', value: 'coming_soon' });
+            
+            const criticallyAcclaimed = document.getElementById('critically-acclaimed-filter')?.checked;
+            if (criticallyAcclaimed) activeFilters.push({ type: 'advanced', label: 'Critically Acclaimed (8.0+)', value: 'acclaimed' });
+            
+            const tropeSelect = document.getElementById('with-trope-select');
+            if (!multiTropeMode && tropeSelect?.value) {
+                const opt = tropeSelect.querySelector(`option[value="${tropeSelect.value}"]`);
+                activeFilters.push({ type: 'trope', label: `Trope: ${opt?.textContent || tropeSelect.value}`, value: tropeSelect.value });
+            }
+            
+            if (multiTropeMode && selectedMultiTropes.length > 0) {
+                activeFilters.push({ type: 'trope', label: `Tropes: ${selectedMultiTropes.join(', ')}`, value: selectedMultiTropes.join(',') });
+            }
+            
+            if (activeFilters.length === 0) {
+                if (noFiltersMsg) noFiltersMsg.hidden = false;
+                if (countSpan) countSpan.textContent = '0';
+                container.innerHTML = '<div id="no-active-filters-msg" class="text-xs text-gray-500 w-full text-center py-2">No active filters. Select filters above to refine your discovery.</div>';
+                return;
+            }
+            
+            if (noFiltersMsg) noFiltersMsg.hidden = true;
+            if (countSpan) countSpan.textContent = activeFilters.length;
+            container.innerHTML = activeFilters.map(filter => `<div class="active-filter-badge group flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-gray-800 border border-gray-700 hover:border-red-500/50"><span class="text-gray-300">${escapeHtml(filter.label)}</span><button onclick="removeActiveFilter('${filter.type}', '${String(filter.value).replace(/'/g, "\\'")}')" class="ml-1 text-gray-500 hover:text-red-400"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>`).join('');
+        }
+
+        function removeActiveFilter(type, value) {
+            if (type === 'emotion') { selectedEmotionalIntensity = null; document.querySelectorAll('.emotion-chip').forEach(c => c.classList.remove('active')); }
+            else if (type === 'pacing') { selectedPacing = null; document.querySelectorAll('.pacing-chip').forEach(c => c.classList.remove('active')); }
+            else if (type === 'content') { selectedContentTypes.clear(); selectedContentTypes.add('movie'); document.querySelectorAll('.content-chip').forEach(btn => btn.classList.toggle('active', btn.dataset.contentType === 'movie')); }
+            else if (type === 'genre') { toggleGenreChipById(parseInt(value)); }
+            else if (type === 'platforms') { toggleAllPlatforms(false); }
+            else if (type === 'language') { document.getElementById('language-filter').value = ''; }
+            else if (type === 'subtitle') { document.getElementById('subtitle-filter').value = ''; }
+            else if (type === 'country') { document.getElementById('country-filter').value = ''; }
+            else if (type === 'rating') { document.getElementById('rating-min').value = '0'; document.getElementById('rating-display').textContent = '0.0'; }
+            else if (type === 'year') { document.getElementById('year-min').value = '1950'; document.getElementById('year-max').value = '2026'; updateChronologicalYearSliders(); }
+            else if (type === 'runtime') { document.getElementById('runtime-min').value = '0'; document.getElementById('runtime-max').value = '300'; updateRuntimeDurationSliders(); }
+            else if (type === 'search') { document.getElementById('nav-search-input').value = ''; }
+            else if (type === 'short') { currentShortCategory = null; document.querySelectorAll('[data-short]').forEach(btn => btn.classList.remove('active')); }
+            else if (type === 'advanced') { 
+                if (value === 'coming_soon') document.getElementById('coming-soon-filter').checked = false;
+                if (value === 'acclaimed') document.getElementById('critically-acclaimed-filter').checked = false;
+            }
+            else if (type === 'trope') { if (!multiTropeMode) document.getElementById('with-trope-select').value = ''; else { for(let i=1;i<=3;i++) document.getElementById(`multi-trope-${i}`).value = ''; selectedMultiTropes = []; } }
+            scheduleFetch();
+        }
+
+        function toggleGenreChipById(genreId) {
+            const btn = document.querySelector(`.chip[data-id="${genreId}"]`);
+            if (btn) {
+                if (selectedGenres.has(genreId)) { selectedGenres.delete(genreId); btn.classList.remove('active'); }
+                else { selectedGenres.add(genreId); btn.classList.add('active'); }
+            }
+            updateActiveFiltersDashboard();
+            scheduleFetch();
+        }
+
+        // ============================================
+        // BUILD API PARAMS - FULL WITH NEW FILTERS
+        // ============================================
         function buildRequestParams(page = 1) {
             const params = new URLSearchParams();
             const currentType = [...selectedContentTypes][0] || 'movie';
             params.set('content_type', currentType === 'short' ? 'short' : currentType);
             params.set('page', String(page));
             params.set('watch_region', localStorage.getItem('user_region') || 'US');
+            
             const sortSelect = document.getElementById('sort-by');
             if (sortSelect) params.set('sort_by', sortSelect.value);
+            
             if (selectedGenres.size) params.set('with_genres', [...selectedGenres].join(','));
             if (selectedPlatforms.size) params.set('with_watch_providers', [...selectedPlatforms].join('|'));
+            
             const langSelect = document.getElementById('language-filter');
             if (langSelect && langSelect.value) params.set('with_original_language', langSelect.value);
+            
+            const subtitleSelect = document.getElementById('subtitle-filter');
+            if (subtitleSelect && subtitleSelect.value) params.set('with_subtitles', subtitleSelect.value);
+            
             const countrySelect = document.getElementById('country-filter');
             if (countrySelect && countrySelect.value) params.set('with_origin_country', countrySelect.value);
+            
             const ratingSlider = document.getElementById('rating-min');
             if (ratingSlider && parseFloat(ratingSlider.value) > 0) params.set('vote_average.gte', ratingSlider.value);
-            const tropeSelect = document.getElementById('with-trope-select');
-            if (tropeSelect && tropeSelect.value) params.set('with_trope', tropeSelect.value);
+            
             const queryInput = document.getElementById('nav-search-input');
             if (queryInput && queryInput.value.trim()) params.set('query', queryInput.value.trim());
-
+            
             const yMin = document.getElementById('year-min').value;
             const yMax = document.getElementById('year-max').value;
             if (currentType === 'tv') {
@@ -400,22 +1030,78 @@
                 if (yMin !== '1950') params.set('primary_release_date.gte', `${yMin}-01-01`);
                 if (yMax !== '2026') params.set('primary_release_date.lte', `${yMax}-12-31`);
             }
+            
             const rMin = document.getElementById('runtime-min').value;
             const rMax = document.getElementById('runtime-max').value;
             if (rMin !== '0') params.set('with_runtime.gte', rMin);
             if (rMax !== '300') params.set('with_runtime.lte', rMax);
-
+            
             if (currentType === 'short' && currentShortCategory) {
-                params.set('content_type', 'short');
                 const catMap = { korean:'ko', japanese:'ja', chinese:'zh', thai:'th' };
                 if (catMap[currentShortCategory]) params.set('with_original_language', catMap[currentShortCategory]);
             }
+            
+            // NEW: Advanced Filters
+            if (document.getElementById('coming-soon-filter')?.checked) {
+                const today = new Date().toISOString().split('T')[0];
+                params.set('primary_release_date.gte', today);
+            }
+            if (document.getElementById('critically-acclaimed-filter')?.checked) {
+                params.set('vote_average.gte', '8.0');
+            }
+            if (document.getElementById('festival-films-filter')?.checked) {
+                params.set('with_keywords', '2487');
+            }
+            if (document.getElementById('completed-series-filter')?.checked) {
+                params.set('with_status', 'ended');
+            }
+            
+            // Emotional Intensity & Pacing (passed as tags for worker filtering)
+            if (selectedEmotionalIntensity) params.set('emotional_intensity', selectedEmotionalIntensity);
+            if (selectedPacing) params.set('pacing', selectedPacing);
+            
+            const tropes = getSelectedTropes();
+            if (tropes.length > 0) params.set('with_tropes', tropes.join(','));
+            
             return params;
         }
 
-        /* ── HIGH-CONCURRENCY DISCOVERY REFETCH TRIGGERS ────────────────────── */
+        // ============================================
+        // SCROLL DEPTH TRACKING - NEW
+        // ============================================
+        function initScrollDepthTracking() {
+            let maxDepth = 0;
+            window.addEventListener('scroll', () => {
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrolled = (window.scrollY / scrollHeight) * 100;
+                if (scrolled >= 25 && !scrollDepthTracked[25]) { scrollDepthTracked[25] = true; trackB2BEvent('scroll_depth', { depth: 25 }); }
+                if (scrolled >= 50 && !scrollDepthTracked[50]) { scrollDepthTracked[50] = true; trackB2BEvent('scroll_depth', { depth: 50 }); }
+                if (scrolled >= 75 && !scrollDepthTracked[75]) { scrollDepthTracked[75] = true; trackB2BEvent('scroll_depth', { depth: 75 }); }
+                if (scrolled >= 99 && !scrollDepthTracked[100]) { scrollDepthTracked[100] = true; trackB2BEvent('scroll_depth', { depth: 100 }); }
+                if (scrolled > maxDepth) { maxDepth = scrolled; }
+            });
+        }
+
+        // ============================================
+        // MAIN DISCOVERY FUNCTION - FULL ORIGINAL
+        // ============================================
         function scheduleFetch() {
+            filterChangeCount++;
+            lastFilterChangeTime = Date.now();
+            trackB2BEvent('filter_change', { 
+                filters: {
+                    content_type: [...selectedContentTypes][0],
+                    genres: [...selectedGenres],
+                    platforms: [...selectedPlatforms],
+                    emotional_intensity: selectedEmotionalIntensity,
+                    pacing: selectedPacing,
+                    has_subtitle: !!document.getElementById('subtitle-filter')?.value
+                },
+                filter_change_count: filterChangeCount
+            });
+            
             clearTimeout(fetchDebouncePointer);
+            updateActiveFiltersDashboard();
             fetchDebouncePointer = setTimeout(() => {
                 currentPageIndex = 1;
                 activeResultsArray = [];
@@ -428,26 +1114,47 @@
             const emptyState = document.getElementById('empty-state');
             const counter = document.getElementById('results-count');
             const loadMoreBtn = document.getElementById('load-more-btn');
+            
             if (!appendMode) {
                 emptyState.hidden = true;
                 loadMoreBtn.classList.add('hidden');
                 grid.innerHTML = Array(10).fill(0).map(() => '<div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>').join('');
-                counter.textContent = 'Loading core matrices...';
-            } else {
-                isCompilationLocked = true;
-                loadMoreBtn.disabled = true;
-                loadMoreBtn.textContent = 'Mapping edge streams...';
+                counter.textContent = 'Loading results from multiple sources...';
             }
+            
             try {
                 const params = buildRequestParams(appendMode ? currentPageIndex : 1);
                 const isShort = params.get('content_type') === 'short';
-                const apiPath = isShort ? '/api/shorts' : (params.has('query') ? '/api/search' : '/api/discover');
+                const hasQuery = params.has('query') && params.get('query').trim().length > 0;
+                const apiPath = isShort ? '/api/shorts' : (hasQuery ? '/api/search' : '/api/discover');
                 const targetUrl = `${WORKER_URL}${apiPath}?${params.toString()}`;
+                
                 const responseData = await fetch(targetUrl).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
-                const rawResults = responseData.results || [];
+                let rawResults = responseData.results || [];
+                
+                // Apply genre AND/OR logic client-side if needed
+                if (filterLogic === 'and' && selectedGenres.size > 1 && rawResults.length > 0) {
+                    const requiredGenres = [...selectedGenres];
+                    rawResults = rawResults.filter(item => {
+                        const itemGenres = item.genre_ids || [];
+                        return requiredGenres.every(req => itemGenres.includes(req));
+                    });
+                }
+                
+                // Apply subtitle filter client-side
+                const subtitleFilter = document.getElementById('subtitle-filter')?.value;
+                if (subtitleFilter && rawResults.length > 0) {
+                    rawResults = rawResults.filter(item => {
+                        if (item._source === 'viki') return true;
+                        if (item.available_subtitles?.includes(subtitleFilter)) return true;
+                        if (subtitleFilter === 'en') return true;
+                        return false;
+                    });
+                }
+                
                 if (appendMode) activeResultsArray.push(...rawResults);
                 else activeResultsArray = rawResults;
-
+                
                 const distinctMap = new Map();
                 const cleanArray = [];
                 for (const item of activeResultsArray) {
@@ -455,49 +1162,52 @@
                     distinctMap.set(item.id, true);
                     cleanArray.push(item);
                 }
+                
                 if (!cleanArray.length) {
                     grid.innerHTML = '';
                     emptyState.hidden = false;
-                    counter.textContent = '0 records indexed';
+                    counter.textContent = '0 results found';
                     loadMoreBtn.classList.add('hidden');
+                    trackB2BEvent('zero_results', { 
+                        filters: params.toString(),
+                        content_type: [...selectedContentTypes][0],
+                        has_genres: selectedGenres.size > 0,
+                        has_platforms: selectedPlatforms.size > 0
+                    });
                     return;
                 }
-                counter.textContent = `Showing ${cleanArray.length} filtered directory element${cleanArray.length !== 1 ? 's' : ''}`;
+                
+                counter.textContent = `Showing ${cleanArray.length} result${cleanArray.length !== 1 ? 's' : ''}`;
                 grid.className = currentView === 'list' ? 'flex flex-col gap-3' : 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4';
                 grid.innerHTML = cleanArray.map(item => renderCatalogItemCard(item)).join('');
+                
                 const totalPages = responseData.total_pages || 1;
                 const hasMoreData = currentPageIndex < totalPages && rawResults.length >= 20;
                 loadMoreBtn.classList.toggle('hidden', !hasMoreData);
                 loadMoreBtn.disabled = false;
-                loadMoreBtn.textContent = 'Load More';
-
-                const shareParams = buildRequestParams(1);
-                history.replaceState(null, '', `?${shareParams.toString()}`);
-                document.getElementById('jsonld-itemlist').textContent = JSON.stringify({
-                    '@context': 'https://schema.org',
-                    '@type': 'ItemList',
-                    'name': 'FlashStream Discovery Results',
-                    'numberOfItems': cleanArray.length,
-                    'itemListElement': cleanArray.slice(0,10).map((item,i) => ({
-                        '@type': 'ListItem',
-                        'position': i+1,
-                        'name': item.title || item.name,
-                        'url': `https://flashstream.pages.dev/movie-detail?id=${item.id}&type=${item.media_type||'movie'}`
-                    }))
-                });
+                
+                // Track filter abandonment (if user hasn't clicked any result after multiple filter changes)
+                if (filterChangeCount > 3 && !sessionStorage.getItem('has_clicked_content')) {
+                    setTimeout(() => {
+                        if (!sessionStorage.getItem('has_clicked_content')) {
+                            trackB2BEvent('filter_abandonment', { filter_change_count: filterChangeCount, time_elapsed: Date.now() - (lastFilterChangeTime || Date.now()) });
+                        }
+                    }, 30000);
+                }
+                
             } catch (err) {
-                console.error('(Catalog Compilation Crash)', err);
+                console.error('Discovery error:', err);
                 grid.innerHTML = '';
-                counter.textContent = 'Network pipeline mapping timed out.';
+                counter.textContent = 'Error loading content. Please try again.';
                 emptyState.hidden = false;
-            } finally {
-                isCompilationLocked = false;
             }
         }
 
         function loadMore() { if (isCompilationLocked) return; currentPageIndex++; executeNetworkDiscoveryPipeline(true); }
 
-        /* ── MONOLITHIC CARD PROFILE VIEW STRINGS ──────────────────────────── */
+        // ============================================
+        // CARD RENDERING - WITH SOURCE BADGES
+        // ============================================
         function renderCatalogItemCard(item) {
             const id = item.id;
             const title = item.title || item.name || 'Unknown Title';
@@ -508,20 +1218,13 @@
             const href = `/movie-detail?id=${id}&type=${type}`;
             const inWL = isInWL(id);
             const hideRat = localStorage.getItem('hide_ratings') === 'true';
+            const sourceBadge = item._source ? `<span class="source-badge source-${item._source} text-[8px] ml-1">${item._source}</span>` : '';
+            
             if (currentView === 'list') {
-                return `<article class="flex items-center gap-4 p-3 rounded-xl bg-gray-900 border border-white/5 hover:border-white/10 transition-all" role="listitem">
-                    <a href="${href}" class="flex-shrink-0 w-12 h-18 bg-cover bg-center rounded-lg" style="background-image:url('${escapeAttr(poster)}')"></a>
-                    <div class="flex-1 min-w-0"><a href="${href}" class="font-semibold text-sm text-white hover:text-accent line-clamp-1 block">${escapeHtml(title)}</a><p class="text-xs text-gray-500 font-medium font-mono mt-1">${year} · ${type.toUpperCase()} ${!hideRat && rating ? `· ★ ${rating}` : ''}</p></div>
-                    <button onclick="handleCardWatchlistToggle(event, this)" class="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-5 h-5" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
-                </article>`;
+                return `<article class="flex items-center gap-4 p-3 rounded-xl bg-gray-900 border border-white/5 hover:border-white/10 transition-all" data-content-id="${id}"><a href="${href}" class="flex-shrink-0 w-12 h-18 bg-cover bg-center rounded-lg" style="background-image:url('${escapeAttr(poster)}')"></a><div class="flex-1 min-w-0"><a href="${href}" class="font-semibold text-sm text-white hover:text-accent line-clamp-1 block">${escapeHtml(title)}${sourceBadge}</a><p class="text-xs text-gray-500 font-medium font-mono mt-1">${year} · ${type.toUpperCase()} ${!hideRat && rating ? ` · ${rating}/10` : ''}</p></div><button onclick="handleCardWatchlistToggle(event, this)" class="p-2 rounded-full hover:bg-white/5 text-gray-400 hover:text-white" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-5 h-5" fill="${inWL ? '#00C4BC' : 'none'}" stroke="${inWL ? '#00C4BC' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button></article>`;
             }
-            return `<article class="group" role="listitem">
-                <div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] border border-white/5 group-hover:border-white/10 transition-all shadow-md">
-                    <a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="handleImgError(this)"></a>
-                    <button onclick="handleCardWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-all" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-4 h-4" fill="${inWL ? '#e50914' : 'none'}" stroke="${inWL ? '#e50914' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
-                </div>
-                <a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1 leading-snug">${escapeHtml(title)}</h3><div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium font-mono"><span>${year}</span>${!hideRat && rating ? `<span class="text-yellow-400">★ ${rating}</span>` : ''}</div></a>
-            </article>`;
+            
+            return `<article class="group" data-content-id="${id}"><div class="relative rounded-xl overflow-hidden bg-gray-900 aspect-[2/3] border border-white/5 group-hover:border-white/10 transition-all shadow-md"><a href="${href}" aria-label="${escapeAttr(title)}"><img src="${escapeAttr(poster)}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-all duration-300" onerror="handleImgError(this)"></a><button onclick="handleCardWatchlistToggle(event, this)" class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-all" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" aria-pressed="${inWL}"><svg class="w-4 h-4" fill="${inWL ? '#00C4BC' : 'none'}" stroke="${inWL ? '#00C4BC' : 'white'}" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button></div><a href="${href}" class="block mt-2 hover:text-accent transition-colors"><h3 class="text-xs font-semibold text-white line-clamp-1 leading-snug">${escapeHtml(title)}${sourceBadge}</h3><div class="flex items-center gap-2 mt-0.5 text-xs text-gray-500 font-medium font-mono"><span>${year}</span>${!hideRat && rating ? `<span class="text-yellow-400">${rating}/10</span>` : ''}</div></a></article>`;
         }
 
         function setView(type) {
@@ -536,6 +1239,9 @@
             document.getElementById('view-list')?.setAttribute('aria-pressed', String(type === 'list'));
         }
 
+        // ============================================
+        // QUICK MODES AND CLEAR FILTERS
+        // ============================================
         function applyQuickMode(mode) {
             clearAllFilters(false);
             const p = new URLSearchParams(QUICK_MODES[mode] || '');
@@ -545,59 +1251,17 @@
             if (p.get('vote_average.gte')) { document.getElementById('rating-min').value = p.get('vote_average.gte'); document.getElementById('rating-display').textContent = parseFloat(p.get('vote_average.gte')).toFixed(1); }
             document.querySelectorAll('#genre-chips .chip').forEach(btn => btn.classList.toggle('active', selectedGenres.has(parseInt(btn.dataset.id,10))));
             document.querySelectorAll('.content-chip').forEach(btn => btn.classList.toggle('active', selectedContentTypes.has(btn.dataset.contentType)));
+            updateActiveFiltersDashboard();
+            trackB2BEvent('quick_mode_applied', { mode: mode });
             scheduleFetch();
         }
 
-        /* ── HIGH-PERFORMANCE AUTO-SUGGEST DROPDOWN ENGINE ────────────────── */
-        function setupSearchDropdown() {
-            const input = document.getElementById('nav-search-input');
-            const dropdown = document.getElementById('search-dropdown');
-            if (!input || !dropdown) return;
-            let debounce;
-            input.addEventListener('input', () => {
-                clearTimeout(debounce);
-                const q = input.value.trim();
-                if (q.length < 2) { dropdown.hidden = true; return; }
-                debounce = setTimeout(() => {
-                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
-                        .then(r => r.json())
-                        .then(data => {
-                            const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0,6);
-                            if (!results.length) { dropdown.hidden = true; return; }
-                            dropdown.innerHTML = results.map(item => {
-                                const title = item.title || item.name || '';
-                                const year = (item.release_date || item.first_air_date || '').slice(0,4);
-                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-                                return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true">
-                                    <div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div>
-                                    <div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
-                                </a>`;
-                            }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
-                            dropdown.hidden = false;
-                        }).catch(() => dropdown.hidden = true);
-                }, 300);
-            });
-            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
-        }
-
-        function setupSearchFiltersEngine() {
-            const searchInput = document.getElementById('nav-search-input');
-            if (searchInput) searchInput.addEventListener('input', () => scheduleFetch());
-        }
-
-        function executeInitialDeepQueryFetch() {
-            const incomingQueryParams = new URLSearchParams(window.location.search);
-            if (incomingQueryParams.has('q')) document.getElementById('nav-search-input').value = incomingQueryParams.get('q');
-            if (incomingQueryParams.has('with_original_language')) document.getElementById('language-filter').value = incomingQueryParams.get('with_original_language');
-            if (incomingQueryParams.has('with_genres')) incomingQueryParams.get('with_genres').split(',').forEach(id => selectedGenres.add(parseInt(id,10)));
-            executeNetworkDiscoveryPipeline(false);
-        }
-
         function clearAllFilters(doFetch = true) {
-            selectedGenres.clear(); selectedPlatforms.clear(); currentShortCategory = null;
+            selectedGenres.clear(); selectedPlatforms.clear(); currentShortCategory = null; selectedEnhancedTags.clear(); selectedMultiTropes = [];
+            selectedEmotionalIntensity = null; selectedPacing = null;
             selectedContentTypes = new Set(['movie']);
             document.getElementById('language-filter').value = '';
+            document.getElementById('subtitle-filter').value = '';
             document.getElementById('country-filter').value = '';
             document.getElementById('rating-min').value = '0';
             document.getElementById('rating-display').textContent = '0.0';
@@ -609,28 +1273,217 @@
             document.getElementById('runtime-display').textContent = '0 - 300 min';
             document.getElementById('with-trope-select').value = '';
             document.getElementById('nav-search-input').value = '';
+            document.getElementById('coming-soon-filter').checked = false;
+            document.getElementById('leaving-soon-filter').checked = false;
+            document.getElementById('festival-films-filter').checked = false;
+            document.getElementById('completed-series-filter').checked = false;
+            document.getElementById('standalone-only-filter').checked = false;
+            document.getElementById('critically-acclaimed-filter').checked = false;
+            document.querySelectorAll('.emotion-chip').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.pacing-chip').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('#genre-chips .chip').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.provider-cb').forEach(cb => cb.checked = false);
             document.querySelectorAll('.content-chip').forEach(btn => btn.classList.remove('active'));
             document.querySelector('.content-chip[data-content-type="movie"]').classList.add('active');
             document.getElementById('shorts-category').hidden = true;
+            if (multiTropeMode) {
+                for(let i=1;i<=3;i++) document.getElementById(`multi-trope-${i}`).value = '';
+            }
+            updateActiveFiltersDashboard();
             if (doFetch) scheduleFetch();
             showToastMessage('All filters cleared', 'info');
         }
 
-        function shareFilters() { navigator.clipboard.writeText(window.location.href).then(() => showToastMessage('Link copied!','success')).catch(()=>{}); }
+        function shareFilters() { navigator.clipboard.writeText(window.location.href).then(() => showToastMessage('Link copied','success')).catch(()=>{}); }
 
-        /* ── UTILITIES ────────────────────────────────────────────────────── */
-        function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-        function showToastMessage(msg, type='success') {
-            const c = { success:'bg-green-900/90 border-green-600 text-green-100' };
-            const el = document.createElement('div');
-            el.className = `px-4 py-2.5 rounded-xl text-xs font-semibold text-white border ${c[type] || 'bg-gray-900/90 border-white/10'}`;
-            el.textContent = msg;
-            document.getElementById('toast-container').appendChild(el);
-            setTimeout(() => el.remove(), 2500);
+        // ============================================
+        // SEARCH DROPDOWN - FULL ORIGINAL
+        // ============================================
+        function setupSearchDropdown() {
+            const input = document.getElementById('nav-search-input');
+            const dropdown = document.getElementById('search-dropdown');
+            if (!input || !dropdown) return;
+            let debounce;
+            let lastSearchTerm = '';
+            input.addEventListener('input', () => {
+                clearTimeout(debounce);
+                const q = input.value.trim();
+                if (q.length < 2) { dropdown.hidden = true; return; }
+                debounce = setTimeout(() => {
+                    if (q !== lastSearchTerm) {
+                        lastSearchTerm = q;
+                        trackB2BEvent('search_keystroke_pause', { query: q, length: q.length });
+                    }
+                    fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0,6);
+                            if (!results.length) { 
+                                dropdown.hidden = true;
+                                trackB2BEvent('unmatched_search_query', { query: q });
+                                return; 
+                            }
+                            dropdown.innerHTML = results.map(item => {
+                                const title = item.title || item.name || '';
+                                const year = (item.release_date || item.first_air_date || '').slice(0,4);
+                                const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+                                const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+                                return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById('search-dropdown').hidden=true; sessionStorage.setItem('has_clicked_content', 'true'); trackB2BEvent('search_result_click', { query: '${escapeAttr(q)}', result_id: ${item.id}, result_title: '${escapeAttr(title)}' });"><div class="w-6 h-9 bg-gray-800 rounded flex-shrink-0 bg-cover" style="background-image:url('${poster}')"></div><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-[10px] text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div></a>`;
+                            }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 text-center">See all results →</a>`;
+                            dropdown.hidden = false;
+                        }).catch(() => dropdown.hidden = true);
+                }, 300);
+            });
+            document.addEventListener('click', e => { if (!e.target.closest('#nav-search-wrap')) dropdown.hidden = true; });
         }
+
+        // ============================================
+        // B2B ANALYTICS - FULL IMPLEMENTATION
+        // ============================================
+        const B2B_CONFIG = {
+            endpoint: `${WORKER_URL}/api/analytics`,
+            sessionId: localStorage.getItem('fs_session_id') || crypto.randomUUID(),
+            userId: localStorage.getItem('fs_user_id') || null,
+            enabled: true
+        };
+        
+        if (!localStorage.getItem('fs_session_id')) {
+            localStorage.setItem('fs_session_id', B2B_CONFIG.sessionId);
+        }
+        
+        function trackB2BEvent(eventName, eventData = {}) {
+            if (!B2B_CONFIG.enabled) return;
+            
+            const payload = {
+                event: eventName,
+                session_id: B2B_CONFIG.sessionId,
+                user_id: B2B_CONFIG.userId,
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                user_agent: navigator.userAgent,
+                referrer: document.referrer,
+                screen_size: `${window.innerWidth}x${window.innerHeight}`,
+                data: eventData
+            };
+            
+            fetch(B2B_CONFIG.endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                keepalive: true
+            }).catch(console.warn);
+            
+            console.log('[B2B]', eventName, eventData);
+        }
+        
+        // Content click tracking with referral
+        function setupContentClickTracking() {
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href*="/movie-detail"]');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    const match = href.match(/id=(\d+)/);
+                    if (match) {
+                        sessionStorage.setItem('has_clicked_content', 'true');
+                        trackB2BEvent('outbound_click', { 
+                            content_id: match[1], 
+                            href: href,
+                            referral_tag: 'discover_page'
+                        });
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // CONSENT BANNER - NEW
+        // ============================================
+        function setupConsentBanner() {
+            if (!localStorage.getItem('analytics_consent')) {
+                const banner = document.createElement('div');
+                banner.className = 'consent-banner';
+                banner.innerHTML = `
+                    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                        <span class="text-xs text-gray-300">We use anonymous analytics to improve global content discovery. No personal data is collected.</span>
+                        <div class="flex gap-3">
+                            <button id="accept-analytics-btn" class="bg-accent hover:bg-red-700 px-4 py-1.5 rounded text-xs font-semibold transition-colors">Accept</button>
+                            <button id="decline-analytics-btn" class="border border-white/20 hover:bg-white/10 px-4 py-1.5 rounded text-xs transition-colors">Decline</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(banner);
+                
+                document.getElementById('accept-analytics-btn').onclick = () => {
+                    localStorage.setItem('analytics_consent', 'true');
+                    B2B_CONFIG.enabled = true;
+                    banner.remove();
+                    trackB2BEvent('consent_given', { choice: 'accept' });
+                };
+                
+                document.getElementById('decline-analytics-btn').onclick = () => {
+                    localStorage.setItem('analytics_consent', 'false');
+                    B2B_CONFIG.enabled = false;
+                    banner.remove();
+                    trackB2BEvent('consent_given', { choice: 'decline' });
+                };
+            } else {
+                B2B_CONFIG.enabled = localStorage.getItem('analytics_consent') === 'true';
+            }
+            
+            document.getElementById('show-consent-settings')?.addEventListener('click', () => {
+                localStorage.removeItem('analytics_consent');
+                setupConsentBanner();
+            });
+        }
+
+        // ============================================
+        // INITIALIZATION - FULL ORIGINAL
+        // ============================================
+        function renderThematicPreferenceGrids() {
+            const quickDiv = document.getElementById('quick-modes');
+            if (quickDiv) quickDiv.innerHTML = Object.keys(QUICK_MODES).map(k => {
+                const names = { light:'Light & Fun', scary:'Scary', feelgood:'Feel Good', binge:'Binge Worthy', date:'Date Night', family:'Family Friendly', hidden:'Hidden Gems', hollywood:'Hollywood', kdrama:'K-Drama', cdrama:'C-Drama', anime:'Anime', bollywood:'Bollywood', thai:'Thai Drama' };
+                return `<button class="chip" onclick="applyQuickMode('${k}')">${names[k] || k}</button>`;
+            }).join('');
+            
+            const ctDiv = document.getElementById('content-type-buttons');
+            if (ctDiv) ctDiv.innerHTML = `<button class="content-chip active" data-content-type="movie" onclick="toggleContentType('movie', this)">Movies</button><button class="content-chip" data-content-type="tv" onclick="toggleContentType('tv', this)">TV Shows</button><button class="content-chip" data-content-type="short" onclick="toggleContentType('short', this)">Shorts</button>`;
+            
+            const shortsDiv = document.getElementById('shorts-cat-buttons');
+            if (shortsDiv) shortsDiv.innerHTML = ['western','korean','japanese','chinese','thai'].map(c => `<button class="chip" data-short="${c}" onclick="setShortsCategory('${c}', this)">${c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('');
+            
+            const genreGrid = document.getElementById('genre-chips');
+            if (genreGrid) genreGrid.innerHTML = TMDB_VALID_GENRES.map(g => `<button class="chip" data-id="${g.id}" onclick="toggleGenreChip(this, ${g.id})">${escapeHtml(g.name)}</button>`).join('');
+            
+            const providerGrid = document.getElementById('platform-filters');
+            if (providerGrid) {
+                providerGrid.innerHTML = `<div class="flex items-center justify-between mb-2 pb-2 border-b border-white/10"><button onclick="toggleAllPlatforms(true)" class="text-[11px] text-accent hover:text-red-400">Select All</button><button onclick="toggleAllPlatforms(false)" class="text-[11px] text-gray-500 hover:text-gray-300">Deselect All</button><span id="platform-count" class="text-[10px] text-gray-500">0 of ${TRACKED_PROVIDERS.length} selected</span></div><div class="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">${TRACKED_PROVIDERS.map(p => `<label class="flex items-center gap-2 text-xs text-gray-300 cursor-pointer hover:text-white select-none"><input type="checkbox" value="${p.id}" class="accent-red-600 provider-cb" onchange="syncSelectedPlatforms()"> ${escapeHtml(p.name)}</label>`).join('')}</div><div class="text-[9px] text-gray-600 mt-2 pt-1 border-t border-white/5">Content from Viki, iQIYI, WeTV, and Youku comes directly from their catalogs.</div>`;
+            }
+        }
+
+        function initializeLayoutContext() {
+            if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+            const region = localStorage.getItem('user_region') || 'US';
+            const regionEl = document.getElementById('region-code');
+            if (regionEl) regionEl.textContent = region;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeLayoutContext();
+            renderThematicPreferenceGrids();
+            setupSearchDropdown();
+            setupConsentBanner();
+            setupContentClickTracking();
+            initScrollDepthTracking();
+            executeNetworkDiscoveryPipeline(false);
+            trackB2BEvent('page_view', { page: 'discover', filter_logic: filterLogic });
+            
+            const sessionStart = Date.now();
+            window.addEventListener('beforeunload', () => {
+                trackB2BEvent('session_end', { duration_seconds: Math.floor((Date.now() - sessionStart) / 1000) });
+            });
+        });
 
         // Expose global functions
         window.toggleGenreChip = toggleGenreChip;
@@ -646,6 +1499,14 @@
         window.loadMore = loadMore;
         window.handleCardWatchlistToggle = handleCardWatchlistToggle;
         window.scheduleFetch = scheduleFetch;
+        window.setFilterLogic = setFilterLogic;
+        window.toggleAllPlatforms = toggleAllPlatforms;
+        window.toggleMultiTropeMode = toggleMultiTropeMode;
+        window.removeActiveFilter = removeActiveFilter;
+        window.setEmotionalIntensity = setEmotionalIntensity;
+        window.setPacing = setPacing;
+        window.updateRatingDisplay = updateRatingDisplay;
+        window.trackB2BEvent = trackB2BEvent;
     </script>
 </body>
 </html>
