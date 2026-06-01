@@ -21,6 +21,19 @@
     <meta name="theme-color" content="var(--color-accent)">
     <!-- Block B: replaced Tailwind + custom CSS with global.css -->
     <link rel="stylesheet" href="/css/global.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    accent: '#00C4BC'
+                }
+            }
+        }
+    };
+</script>
     <!-- Block E: mobile filter panel extra styles -->
     <style>
         /* mobile filter panel smooth slide and sticky apply button */
