@@ -275,14 +275,20 @@
             img.src = NO_POSTER;
         }
 
-        // Use store for preferences
+        // Use store for preferences (using global Store object)
         const PREFS = {
-            getRegion: () => store.get('user_region') || 'US',
-            setRegion: (r) => store.set('user_region', r),
-            getTheme: () => store.get('cs-theme') || 'dark',
-            setTheme: (t) => store.set('cs-theme', t),
-            getTaste: () => { try { return store.get('taste_profile') || {}; } catch { return {}; } }
+            getRegion: () => (typeof Store !== 'undefined' && Store.getItem) ? Store.getItem('user_region') || 'US' : localStorage.getItem('user_region') || 'US',
+            setRegion: (r) => { if (typeof Store !== 'undefined' && Store.setItem) { Store.setItem('user_region', r); } else { localStorage.setItem('user_region', r); } },
+            getTheme: () => (typeof Store !== 'undefined' && Store.getItem) ? Store.getItem('cs-theme') || 'dark' : localStorage.getItem('cs-theme') || 'dark',
+            setTheme: (t) => { if (typeof Store !== 'undefined' && Store.setItem) { Store.setItem('cs-theme', t); } else { localStorage.setItem('cs-theme', t); } },
+            getTaste: () => { try { 
+                if (typeof Store !== 'undefined' && Store.getItem) {
+                    return Store.getItem('taste_profile') || {};
+                }
+                return JSON.parse(localStorage.getItem('taste_profile') || '{}');
+            } catch { return {}; } }
         };
+
 
         // Watchlist functions using apiClient (no console.warn)
         let watchlistCache = null;
@@ -667,13 +673,21 @@
         }
 
         // Auth helpers (using store)
-        function isUserLoggedIn() {
-            return !!store.get('auth_token') || !!sessionStorage.getItem('auth_session');
-        }
+function isUserLoggedIn() {
+    if (typeof Store !== 'undefined' && Store.getItem) {
+        return !!Store.getItem('flashstream_auth_token') || !!sessionStorage.getItem('auth_session');
+    }
+    return !!localStorage.getItem('flashstream_auth_token') || !!sessionStorage.getItem('auth_session');
+}
 
         function handleLogout() {
-            store.delete('auth_token');
-            store.delete('user_email');
+            if (typeof Store !== 'undefined' && Store.removeItem) {
+                Store.removeItem('flashstream_auth_token');
+                Store.removeItem('user_email');
+            } else {
+                localStorage.removeItem('flashstream_auth_token');
+                localStorage.removeItem('user_email');
+            }
             sessionStorage.removeItem('auth_session');
             window.location.href = '/';
         }
