@@ -773,6 +773,21 @@ function isUserLoggedIn() {
 
         function injectGlobalStyleFixes() {}
 
+        function initTasteProfile() {
+            let existing;
+            if (typeof Store !== 'undefined' && Store.getItem) {
+                existing = Store.getItem('taste_profile');
+            } else {
+                const raw = localStorage.getItem('taste_profile');
+                if (raw) {
+                    try { existing = JSON.parse(raw); } catch(e) { existing = null; }
+                }
+            }
+            if (!existing || Object.keys(existing).length === 0) {
+                updateTasteProfile();
+            }
+        }
+
         // Initialization
         async function initializeAllEnhancedFeatures() {
             cleanDuplicateNavigationCSS();
@@ -788,12 +803,12 @@ function isUserLoggedIn() {
                     const newTheme = isDark ? 'light' : 'dark';
                     document.documentElement.classList.toggle('dark');
                     PREFS.setTheme(newTheme);
-                    if (window.store && store.setTheme) store.setTheme(newTheme);
+                    // Removed window.store reference - not needed
                 });
             }
             updateRegionBadge();
             setupSearchEngine();
-            initTasteProfile();
+            initTasteProfile();  // This now exists!
             await loadAllRows();
             // After loading, ensure CCPA link visibility based on region
             const region = PREFS.getRegion();
