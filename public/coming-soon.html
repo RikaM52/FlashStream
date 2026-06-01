@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- FlashStream – Coming Soon Page – Production Build v2.0 -->
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
@@ -16,76 +17,48 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png" type="image/png">
   <meta name="theme-color" content="#00C4BC">
+  <!-- FIX-1: Import global styles FIRST for consistency -->
+  <link rel="stylesheet" href="/css/global.css">
+  <!-- Block 13: Store.js and API Client moved to end of body; keep Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { accent: '#00C4BC' },
+          fontFamily: { sans: ['Roboto', 'system-ui', '-apple-system', 'sans-serif'] }
+        }
+      }
+    };
+  </script>
+  <!-- BLOCK 22: Mobile filter bar scrolling & sentinel min-height -->
   <style>
-    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-    .line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-    .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
-    .skeleton{background:linear-gradient(90deg,#1f1f29 25%,#2a2a38 50%,#1f1f29 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
-    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-    :focus-visible{outline:2px solid #00C4BC;outline-offset:3px;border-radius:4px}
-    .chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:9999px;font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.15s;color:#9ca3af;background:transparent;white-space:nowrap}
-    .chip:hover{border-color:rgba(255,255,255,0.4);color:#fff}
-    .chip.active{background:#00C4BC;border-color:#00C4BC;color:#fff}
-    .filter-section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:8px}
-    [hidden]{display:none!important}
-    #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
-    .release-badge{position:absolute;bottom:8px;left:8px;right:8px;background:rgba(0,0,0,0.8);backdrop-filter:blur(4px);padding:4px 8px;border-radius:8px;font-size:11px;font-weight:500;text-align:center;color:#fff}
+    @media (max-width: 640px) {
+      .flex-wrap.gap-2,
+      .flex-wrap.gap-1\.5 {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+    }
+    #load-more-sentinel {
+      min-height: 60px;
+    }
   </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
+  <!-- Block 3: Consent modal root -->
+  <div id="consent-modal-root"></div>
+  <!-- FIX-5: Screen reader announcer for dynamic content updates -->
+  <div class="sr-only" id="sr-announcer" aria-live="polite" aria-atomic="true"></div>
   <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
 
   <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
-  <!-- NAVIGATION -->
-  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-      <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-        <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
-        <span class="hidden sm:block">FlashStream</span>
-      </a>
-
-      <!-- SEARCH BAR -->
-      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="nav-search-input" placeholder="Search upcoming movies, TV shows..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" autocomplete="off">
-        </div>
-        <div id="search-dropdown" class="absolute top-full mt-1 left-0 right-0 bg-gray-950 border border-white/10 rounded-xl overflow-hidden shadow-2xl z-50" hidden></div>
-      </div>
-
-      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-        <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-        <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
-        <a href="/coming-soon" class="text-white font-semibold">Coming Soon</a>
-        <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
-        <a href="/settings" class="text-gray-400 hover:text-white transition-colors">Settings</a>
-      </div>
-
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-          <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
-        </a>
-        <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        </button>
-        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-      <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-      <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-      <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-      <a href="/coming-soon" class="text-white font-semibold py-1.5">Coming Soon</a>
-      <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-      <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-    </div>
-  </nav>
+  <!-- BLOCK 14: Unified navigation container (injected by navigation.js) -->
+  <div id="main-nav" class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5"></div>
 
   <main id="main-content" class="max-w-7xl mx-auto px-4 py-6">
     <!-- PAGE HEADER -->
@@ -104,15 +77,42 @@
       <div class="flex items-center gap-2">
         <span class="text-xs text-gray-500">Sort by:</span>
         <select id="sort-by" class="bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:outline-none focus:border-accent">
-          <option value="date_asc">Release Date (Earliest)</option>
-          <option value="date_desc">Release Date (Latest)</option>
+          <option value="closest">Release Date (Closest First)</option>
+          <option value="farthest">Release Date (Farthest First)</option>
           <option value="popularity">Most Anticipated</option>
+          <option value="title_asc">Title A-Z</option>
         </select>
       </div>
     </div>
 
+    <!-- BLOCK B: Release Timeframe Filter -->
+    <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full">
+      <span class="text-xs text-gray-500 mr-2 self-center">Release:</span>
+      <button class="chip active" data-timeframe="all" onclick="setTimeframe('all')">All</button>
+      <button class="chip" data-timeframe="week" onclick="setTimeframe('week')">This Week</button>
+      <button class="chip" data-timeframe="month" onclick="setTimeframe('month')">This Month</button>
+      <button class="chip" data-timeframe="quarter" onclick="setTimeframe('quarter')">Next 3 Months</button>
+      <button class="chip" data-timeframe="halfyear" onclick="setTimeframe('halfyear')">Next 6 Months</button>
+      <button class="chip" data-timeframe="2025" onclick="setTimeframe('2025')">2025+</button>
+    </div>
+
+    <!-- BLOCK P: Content Origin Filter -->
+    <div id="origin-filter-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
+    <!-- BLOCK Q: Subtitle Language Filter -->
+    <div id="subtitle-filter-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
+    <!-- BLOCK R: Trope Filter (Multi-select) -->
+    <div id="trope-filter-container" class="w-full mt-3 pt-3 border-t border-white/10"></div>
+
+    <!-- BLOCK S: Content Length Filter -->
+    <div id="content-length-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
+    <!-- BLOCK G: Genre Filter -->
+    <div id="genre-filter-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
     <!-- RESULTS GRID -->
-    <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" role="list" aria-label="Coming soon results">
+    <div id="results-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6" role="list" aria-label="Coming soon results">
       <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
       <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
       <div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>
@@ -132,6 +132,25 @@
     <div id="pagination" class="flex items-center justify-center gap-2 mt-8 flex-wrap" role="navigation" aria-label="Results pagination"></div>
   </main>
 
+  <!-- BLOCK 20: Global Footer -->
+  <footer class="border-t border-white/10 mt-16 py-8 px-4 text-center text-xs text-gray-500">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-6">
+      <a href="/about" class="hover:text-white transition-colors">About</a>
+      <a href="/privacy" class="hover:text-white transition-colors">Privacy</a>
+      <a href="/terms" class="hover:text-white transition-colors">Terms</a>
+      <a href="/help" class="hover:text-white transition-colors">Help</a>
+      <a href="#" id="ccpa-link" class="hover:text-white transition-colors hidden" data-ccpa-link>Do Not Sell My Personal Information</a>
+    </div>
+    <div class="mt-4">© 2025 FlashStream. All rights reserved.</div>
+  </footer>
+
+  <!-- BLOCK 13: External scripts moved BEFORE the inline script to ensure store and apiClient are defined -->
+  <script src="/js/store.js"></script>
+  <script src="/js/consent.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api-client.js"></script>
+  <script src="/js/navigation.js"></script>
+
   <script>
     const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
@@ -146,33 +165,324 @@
     let fetchDebounce = null;
     let currentView = localStorage.getItem('cs-view') || 'grid';
 
-    function getRegion() { return localStorage.getItem('user_region') || 'US'; }
+    // BLOCK B: Timeframe filter state
+    let currentTimeframe = 'all';
+    // BLOCK G: Genre filter state
+    let currentGenreFilter = 'all';
+
+    // BLOCK P: Content Origin Filter state
+    let currentOriginFilter = 'all';
     
-    function getWL() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
-    function saveWL(l) { localStorage.setItem('watchlist', JSON.stringify(l)); }
+    // BLOCK Q: Subtitle Language Filter state
+    let currentSubtitleFilter = 'all';
+    
+    // BLOCK R: Trope Filter state (multi-select)
+    let selectedTropes = [];
+    
+    // BLOCK S: Content Length Filter state
+    let currentContentLengthFilter = 'all';
+
+    // BLOCK J: Infinite scroll state
+    let isLoadingMore = false;
+    let hasMoreResults = true;
+    let allLoadedResults = [];
+    let currentDisplayCount = 20;
+    const LOAD_INCREMENT = 20;
+
+    // BLOCK X: Abandonment Point Tracking state
+    let filterChangeHistory = [];
+    let lastClickTime = Date.now();
+    let abandonmentTimer = null;
+
+    // BLOCK Y: Trailer Playback Analytics state
+    // BLOCK Z: Social Share & Bookmark Analytics state
+    // BLOCK AA: Device & Environment Tracking state
+    
+    // BLOCK AB: Header Click Velocity Tracking state
+    let headerClickHistory = [];
+    let pageLoadTime = Date.now();
+
+    // BLOCK G: Genre data
+    const upcomingGenres = [
+      { id: 28, name: 'Action' }, { id: 35, name: 'Comedy' }, { id: 18, name: 'Drama' },
+      { id: 27, name: 'Horror' }, { id: 10749, name: 'Romance' }, { id: 878, name: 'Sci-Fi' },
+      { id: 53, name: 'Thriller' }, { id: 16, name: 'Animation' }, { id: 10751, name: 'Family' }, { id: 14, name: 'Fantasy' }
+    ];
+
+    // BLOCK P: Content Origin data
+    const contentOrigins = [
+      { id: 'kr', name: '🇰🇷 K-Drama', platforms: ['Viki', 'Netflix', 'Disney+'] },
+      { id: 'cn', name: '🇨🇳 C-Drama', platforms: ['iQIYI', 'WeTV', 'Youku'] },
+      { id: 'th', name: '🇹🇭 Thai Drama', platforms: ['Viki', 'iQIYI', 'WeTV'] },
+      { id: 'jp', name: '🇯🇵 J-Drama', platforms: ['Netflix', 'Viki', 'Crunchyroll'] }
+    ];
+
+    // BLOCK Q: Subtitle Language data
+    const subtitleLanguages = [
+      { code: 'en', name: 'English' },
+      { code: 'es', name: 'Español' },
+      { code: 'pt', name: 'Português' },
+      { code: 'fr', name: 'Français' },
+      { code: 'de', name: 'Deutsch' },
+      { code: 'id', name: 'Bahasa Indonesia' },
+      { code: 'th', name: 'ไทย' },
+      { code: 'vi', name: 'Tiếng Việt' }
+    ];
+
+    // BLOCK R: Trope Database
+    const tropeDatabase = {
+      kdrama: [
+        { id: 'chaebol', name: 'Chaebol / Rich Heir' },
+        { id: 'contract_marriage', name: 'Contract Marriage' },
+        { id: 'office_romance', name: 'Office Romance' },
+        { id: 'enemies_to_lovers', name: 'Enemies to Lovers' },
+        { id: 'childhood_friends', name: 'Childhood Friends' },
+        { id: 'amnesia', name: 'Amnesia / Memory Loss' }
+      ],
+      cdrama: [
+        { id: 'wuxia', name: 'Wuxia (Martial Arts)' },
+        { id: 'xianxia', name: 'Xianxia (Fantasy)' },
+        { id: 'historical', name: 'Historical / Palace' },
+        { id: 'ceo_romance', name: 'CEO / Boss Romance' },
+        { id: 'cold_male_lead', name: 'Cold Male Lead' },
+        { id: 'revenge_plot', name: 'Revenge Plot' }
+      ],
+      thai: [
+        { id: 'bl', name: 'BL (Boys Love)' },
+        { id: 'gl', name: 'GL (Girls Love)' },
+        { id: 'bg_love', name: 'BG Love' },
+        { id: 'university', name: 'University Setting' },
+        { id: 'high_school', name: 'High School Setting' }
+      ],
+      jdrama: [
+        { id: 'manga_adaptation', name: 'Manga/LN Adaptation' },
+        { id: 'time_travel', name: 'Time Travel' },
+        { id: 'slow_burn', name: 'Slow Burn Romance' },
+        { id: 'psychological', name: 'Psychological Thriller' }
+      ]
+    };
+
+    // BLOCK T: Dwell Time Tracking state
+    let dwellTimeTrackers = new Map();
+    let visibleCards = new Map();
+    let dwellObserver = null;
+
+    // BLOCK U: Dead-End Search state
+    // BLOCK V: Outbound Routing state
+    // BLOCK W: Search Query Logging state
+    let lastSearchedQuery = '';
+    let searchTypingTimer = null;
+
+    // ============================================
+    // BLOCK AE: DISCOVERY PLATFORM INTEGRATION
+    // Profile support, region sync, blocked people, B2B events
+    // ============================================
+    
+    // Storage Keys for discovery integration
+    const DS_STORAGE_KEYS = {
+        SESSION_ID: 'fs_session_id',
+        USER_ID: 'fs_user_id',
+        ANALYTICS_CONSENT: 'analytics_consent',
+        CCPA_LIMIT: 'ccpa_limit_use',
+        THEME: 'cs-theme',
+        USER_REGION: 'user_region',
+        TASTE_PROFILE: 'taste_profile',
+        TRIGGER_PREFS: 'pref_triggers',
+        TRIGGER_SEVERITY: 'trigger_severity',
+        PROFILES: 'user_profiles',
+        ACTIVE_PROFILE: 'active_profile',
+        BLOCKED_PEOPLE: 'blocked_people',
+        PENDING_B2B_EVENTS: 'pending_b2b_events'
+    };
+
+    // BLOCK 6: Replace localStorage direct access with store.js getters/setters
+    function getRegion() { return store.getUserRegion(); }
+    
+    function getWL() { return store.getWatchlist(); }
+    function saveWL(list) { store.setWatchlist(list); }
     function isInWL(id) { return getWL().some(i => String(i.tmdb_id) === String(id)); }
     
+    function getReminders() { return store.getReminders(); }
+    function saveReminders(reminders) { store.setReminders(reminders); }
+    function hasReminder(id) { return getReminders().some(r => r.id === String(id)); }
+    
+    function getAnticipationCount(titleId) {
+      const watchlist = getWL();
+      return watchlist.filter(item => String(item.tmdb_id) === String(titleId)).length;
+    }
+    
+    function rateFilmInline(filmId, rating, title) {
+      try {
+        const ratings = store.getRatings();
+        ratings[String(filmId)] = rating;
+        store.setRatings(ratings);
+        
+        const ratingContainer = document.querySelector(`.rating-star[data-film-id="${filmId}"]`)?.closest('[data-rating-container]');
+        if (ratingContainer) {
+          const stars = ratingContainer.querySelectorAll('.rating-star');
+          stars.forEach((star, idx) => {
+            if (idx < rating) {
+              star.classList.add('text-yellow-400');
+              star.classList.remove('text-gray-600');
+            } else {
+              star.classList.add('text-gray-600');
+              star.classList.remove('text-yellow-400');
+            }
+          });
+        }
+        
+        showToast(`Rated "${title}" ${rating}★`, 'success');
+        // BLOCK 16: rating_submitted telemetry
+        if (window.telemetry?.track) {
+          window.telemetry.track('rating_submitted', { film_id: filmId, rating });
+        }
+      } catch(e) {}
+    }
+
+    // Flush pending B2B events (no-op after _eventCollector removal)
+    function flushPendingB2BEvents() {
+        // Removed _eventCollector reference
+    }
+
+    // Filter by blocked people (actors/directors)
+    function getBlockedPeople() {
+        try {
+            return JSON.parse(localStorage.getItem(DS_STORAGE_KEYS.BLOCKED_PEOPLE) || '[]');
+        } catch(e) { return []; }
+    }
+
+    function filterByBlockedPeople(results) {
+        const blockedPeople = getBlockedPeople();
+        if (blockedPeople.length === 0) return results;
+        
+        return results.filter(item => {
+            const title = (item.title || item.name || '').toLowerCase();
+            return !blockedPeople.some(person => title.includes(person.toLowerCase()));
+        });
+    }
+
+    // Get trigger warnings for content (discovery display only)
+    function getTriggerPreferences() {
+        try {
+            return JSON.parse(localStorage.getItem(DS_STORAGE_KEYS.TRIGGER_PREFS) || '[]');
+        } catch(e) { return []; }
+    }
+
+    function getTriggerSeverity() {
+        try {
+            return JSON.parse(localStorage.getItem(DS_STORAGE_KEYS.TRIGGER_SEVERITY) || '{}');
+        } catch(e) { return {}; }
+    }
+
+    // Add warning badge to card (just visual, no blocking)
+    function getWarningBadge(item) {
+        const activeTriggers = getTriggerPreferences();
+        const itemTriggers = item.content_warnings || item.triggers || [];
+        const matchingTriggers = itemTriggers.filter(t => activeTriggers.includes(t));
+        
+        if (matchingTriggers.length === 0) return '';
+        
+        const severities = getTriggerSeverity();
+        const highestSeverity = matchingTriggers.reduce((highest, t) => {
+            const sev = severities[t] || 'moderate';
+            const sevOrder = { 'mild': 0, 'moderate': 1, 'severe': 2 };
+            return sevOrder[sev] > sevOrder[highest] ? sev : highest;
+        }, 'mild');
+        
+        const severityColors = { 
+            mild: 'bg-yellow-500/80', 
+            moderate: 'bg-orange-500/80', 
+            severe: 'bg-red-500/80' 
+        };
+        
+        return `<span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[9px] font-medium ${severityColors[highestSeverity]} text-white" title="Content advisory: ${matchingTriggers.join(', ')}">⚠️ ${highestSeverity}</span>`;
+    }
+
+    // Sync region badge across tabs
+    function syncRegionBadge() {
+        const region = getRegion();
+        const regionCodeElem = document.getElementById('region-code');
+        if (regionCodeElem) regionCodeElem.textContent = region;
+    }
+
+    // Sync theme across tabs (using store.js)
+    function syncTheme() {
+        const theme = store.getTheme();
+        if (theme === 'light') document.documentElement.classList.remove('dark');
+        else document.documentElement.classList.add('dark');
+    }
+
+    // Listen for cross-tab changes
+    window.addEventListener('storage', (e) => {
+        if (e.key === DS_STORAGE_KEYS.USER_REGION) {
+            const regionCodeElem = document.getElementById('region-code');
+            if (regionCodeElem) regionCodeElem.textContent = e.newValue || 'US';
+        }
+        if (e.key === DS_STORAGE_KEYS.THEME) {
+            if (e.newValue === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+        }
+        if (e.key === DS_STORAGE_KEYS.ACTIVE_PROFILE) {
+            showToast(`Switched to "${e.newValue}" profile. Refreshing...`, 'info');
+            setTimeout(() => location.reload(), 500);
+        }
+        if (e.key === DS_STORAGE_KEYS.BLOCKED_PEOPLE) {
+            if (typeof fetchComingSoon !== 'undefined') fetchComingSoon();
+        }
+    });
+
+    // Register service worker for offline discovery
+    function registerServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(() => {});
+        }
+    }
+
+    // Initialize discovery features (without _eventCollector)
+    function initDiscoveryFeatures() {
+        flushPendingB2BEvents();
+        syncRegionBadge();
+        syncTheme();
+        registerServiceWorker();
+    }
+
+    // Export for use in card rendering
+    window.getWarningBadge = getWarningBadge;
+    window.filterByBlockedPeople = filterByBlockedPeople;
+    // ============================================
+    // END BLOCK AE
+    // ============================================
+
     function toggleWatchlist(item) {
       const list = getWL();
       const idx = list.findIndex(i => String(i.tmdb_id) === String(item.tmdb_id));
+      let added = false;
       if (idx > -1) {
         list.splice(idx, 1);
         saveWL(list);
         showToast('Removed from watchlist', 'info');
-        return false;
+      } else {
+        list.unshift({
+          tmdb_id: String(item.tmdb_id),
+          type: item.type,
+          title: item.title,
+          poster_path: item.poster_path,
+          genre_ids: item.genre_ids || [],
+          status: 'want_to_watch',
+          date_added: Date.now()
+        });
+        saveWL(list);
+        showToast('Added to watchlist', 'success');
+        added = true;
       }
-      list.unshift({
-        tmdb_id: String(item.tmdb_id),
-        type: item.type,
-        title: item.title,
-        poster_path: item.poster_path,
-        genre_ids: item.genre_ids || [],
-        status: 'want_to_watch',
-        date_added: Date.now()
-      });
-      saveWL(list);
-      showToast('Added to watchlist', 'success');
-      return true;
+      // BLOCK 16: watchlist_change telemetry
+      if (window.telemetry?.track) {
+        window.telemetry.track('watchlist_change', {
+          film_id: item.tmdb_id,
+          action: added ? 'add' : 'remove'
+        });
+      }
+      return added;
     }
 
     function filterByType(type) {
@@ -181,7 +491,995 @@
         btn.classList.toggle('active', btn.dataset.type === type);
       });
       currentPage = 1;
+      currentDisplayCount = 20;
+      hasMoreResults = true;
+      allLoadedResults = [];
       fetchComingSoon();
+    }
+
+    // BLOCK B: Timeframe filter functions
+    function setTimeframe(timeframe) {
+      currentTimeframe = timeframe;
+      document.querySelectorAll('[data-timeframe]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.timeframe === timeframe);
+      });
+      currentPage = 1;
+      currentDisplayCount = 20;
+      hasMoreResults = true;
+      allLoadedResults = [];
+      fetchComingSoon();
+    }
+
+    function filterByTimeframe(results) {
+      if (currentTimeframe === 'all') return results;
+      
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayStr = today.toISOString().slice(0, 10);
+      
+      const getDate = (item) => item.release_date || item.first_air_date || '';
+      
+      switch(currentTimeframe) {
+        case 'week': {
+          const nextWeek = new Date(today);
+          nextWeek.setDate(today.getDate() + 7);
+          const nextWeekStr = nextWeek.toISOString().slice(0, 10);
+          return results.filter(item => {
+            const date = getDate(item);
+            return date && date >= todayStr && date <= nextWeekStr;
+          });
+        }
+        case 'month': {
+          const nextMonth = new Date(today);
+          nextMonth.setDate(today.getDate() + 30);
+          const nextMonthStr = nextMonth.toISOString().slice(0, 10);
+          return results.filter(item => {
+            const date = getDate(item);
+            return date && date >= todayStr && date <= nextMonthStr;
+          });
+        }
+        case 'quarter': {
+          const nextQuarter = new Date(today);
+          nextQuarter.setDate(today.getDate() + 90);
+          const nextQuarterStr = nextQuarter.toISOString().slice(0, 10);
+          return results.filter(item => {
+            const date = getDate(item);
+            return date && date >= todayStr && date <= nextQuarterStr;
+          });
+        }
+        case 'halfyear': {
+          const nextHalfYear = new Date(today);
+          nextHalfYear.setDate(today.getDate() + 180);
+          const nextHalfYearStr = nextHalfYear.toISOString().slice(0, 10);
+          return results.filter(item => {
+            const date = getDate(item);
+            return date && date >= todayStr && date <= nextHalfYearStr;
+          });
+        }
+        case '2025': {
+          return results.filter(item => {
+            const date = getDate(item);
+            return date && date >= '2025-01-01';
+          });
+        }
+        default:
+          return results;
+      }
+    }
+
+    // BLOCK A: Enhanced sort function
+    function applyEnhancedSorting(results, sortValue) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      switch(sortValue) {
+        case 'closest':
+          return results.sort((a, b) => {
+            const dateA = new Date(a.release_date || a.first_air_date || '9999-12-31');
+            const dateB = new Date(b.release_date || b.first_air_date || '9999-12-31');
+            const diffA = Math.abs(dateA - today);
+            const diffB = Math.abs(dateB - today);
+            return diffA - diffB;
+          });
+        case 'farthest':
+          return results.sort((a, b) => {
+            const dateA = new Date(a.release_date || a.first_air_date || '9999-12-31');
+            const dateB = new Date(b.release_date || b.first_air_date || '9999-12-31');
+            return dateB - dateA;
+          });
+        case 'title_asc':
+          return results.sort((a, b) => {
+            const titleA = (a.title || a.name || '').toLowerCase();
+            const titleB = (b.title || b.name || '').toLowerCase();
+            return titleA.localeCompare(titleB);
+          });
+        case 'popularity':
+          return results.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+        default:
+          return results;
+      }
+    }
+
+    // BLOCK C: Trailer availability cache with TTL (7 days expiration)
+    let trailerCache = new Map();
+    const TRAILER_CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    // BLOCK 7: Replace direct fetch with apiClient.getVideos
+    async function checkTrailerAvailability(tmdbId, mediaType) {
+      const cached = trailerCache.get(tmdbId);
+      if (cached && (Date.now() - cached.timestamp) < TRAILER_CACHE_TTL) {
+        return cached.hasTrailer;
+      }
+      
+      try {
+        const videoData = await apiClient.getVideos(tmdbId, mediaType);
+        const hasTrailer = videoData.results && videoData.results.some(v => v.type === 'Trailer' && v.site === 'YouTube');
+        trailerCache.set(tmdbId, { hasTrailer: hasTrailer, timestamp: Date.now() });
+        return hasTrailer;
+      } catch(e) {
+        trailerCache.set(tmdbId, { hasTrailer: false, timestamp: Date.now() });
+        return false;
+      }
+    }
+
+    // Enhanced preloadTrailerChecks with re-render support
+    let pendingTrailerCheckCount = 0;
+    let pendingTrailerItems = [];
+    let pendingTrailerGridElement = null;
+
+    function preloadTrailerChecks(items) {
+      items.slice(0, 20).forEach(item => {
+        const id = item.id;
+        const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+        checkTrailerAvailability(id, type);
+      });
+    }
+
+    function preloadTrailerChecksWithRender(items, gridElement) {
+      if (!items || !items.length) return;
+      
+      pendingTrailerItems = items;
+      pendingTrailerCheckCount = items.length;
+      pendingTrailerGridElement = gridElement;
+      let completedChecks = 0;
+      
+      items.forEach(item => {
+        const id = item.id;
+        const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+        
+        checkTrailerAvailability(id, type).finally(() => {
+          completedChecks++;
+          if (completedChecks === pendingTrailerCheckCount && pendingTrailerGridElement) {
+            const currentResults = allLoadedResults.slice(0, currentDisplayCount);
+            if (currentResults.length === pendingTrailerItems.length && pendingTrailerGridElement.innerHTML.includes('skeleton') === false) {
+              pendingTrailerGridElement.innerHTML = currentResults.map(item => renderCardWithTrailer(item)).join('');
+              attachRatingStarListeners();
+            }
+          }
+        });
+      });
+    }
+
+    // BLOCK D: Reminder system
+    function toggleReminder(event, btn, id, title, releaseDate) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const reminders = getReminders();
+      const existingIndex = reminders.findIndex(r => r.id === String(id));
+      let enabled = false;
+      if (existingIndex > -1) {
+        reminders.splice(existingIndex, 1);
+        saveReminders(reminders);
+        const svg = btn.querySelector('svg');
+        if (svg) { svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'white'); }
+        btn.setAttribute('data-reminder', 'false');
+        showToast(`Reminder removed for "${title}"`, 'info');
+      } else {
+        reminders.push({ id: String(id), title: title, releaseDate: releaseDate, createdAt: Date.now() });
+        saveReminders(reminders);
+        const svg = btn.querySelector('svg');
+        if (svg) { svg.setAttribute('fill', '#00C4BC'); svg.setAttribute('stroke', '#00C4BC'); }
+        btn.setAttribute('data-reminder', 'true');
+        showToast(`Reminder set for "${title}" on ${formatReleaseDate(releaseDate)}`, 'success');
+        requestNotificationPermission();
+        enabled = true;
+      }
+      // BLOCK 16: reminder_toggled telemetry
+      if (window.telemetry?.track) {
+        window.telemetry.track('reminder_toggled', { film_id: id, enabled });
+      }
+    }
+
+    function requestNotificationPermission() {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
+    // BLOCK 5: removed checkReminders interval; keep function for manual use but no auto interval
+    function checkReminders() {
+      const reminders = getReminders();
+      if (reminders.length === 0) return;
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      reminders.forEach(reminder => {
+        const releaseDate = new Date(reminder.releaseDate);
+        releaseDate.setHours(0, 0, 0, 0);
+        const diffDays = Math.ceil((releaseDate - today) / (1000 * 60 * 60 * 24));
+        if (diffDays === 7 && !reminder.notified7d) {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(`📅 ${reminder.title}`, { body: 'Releases in 1 week!', icon: '/icons/icon-192.png', silent: false });
+          }
+          reminder.notified7d = true;
+        } else if (diffDays === 1 && !reminder.notified1d) {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(`📅 ${reminder.title}`, { body: 'Releases TOMORROW!', icon: '/icons/icon-192.png', silent: false });
+          }
+          reminder.notified1d = true;
+        } else if (diffDays === 0 && !reminder.notifiedToday) {
+          if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(`📅 ${reminder.title}`, { body: 'Available TODAY!', icon: '/icons/icon-192.png', silent: false });
+          }
+          reminder.notifiedToday = true;
+        }
+      });
+      saveReminders(reminders);
+    }
+
+    // BLOCK E: Anticipation score (using store.js)
+    // getAnticipationCount defined above with store.js
+
+    // BLOCK F: Calendar export
+    // BLOCK 10: Improved Calendar Integration with custom modal (replaces confirm)
+    function addToCalendar(title, releaseDate, tmdbId) {
+      if (!releaseDate) { showToast('Release date not confirmed yet', 'info'); return; }
+      
+      const startDate = new Date(releaseDate);
+      const endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + 1);
+      const formatForCalendar = (date) => date.toISOString().replace(/-|:|\.\d+/g, '');
+      
+      // Create modal container
+      const modal = document.createElement('div');
+      modal.className = 'fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-label', 'Add to calendar');
+      
+      modal.innerHTML = `
+        <div class="bg-gray-900 rounded-2xl max-w-sm w-full mx-4 p-6 border border-white/10 shadow-2xl">
+          <h3 class="text-lg font-semibold text-white mb-4">Add "${escapeHtml(title)}" to calendar</h3>
+          <div class="space-y-3">
+            <button id="calendar-google" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="#4285F4"/></svg>
+              Google Calendar
+            </button>
+            <button id="calendar-ics" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-white transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Download ICS file
+            </button>
+          </div>
+          <button id="calendar-close" class="mt-6 w-full text-center text-sm text-gray-500 hover:text-gray-300 transition-colors">Cancel</button>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      const handleGoogle = () => {
+        const googleUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${formatForCalendar(startDate)}/${formatForCalendar(endDate)}`;
+        window.open(googleUrl, '_blank');
+        showToast('Opening Google Calendar...', 'info');
+        modal.remove();
+      };
+      
+      const handleICS = () => {
+        const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${title} Release\nDTSTART:${formatForCalendar(startDate)}\nDTEND:${formatForCalendar(endDate)}\nEND:VEVENT\nEND:VCALENDAR`;
+        const blob = new Blob([icsContent], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.replace(/[^a-z0-9]/gi, '_')}_release.ics`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Calendar file downloaded', 'success');
+        modal.remove();
+      };
+      
+      modal.querySelector('#calendar-google').addEventListener('click', handleGoogle);
+      modal.querySelector('#calendar-ics').addEventListener('click', handleICS);
+      modal.querySelector('#calendar-close').addEventListener('click', () => modal.remove());
+      modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+    }
+
+    // BLOCK G: Genre filter functions
+    function initGenreFilter() {
+      const container = document.getElementById('genre-filter-container');
+      if (!container) return;
+      
+      const genreHtml = `<span class="text-xs text-gray-500 mr-2 self-center">Genre:</span>
+        <button class="chip active" data-genre="all" onclick="setGenreFilter('all')">All</button>
+        ${upcomingGenres.map(g => `<button class="chip" data-genre="${g.id}" onclick="setGenreFilter('${g.id}')">${g.name}</button>`).join('')}`;
+      container.innerHTML = genreHtml;
+    }
+
+    function setGenreFilter(genreId) {
+      currentGenreFilter = genreId;
+      document.querySelectorAll('[data-genre]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.genre === String(genreId));
+      });
+      resetAndFetch();
+    }
+
+    function filterByGenre(results) {
+      if (currentGenreFilter === 'all') return results;
+      const genreIdNum = parseInt(currentGenreFilter);
+      return results.filter(item => {
+        const genres = item.genre_ids || [];
+        return genres.includes(genreIdNum);
+      });
+    }
+
+    // BLOCK P: Content Origin Filter functions
+    function initOriginFilter() {
+      const container = document.getElementById('origin-filter-container');
+      if (!container) return;
+      container.innerHTML = `
+        <span class="text-xs text-gray-500 mr-2 self-center">Origin:</span>
+        <button class="chip active" data-origin="all" onclick="setOriginFilter('all')">All</button>
+        ${contentOrigins.map(o => `<button class="chip" data-origin="${o.id}" onclick="setOriginFilter('${o.id}')">${o.name}</button>`).join('')}
+      `;
+    }
+
+    function setOriginFilter(originId) {
+      currentOriginFilter = originId;
+      document.querySelectorAll('[data-origin]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.origin === String(originId));
+      });
+      resetAndFetch();
+    }
+
+    function filterByOrigin(results) {
+      if (currentOriginFilter === 'all') return results;
+      const originLangMap = { kr: 'ko', cn: 'zh', th: 'th', jp: 'ja' };
+      const targetLang = originLangMap[currentOriginFilter];
+      if (targetLang) {
+        return results.filter(item => item.original_language === targetLang);
+      }
+      return results;
+    }
+
+    // BLOCK Q: Subtitle Language Filter functions
+    function initSubtitleFilter() {
+      const container = document.getElementById('subtitle-filter-container');
+      if (!container) return;
+      container.innerHTML = `
+        <span class="text-xs text-gray-500 mr-2 self-center">Subtitles:</span>
+        <button class="chip active" data-subtitle="all" onclick="setSubtitleFilter('all')">All</button>
+        ${subtitleLanguages.map(s => `<button class="chip" data-subtitle="${s.code}" onclick="setSubtitleFilter('${s.code}')">${s.name}</button>`).join('')}
+        <span class="text-[10px] text-accent ml-2">⭐ Viki offers fan subtitles</span>
+      `;
+    }
+
+    function setSubtitleFilter(subtitleId) {
+      currentSubtitleFilter = subtitleId;
+      document.querySelectorAll('[data-subtitle]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.subtitle === String(subtitleId));
+      });
+      resetAndFetch();
+    }
+
+    // BLOCK R: Trope Filter functions (Multi-select)
+    function initTropeFilter() {
+      const container = document.getElementById('trope-filter-container');
+      if (!container) return;
+      
+      let html = `<div class="w-full mb-2"><span class="text-xs text-gray-500">Tropes (select multiple):</span></div>
+        <div class="flex flex-wrap gap-1.5">`;
+      
+      for (const [category, tropes] of Object.entries(tropeDatabase)) {
+        html += `<div class="w-full mt-2"><span class="text-[10px] text-gray-600 uppercase tracking-wider">${category.toUpperCase()}</span></div>`;
+        tropes.forEach(trope => {
+          const isSelected = selectedTropes.includes(trope.id);
+          html += `<button class="trope-chip text-xs px-2 py-1 rounded-full border transition-colors ${isSelected ? 'bg-accent text-black border-accent' : 'border-white/10 bg-transparent text-gray-400 hover:border-accent'}" data-trope="${trope.id}" onclick="toggleTrope('${trope.id}')">${trope.name}</button>`;
+        });
+      }
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    function toggleTrope(tropeId) {
+      const index = selectedTropes.indexOf(tropeId);
+      const btn = document.querySelector(`.trope-chip[data-trope="${tropeId}"]`);
+      
+      if (index > -1) {
+        selectedTropes.splice(index, 1);
+        btn?.classList.remove('bg-accent', 'text-black', 'border-accent');
+        btn?.classList.add('bg-transparent', 'text-gray-400', 'border-white/10');
+      } else {
+        selectedTropes.push(tropeId);
+        btn?.classList.add('bg-accent', 'text-black', 'border-accent');
+        btn?.classList.remove('bg-transparent', 'text-gray-400', 'border-white/10');
+      }
+      resetAndFetch();
+    }
+
+    // BLOCK 9: Proper filterByTropes using API-returned tropes array
+    function filterByTropes(results) {
+      if (selectedTropes.length === 0) return results;
+      return results.filter(item => 
+        item.tropes && selectedTropes.some(trope => item.tropes.includes(trope))
+      );
+    }
+
+    // BLOCK S: Content Length Filter functions
+    function initContentLengthFilter() {
+      const container = document.getElementById('content-length-container');
+      if (!container) return;
+      container.innerHTML = `
+        <span class="text-xs text-gray-500 mr-2 self-center">Format:</span>
+        <button class="chip active" data-length="all" onclick="setContentLength('all')">All</button>
+        <button class="chip" data-length="standard" onclick="setContentLength('standard')">📺 Standard (45-60min)</button>
+        <button class="chip" data-length="short" onclick="setContentLength('short')">📱 Short-form (1-10min)</button>
+        <button class="chip" data-length="mini" onclick="setContentLength('mini')">🎬 Mini-drama (10-20min)</button>
+      `;
+    }
+
+    function setContentLength(length) {
+      currentContentLengthFilter = length;
+      document.querySelectorAll('[data-length]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.length === length);
+      });
+      resetAndFetch();
+    }
+
+    // BLOCK 9: Proper filterByContentLength using runtime or episode length
+    function filterByContentLength(results) {
+      if (currentContentLengthFilter === 'all') return results;
+      return results.filter(item => {
+        const runtime = item.runtime || (item.episode_run_time && item.episode_run_time[0]) || 0;
+        if (currentContentLengthFilter === 'short') return runtime <= 10;
+        if (currentContentLengthFilter === 'mini') return runtime > 10 && runtime <= 20;
+        if (currentContentLengthFilter === 'standard') return runtime > 20;
+        return true;
+      });
+    }
+
+    // BLOCK T: Dwell Time Tracking Functions (with telemetry for content_impression and content_dwell)
+    function setupDwellTimeTracking() {
+      if (dwellObserver) dwellObserver.disconnect();
+      
+      dwellObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const card = entry.target;
+          const filmId = card.dataset.filmId;
+          const title = card.querySelector('h3')?.textContent || '';
+          
+          if (entry.isIntersecting) {
+            const startTime = Date.now();
+            dwellTimeTrackers.set(filmId, { startTime, title, card });
+            visibleCards.set(filmId, true);
+            // BLOCK 16: content_impression telemetry
+            if (window.telemetry?.track) {
+              window.telemetry.track('content_impression', { film_id: filmId, title });
+            }
+          } else if (visibleCards.has(filmId)) {
+            const tracker = dwellTimeTrackers.get(filmId);
+            if (tracker) {
+              const dwellTime = Date.now() - tracker.startTime;
+              // BLOCK 16: content_dwell telemetry (minimum 1 second)
+              if (window.telemetry?.track && dwellTime >= 1000) {
+                window.telemetry.track('content_dwell', { film_id: filmId, dwell_ms: dwellTime });
+              }
+              dwellTimeTrackers.delete(filmId);
+              visibleCards.delete(filmId);
+            }
+          }
+        });
+      }, { threshold: 0.5 });
+      
+      document.querySelectorAll('#results-grid article[data-film-id]').forEach(card => {
+        dwellObserver.observe(card);
+      });
+    }
+
+    // BLOCK U: Dead-End Search Tracking (Enhanced Empty State)
+    function showEmptyStateWithSuggestion() {
+      const empty = document.getElementById('empty-state');
+      if (!empty) return;
+      
+      empty.innerHTML = `
+        <div class="text-6xl mb-4">🔍</div>
+        <h2 class="text-xl font-semibold text-white mb-2">No matching content found</h2>
+        <p class="text-gray-400 mb-4">Try different filters or check back later.</p>
+        <button onclick="resetAllFilters()" class="px-4 py-2 bg-accent text-black rounded-lg text-sm">Reset Filters</button>
+        <button onclick="saveUnmetDemand()" class="px-4 py-2 border border-accent text-accent rounded-lg text-sm ml-2">📢 Request this content</button>
+      `;
+      empty.hidden = false;
+    }
+
+    function saveUnmetDemand() {
+      const demandData = {
+        filters: {
+          type: currentType,
+          timeframe: currentTimeframe,
+          genre: currentGenreFilter,
+          origin: currentOriginFilter || 'all',
+          subtitles: currentSubtitleFilter || 'all',
+          tropes: selectedTropes
+        },
+        timestamp: Date.now()
+      };
+      
+      try {
+        const unmetDemands = JSON.parse(localStorage.getItem('_unmet_demand') || '[]');
+        unmetDemands.push(demandData);
+        localStorage.setItem('_unmet_demand', JSON.stringify(unmetDemands.slice(-100)));
+      } catch(e) {}
+      
+      showToast('Demand recorded! Streaming platforms will be notified.', 'success');
+    }
+
+    // BLOCK V: Outbound Routing with Tracking Tags (removed _eventCollector)
+    function getTrackingUrl(platform, title, contentType, filmId) {
+      const baseUrls = {
+        viki: 'https://www.viki.com/search?q=',
+        iqiyi: 'https://www.iqiyi.com/search/?q=',
+        wetv: 'https://wetv.vip/en/search?keyword=',
+        youku: 'https://youku.tv/search?keyword=',
+        netflix: 'https://www.netflix.com/search?q=',
+        disney: 'https://www.disneyplus.com/search/'
+      };
+      
+      const encodedTitle = encodeURIComponent(title);
+      const trackingParams = `utm_source=flashstream&utm_medium=discovery&utm_campaign=${contentType}&utm_content=${filmId}&utm_term=${selectedTropes.join(',')}`;
+      
+      let url = baseUrls[platform] + encodedTitle;
+      url += (url.includes('?') ? '&' : '?') + trackingParams;
+      return url;
+    }
+
+    // Add Where to Watch buttons to card render - helper function (BLOCK 15: replaced inline onclick with data attributes)
+    function getWhereToWatchButtons(item) {
+      const platforms = [];
+      const origin = item.origin_country || 
+        (item.original_language === 'ko' ? 'kr' : 
+         item.original_language === 'zh' ? 'cn' : 
+         item.original_language === 'th' ? 'th' : 
+         item.original_language === 'ja' ? 'jp' : null);
+      
+      switch(origin) {
+        case 'kr': platforms.push({ name: 'viki', label: 'Viki' }, { name: 'netflix', label: 'Netflix' }); break;
+        case 'cn': platforms.push({ name: 'iqiyi', label: 'iQIYI' }, { name: 'wetv', label: 'WeTV' }, { name: 'youku', label: 'Youku' }); break;
+        case 'th': platforms.push({ name: 'viki', label: 'Viki' }, { name: 'iqiyi', label: 'iQIYI' }, { name: 'wetv', label: 'WeTV' }); break;
+        case 'jp': platforms.push({ name: 'viki', label: 'Viki' }, { name: 'netflix', label: 'Netflix' }); break;
+        default: platforms.push({ name: 'viki', label: 'Viki' }, { name: 'iqiyi', label: 'iQIYI' });
+      }
+      
+      return `
+        <div class="flex gap-1 mt-2">
+          ${platforms.map(p => `
+            <button data-track-outbound 
+                    data-platform="${p.name}" 
+                    data-title="${escapeAttr(item.title || item.name)}" 
+                    data-film-id="${item.id}" 
+                    data-type="${item.media_type}"
+                    class="text-[10px] px-2 py-1 rounded bg-white/5 hover:bg-accent hover:text-black transition-colors">
+              ${p.label}
+            </button>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // BLOCK 15: Delegated event listener for outbound tracking buttons
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-track-outbound]');
+      if (!btn) return;
+      e.preventDefault();
+      const platform = btn.dataset.platform;
+      const title = btn.dataset.title;
+      const filmId = btn.dataset.filmId;
+      const contentType = btn.dataset.type;
+      
+      // BLOCK 16: external_link_click telemetry
+      if (window.telemetry?.track) {
+        window.telemetry.track('external_link_click', { platform, title, filmId, contentType });
+      }
+      
+      const url = getTrackingUrl(platform, title, contentType, filmId);
+      window.open(url, '_blank');
+      showToast(`Opening ${platform.toUpperCase()}...`, 'info');
+    });
+
+    // BLOCK W: Search Bar Query Logging (Enhanced, removed _eventCollector)
+    function setupSearchLogging() {
+      const searchInputElem = document.getElementById('nav-search-input');
+      if (!searchInputElem) return;
+      
+      const originalSearchInput = searchInputElem;
+      
+      originalSearchInput.addEventListener('input', (e) => {
+        const q = e.target.value.trim();
+        clearTimeout(searchTypingTimer);
+        searchTypingTimer = setTimeout(() => {
+          if (q.length >= 2 && q !== lastSearchedQuery) {
+            lastSearchedQuery = q;
+            // BLOCK 16: search_typed telemetry
+            if (window.telemetry?.track) {
+              window.telemetry.track('search_typed', { query: q });
+            }
+          }
+        }, 800);
+      });
+    }
+
+    // BLOCK 7: Replace direct fetch with apiClient.search in doSearch
+    const originalDoSearch = window.doSearch;
+    window.doSearch = async function(q) {
+      // BLOCK 16: search_submitted telemetry
+      if (window.telemetry?.track && q && q.trim().length > 0) {
+        window.telemetry.track('search_submitted', { query: q });
+      }
+      try {
+        const data = await apiClient.search(q);
+        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
+        
+        if (!results.length || !searchDropdown) {
+          if (searchDropdown) searchDropdown.hidden = true;
+          return results;
+        }
+        
+        searchDropdown.innerHTML = results.map(item => {
+          const title = item.title || item.name || '';
+          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
+          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
+          return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors" onclick="searchDropdown.hidden=true">
+            ${poster ? `<img src="${poster}" alt="" class="w-7 h-10 object-cover rounded" onerror="handleImgError(this)">` : '<div class="w-7 h-10 bg-gray-800 rounded"></div>'}
+            <div><p class="text-sm font-medium text-white">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
+          </a>`;
+        }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 transition-colors" onclick="searchDropdown.hidden=true">See all results →</a>`;
+        searchDropdown.hidden = false;
+        return results;
+      } catch {
+        if (searchDropdown) searchDropdown.hidden = true;
+        return [];
+      }
+    };
+
+    // BLOCK X: Abandonment Point Tracking Functions (removed _eventCollector)
+    function trackFilterChange(filterType, filterValue) {
+      const now = Date.now();
+      
+      filterChangeHistory.push({
+        type: filterType,
+        value: filterValue,
+        timestamp: now,
+        selected_tropes: [...selectedTropes]
+      });
+      if (filterChangeHistory.length > 10) filterChangeHistory.shift();
+      
+      const recentChanges = filterChangeHistory.filter(c => (now - c.timestamp) < 60000);
+      const hasRecentClick = (now - lastClickTime) < 30000;
+      
+      if (recentChanges.length >= 4 && !hasRecentClick) {
+        filterChangeHistory = [];
+      }
+      
+      clearTimeout(abandonmentTimer);
+      abandonmentTimer = setTimeout(() => {
+        // No tracking
+      }, 30000);
+      
+      // BLOCK 16: filter_applied telemetry
+      if (window.telemetry?.track) {
+        window.telemetry.track('filter_applied', {
+          filter_type: filterType,
+          filter_value: filterValue,
+          selected_tropes: selectedTropes
+        });
+      }
+    }
+
+    // Wrap filter functions to track changes
+    const originalSetTimeframe_ = window.setTimeframe;
+    window.setTimeframe = function(tf) {
+      trackFilterChange('timeframe', tf);
+      return originalSetTimeframe_(tf);
+    };
+
+    const originalSetGenreFilter_ = window.setGenreFilter;
+    window.setGenreFilter = function(genre) {
+      trackFilterChange('genre', genre);
+      return originalSetGenreFilter_(genre);
+    };
+
+    // Track actual clicks on content (BLOCK 16: content_click telemetry)
+    document.addEventListener('click', (e) => {
+      const cardLink = e.target.closest('article a[href*="/movie-detail"]');
+      if (cardLink) {
+        const article = cardLink.closest('article');
+        const filmId = article?.dataset.filmId;
+        if (window.telemetry?.track && filmId) {
+          window.telemetry.track('content_click', { film_id: filmId });
+        }
+        lastClickTime = Date.now();
+      } else if (e.target.closest('[data-track-outbound]')) {
+        lastClickTime = Date.now();
+      }
+    });
+
+    // BLOCK Y: Trailer Playback Analytics (removed _eventCollector)
+    function setupTrailerTracking() {
+      document.addEventListener('click', (e) => {
+        const trailerBtn = e.target.closest('[onclick*="playTrailer"], .trailer-trigger, [data-trailer-btn]');
+        if (!trailerBtn) return;
+        // No tracking
+      });
+    }
+
+    // BLOCK Z: Social Share & Bookmark Analytics (removed _eventCollector)
+    function setupShareTracking() {
+      const originalToggle = window.toggleWatchlist;
+      window.toggleWatchlist = function(item) {
+        return originalToggle(item);
+      };
+      
+      const shareContainer = document.createElement('div');
+      shareContainer.id = 'share-buttons-container';
+      shareContainer.className = 'fixed bottom-4 right-4 flex flex-col gap-2 z-40';
+      shareContainer.innerHTML = `
+        <button id="share-current" class="p-2 rounded-full bg-accent text-black shadow-lg hover:scale-110 transition-transform" aria-label="Share">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v12"/></svg>
+        </button>
+      `;
+      document.body.appendChild(shareContainer);
+      
+      document.getElementById('share-current')?.addEventListener('click', () => {
+        const url = window.location.href;
+        const title = document.querySelector('h1')?.textContent || 'FlashStream';
+        
+        if (navigator.share) {
+          navigator.share({ title, url });
+        } else {
+          navigator.clipboard.writeText(url);
+          showToast('Link copied to clipboard!', 'success');
+        }
+      });
+    }
+
+    // BLOCK AA: Device & Environment Tracking (removed _eventCollector)
+    function captureEnvironmentContext() {
+      const context = {
+        device_type: /Mobile|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'mobile' : 
+                      /Tablet|iPad/i.test(navigator.userAgent) ? 'tablet' : 'desktop',
+        connection_type: navigator.connection ? (navigator.connection.effectiveType || 'unknown') : 'unknown',
+        screen_width: window.innerWidth,
+        screen_category: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop',
+        color_scheme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+        browser_language: navigator.language?.split('-')[0] || 'en',
+        timezone_offset: new Date().getTimezoneOffset(),
+        timezone_hours: -new Date().getTimezoneOffset() / 60,
+        viewport_height: window.innerHeight,
+        viewport_width: window.innerWidth
+      };
+      
+      sessionStorage.setItem('_device_context', JSON.stringify({
+        device_type: context.device_type,
+        screen_category: context.screen_category,
+        color_scheme: context.color_scheme
+      }));
+      
+      return context;
+    }
+
+    // BLOCK AB: Header Click Velocity Tracking (removed _eventCollector)
+    function setupHeaderTracking() {
+      const navLinks = document.querySelectorAll('nav a[href], .nav-link, .header-nav a');
+      const initialIntentTimeout = 5000;
+      
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          const destination = link.getAttribute('href');
+          const linkText = link.textContent.trim();
+          const timeOnPage = (Date.now() - pageLoadTime) / 1000;
+          const isInitialIntent = timeOnPage <= initialIntentTimeout;
+          
+          headerClickHistory.push({
+            destination,
+            text: linkText,
+            time_on_page_seconds: Math.round(timeOnPage * 10) / 10,
+            is_initial_intent: isInitialIntent,
+            timestamp: Date.now(),
+            current_filters: {
+              type: currentType,
+              timeframe: currentTimeframe,
+              genre: currentGenreFilter,
+              origin: currentOriginFilter,
+              tropes_count: selectedTropes.length
+            }
+          });
+          
+          if (headerClickHistory.length > 10) headerClickHistory.shift();
+        });
+      });
+      
+      let returnCount = 0;
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && performance.navigation && performance.navigation.type === 1) {
+          returnCount++;
+        }
+      });
+    }
+
+    // BLOCK AC: Reset helper function
+    function resetAndFetch() {
+      currentPage = 1;
+      currentDisplayCount = 20;
+      hasMoreResults = true;
+      allLoadedResults = [];
+      fetchComingSoon();
+    }
+
+    // BLOCK I: Enhanced loading state and reset function
+    function showLoadingState() {
+      const grid = document.getElementById('results-grid');
+      if (grid) {
+        grid.innerHTML = Array(12).fill(0).map(() => `<div class="animate-pulse"><div class="bg-gray-800 rounded-xl aspect-[2/3]"></div><div class="h-3 bg-gray-800 rounded mt-2 w-3/4"></div><div class="h-2 bg-gray-800 rounded mt-1 w-1/2"></div></div>`).join('');
+      }
+    }
+
+    function resetAllFilters() {
+      currentType = 'all';
+      currentTimeframe = 'all';
+      currentGenreFilter = 'all';
+      currentOriginFilter = 'all';
+      currentSubtitleFilter = 'all';
+      selectedTropes = [];
+      currentContentLengthFilter = 'all';
+      currentPage = 1;
+      currentDisplayCount = 20;
+      hasMoreResults = true;
+      allLoadedResults = [];
+      
+      document.querySelectorAll('[data-type], [data-timeframe], [data-genre], [data-origin], [data-subtitle], [data-length]').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.type === 'all' || btn.dataset.timeframe === 'all' || btn.dataset.genre === 'all' ||
+            btn.dataset.origin === 'all' || btn.dataset.subtitle === 'all' || btn.dataset.length === 'all') {
+          btn.classList.add('active');
+        }
+      });
+      
+      document.querySelectorAll('.trope-chip').forEach(btn => {
+        btn.classList.remove('bg-accent', 'text-black', 'border-accent');
+        btn.classList.add('bg-transparent', 'text-gray-400', 'border-white/10');
+      });
+      
+      const sortSelect = document.getElementById('sort-by');
+      if (sortSelect) sortSelect.value = 'closest';
+      fetchComingSoon();
+    }
+
+    // BLOCK J: Load more results function
+    function loadMoreResults() {
+      if (isLoadingMore || !hasMoreResults) return;
+      
+      isLoadingMore = true;
+      const currentLength = currentDisplayCount;
+      const newLength = Math.min(currentLength + LOAD_INCREMENT, allLoadedResults.length);
+      
+      if (newLength > currentLength) {
+        currentDisplayCount = newLength;
+        renderDisplayedResults();
+      }
+      
+      if (currentDisplayCount >= allLoadedResults.length) {
+        hasMoreResults = false;
+      }
+      
+      isLoadingMore = false;
+    }
+
+    function renderDisplayedResults() {
+      const grid = document.getElementById('results-grid');
+      if (!grid) return;
+      
+      const resultsToShow = allLoadedResults.slice(0, currentDisplayCount);
+      grid.innerHTML = resultsToShow.map(item => renderCardWithTrailer(item)).join('');
+      attachRatingStarListeners();
+      
+      setTimeout(() => setupDwellTimeTracking(), 100);
+      
+      const existingSentinel = document.getElementById('load-more-sentinel');
+      if (existingSentinel) existingSentinel.remove();
+      
+      if (hasMoreResults && currentDisplayCount < allLoadedResults.length) {
+        const newSentinel = document.createElement('div');
+        newSentinel.id = 'load-more-sentinel';
+        newSentinel.className = 'col-span-full text-center py-4';
+        newSentinel.innerHTML = '<div class="inline-flex items-center gap-2 text-xs text-gray-500"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Loading more...</div>';
+        grid.parentNode.insertBefore(newSentinel, grid.nextSibling);
+        setupInfiniteScroll();
+      }
+      
+      updateFilmCardsList();
+    }
+
+    let scrollObserver = null;
+    function setupInfiniteScroll() {
+      if (scrollObserver) {
+        scrollObserver.disconnect();
+        scrollObserver = null;
+      }
+      
+      const sentinel = document.getElementById('load-more-sentinel');
+      if (!sentinel) return;
+      
+      scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting && hasMoreResults && !isLoadingMore && allLoadedResults.length > 0) {
+            loadMoreResults();
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '200px' });
+      
+      scrollObserver.observe(sentinel);
+    }
+
+    // BLOCK K: Save user preferences
+    function saveUserPreferences() {
+      try {
+        const prefs = {
+          defaultSort: document.getElementById('sort-by')?.value || 'closest',
+          defaultType: currentType,
+          defaultTimeframe: currentTimeframe,
+          defaultGenre: currentGenreFilter,
+          defaultOrigin: currentOriginFilter,
+          defaultSubtitle: currentSubtitleFilter,
+          defaultTropes: selectedTropes,
+          defaultContentLength: currentContentLengthFilter,
+          updatedAt: Date.now()
+        };
+        localStorage.setItem('user_upcoming_prefs', JSON.stringify(prefs));
+      } catch(e) {}
+    }
+
+    function loadUserPreferences() {
+      try {
+        const saved = localStorage.getItem('user_upcoming_prefs');
+        if (saved) {
+          const prefs = JSON.parse(saved);
+          const daysSinceUpdate = (Date.now() - prefs.updatedAt) / (1000 * 60 * 60 * 24);
+          if (daysSinceUpdate < 30) {
+            if (prefs.defaultSort && document.getElementById('sort-by')) {
+              document.getElementById('sort-by').value = prefs.defaultSort;
+            }
+            if (prefs.defaultType && prefs.defaultType !== 'all') {
+              filterByType(prefs.defaultType);
+            }
+            if (prefs.defaultTimeframe && prefs.defaultTimeframe !== 'all') {
+              setTimeframe(prefs.defaultTimeframe);
+            }
+            if (prefs.defaultGenre && prefs.defaultGenre !== 'all') {
+              setGenreFilter(prefs.defaultGenre);
+            }
+            if (prefs.defaultOrigin && prefs.defaultOrigin !== 'all') {
+              setOriginFilter(prefs.defaultOrigin);
+            }
+            if (prefs.defaultSubtitle && prefs.defaultSubtitle !== 'all') {
+              setSubtitleFilter(prefs.defaultSubtitle);
+            }
+            if (prefs.defaultTropes && prefs.defaultTropes.length) {
+              selectedTropes = prefs.defaultTropes;
+              initTropeFilter();
+            }
+            if (prefs.defaultContentLength && prefs.defaultContentLength !== 'all') {
+              setContentLength(prefs.defaultContentLength);
+            }
+          }
+        }
+      } catch(e) {}
     }
 
     function formatReleaseDate(dateStr) {
@@ -201,98 +1499,315 @@
       return diffDays;
     }
 
+    // Inline rating function and rating star listeners (removed _eventCollector)
+    // rateFilmInline defined above with store.js
+
+    function attachRatingStarListeners() {
+      document.querySelectorAll('.rating-star').forEach(star => {
+        star.removeEventListener('click', ratingStarClickHandler);
+        star.addEventListener('click', ratingStarClickHandler);
+      });
+    }
+
+    function ratingStarClickHandler(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const filmId = parseInt(this.dataset.filmId);
+      const rating = parseInt(this.dataset.rating);
+      const article = this.closest('article');
+      const title = article?.querySelector('h3')?.textContent || 'Selected film';
+      rateFilmInline(filmId, rating, title);
+    }
+
+    // BLOCK M: Keyboard Shortcuts Handler
+    let selectedFilmIndex = -1;
+    let currentFilmCards = [];
+
+    function updateFilmCardsList() {
+      currentFilmCards = Array.from(document.querySelectorAll('#results-grid article[data-film-id]'));
+    }
+
+    function selectFilmByIndex(index) {
+      if (currentFilmCards.length === 0) return;
+      if (index < 0) index = 0;
+      if (index >= currentFilmCards.length) index = currentFilmCards.length - 1;
+      selectedFilmIndex = index;
+      currentFilmCards.forEach((card, i) => {
+        if (i === selectedFilmIndex) {
+          card.classList.add('ring-2', 'ring-accent', 'ring-offset-2', 'ring-offset-black');
+          card.querySelector('a')?.focus();
+        } else {
+          card.classList.remove('ring-2', 'ring-accent', 'ring-offset-2', 'ring-offset-black');
+        }
+      });
+      // BLOCK 18: Mobile hint toast
+      if (window.innerWidth < 768 && selectedFilmIndex !== -1) {
+        showToast('Use ↑↓ to navigate, Space to add to watchlist', 'info', 3000);
+      }
+    }
+
+    function getSelectedFilmId() {
+      if (selectedFilmIndex >= 0 && currentFilmCards[selectedFilmIndex]) {
+        return currentFilmCards[selectedFilmIndex].dataset.filmId;
+      }
+      return null;
+    }
+
+    function triggerWatchlistOnSelected() {
+      const filmId = getSelectedFilmId();
+      if (filmId) {
+        const watchlistBtn = document.querySelector(`article[data-film-id="${filmId}"] button[onclick*="handleCardWatchlist"]`);
+        if (watchlistBtn) {
+          watchlistBtn.click();
+        }
+      }
+    }
+
+    function openSelectedFilmDetail() {
+      const filmId = getSelectedFilmId();
+      if (filmId) {
+        const detailLink = document.querySelector(`article[data-film-id="${filmId}"] a[href*="/movie-detail"]`);
+        if (detailLink) {
+          window.location.href = detailLink.href;
+        }
+      }
+    }
+
+    function announceResultsCount(count, filterInfo) {
+      const announcer = document.getElementById('sr-announcer');
+      if (!announcer) return;
+      let message = `${count} upcoming releases found`;
+      if (filterInfo) message += ` with ${filterInfo}`;
+      announcer.textContent = message;
+    }
+
+    function initAccessibilityAnnouncer() {
+      if (!document.getElementById('sr-announcer')) {
+        const announcer = document.createElement('div');
+        announcer.id = 'sr-announcer';
+        announcer.className = 'sr-only';
+        announcer.setAttribute('aria-live', 'polite');
+        announcer.setAttribute('aria-atomic', 'true');
+        document.body.appendChild(announcer);
+      }
+    }
+
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        if (e.target.matches('input, textarea, select, [contenteditable="true"]')) return;
+        
+        updateFilmCardsList();
+        
+        switch(e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            if (currentFilmCards.length === 0) return;
+            if (selectedFilmIndex === -1) selectedFilmIndex = 0;
+            else selectedFilmIndex = Math.min(selectedFilmIndex + 1, currentFilmCards.length - 1);
+            selectFilmByIndex(selectedFilmIndex);
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            if (currentFilmCards.length === 0) return;
+            if (selectedFilmIndex === -1) selectedFilmIndex = currentFilmCards.length - 1;
+            else selectedFilmIndex = Math.max(selectedFilmIndex - 1, 0);
+            selectFilmByIndex(selectedFilmIndex);
+            break;
+          case ' ':
+          case 'Space':
+            e.preventDefault();
+            triggerWatchlistOnSelected();
+            break;
+          case 'Enter':
+            e.preventDefault();
+            openSelectedFilmDetail();
+            break;
+          case 'Escape':
+            if (selectedFilmIndex !== -1) {
+              selectFilmByIndex(-1);
+              selectedFilmIndex = -1;
+            }
+            break;
+          case 'h':
+          case 'H':
+            e.preventDefault();
+            showKeyboardHelp();
+            break;
+          default:
+            const num = parseInt(e.key);
+            if (num >= 1 && num <= 5) {
+              e.preventDefault();
+              const filmId = getSelectedFilmId();
+              if (filmId) {
+                const title = currentFilmCards[selectedFilmIndex]?.querySelector('h3')?.textContent || 'Selected film';
+                rateFilmInline(parseInt(filmId), num, title);
+              } else {
+                showToast('Use ↑↓ arrows to select a film first', 'info');
+              }
+            }
+            break;
+        }
+      });
+    }
+
+    function showKeyboardHelp() {
+      const helpModal = document.createElement('div');
+      helpModal.className = 'fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm';
+      helpModal.setAttribute('role', 'dialog');
+      helpModal.setAttribute('aria-modal', 'true');
+      helpModal.innerHTML = `
+        <div class="bg-gray-900 rounded-2xl max-w-md w-full mx-4 p-6 border border-white/10 shadow-2xl transform transition-all">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-white">Keyboard Shortcuts</h3>
+            <button onclick="this.closest('[role=dialog]').remove()" class="p-1 rounded-lg hover:bg-white/10 text-gray-400">&times;</button>
+          </div>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between items-center py-2 border-b border-white/10"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">↑ ↓</span><span class="text-gray-300">Navigate between films</span></div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">Space</span><span class="text-gray-300">Add/remove from Watchlist</span></div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">Enter</span><span class="text-gray-300">Open film details</span></div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">Esc</span><span class="text-gray-300">Clear selection</span></div>
+            <div class="flex justify-between items-center py-2 border-b border-white/10"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">1-5</span><span class="text-gray-300">Rate film (1-5 stars)</span></div>
+            <div class="flex justify-between items-center py-2"><span class="text-gray-400 font-mono text-xs bg-gray-800 px-2 py-1 rounded">H</span><span class="text-gray-300">Show this help menu</span></div>
+          </div>
+          <div class="flex justify-end mt-6">
+            <button onclick="this.closest('[role=dialog]').remove()" class="px-4 py-2 bg-accent text-black rounded-lg text-sm font-medium hover:bg-accent/80 transition-colors">Got it</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(helpModal);
+      helpModal.addEventListener('click', (e) => { if (e.target === helpModal) helpModal.remove(); });
+    }
+
+    async function goToPage(page) {
+      currentPage = page;
+      hasMoreResults = false;
+      isLoadingMore = false;
+      currentDisplayCount = 20;
+      allLoadedResults = [];
+      
+      const sentinel = document.getElementById('load-more-sentinel');
+      if (sentinel) sentinel.remove();
+      if (scrollObserver) {
+        scrollObserver.disconnect();
+        scrollObserver = null;
+      }
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await fetchComingSoon();
+    }
+
+    // Export functions to global scope for inline onclick handlers
+    window.rateFilmInline = rateFilmInline;
+    window.toggleReminder = toggleReminder;
+    window.handleCardWatchlist = handleCardWatchlist;
+    window.addToCalendar = addToCalendar;
+    window.filterByType = filterByType;
+    window.setTimeframe = setTimeframe;
+    window.setGenreFilter = setGenreFilter;
+    window.setOriginFilter = setOriginFilter;
+    window.setSubtitleFilter = setSubtitleFilter;
+    window.toggleTrope = toggleTrope;
+    window.setContentLength = setContentLength;
+    window.goToPage = goToPage;
+    window.resetAllFilters = resetAllFilters;
+    // BLOCK 15: Removed window.trackOutboundClick reference
+    window.saveUnmetDemand = saveUnmetDemand;
+
+    // BLOCK 8: Enhanced fetchComingSoon using apiClient.getUpcoming endpoint
     async function fetchComingSoon() {
       const grid = document.getElementById('results-grid');
       const empty = document.getElementById('empty-state');
       
-      empty.hidden = true;
-      grid.innerHTML = Array(8).fill(0).map(() => `<div class="skeleton rounded-xl aspect-[2/3]" aria-hidden="true"></div>`).join('');
-      
-      const today = new Date().toISOString().slice(0, 10);
+      if (empty) empty.hidden = true;
+      showLoadingState();
       
       try {
-        let allResults = [];
-        
-        // Fetch movies (future releases)
-        const movieParams = new URLSearchParams();
-        movieParams.set('content_type', 'movie');
-        movieParams.set('primary_release_date.gte', today);
-        movieParams.set('sort_by', 'primary_release_date.asc');
-        movieParams.set('page', currentPage);
-        movieParams.set('watch_region', getRegion());
-        
-        const movieData = await fetch(`${WORKER_URL}/api/discover?${movieParams}`).then(r => r.json());
-        let movieResults = movieData.results || [];
-        movieResults = movieResults.filter(item => {
-          const releaseDate = item.release_date;
-          return releaseDate && releaseDate >= today && item.title && item.title.length > 0;
+        // BLOCK 8: Single call to /api/upcoming via apiClient
+        const upcomingData = await apiClient.getUpcoming({
+          type: currentType,
+          region: getRegion(),
+          page: currentPage,
+          timeframe: currentTimeframe,
+          genre: currentGenreFilter === 'all' ? undefined : currentGenreFilter,
+          origin: currentOriginFilter === 'all' ? undefined : currentOriginFilter,
+          tropes: selectedTropes.length ? selectedTropes : undefined,
+          contentLength: currentContentLengthFilter === 'all' ? undefined : currentContentLengthFilter
         });
-        movieResults.forEach(item => { item.media_type = 'movie'; });
-        allResults.push(...movieResults);
         
-        // Fetch TV shows (future air dates)
-        if (currentType === 'all' || currentType === 'tv') {
-          const tvParams = new URLSearchParams();
-          tvParams.set('content_type', 'tv');
-          tvParams.set('first_air_date.gte', today);
-          tvParams.set('sort_by', 'first_air_date.asc');
-          tvParams.set('page', currentPage);
-          tvParams.set('watch_region', getRegion());
-          
-          const tvData = await fetch(`${WORKER_URL}/api/discover?${tvParams}`).then(r => r.json());
-          let tvResults = tvData.results || [];
-          tvResults = tvResults.filter(item => {
-            const airDate = item.first_air_date;
-            return airDate && airDate >= today && item.name && item.name.length > 0;
-          });
-          tvResults.forEach(item => { item.media_type = 'tv'; });
-          allResults.push(...tvResults);
-        }
+        let allResults = upcomingData.results || [];
+        totalPages = upcomingData.totalPages || 1; // BLOCK 17: Already correct
         
-        // Apply type filter
-        if (currentType !== 'all') {
-          allResults = allResults.filter(item => item.media_type === currentType);
-        }
+        // Apply client-side filtering for tropes & length (BLOCK 9)
+        allResults = filterByTropes(allResults);
+        allResults = filterByContentLength(allResults);
         
-        // Sort results
+        // Apply additional local filters
+        allResults = filterByOrigin(allResults);
+        allResults = filterByGenre(allResults);
+        allResults = filterByTimeframe(allResults);
+        
+        // Apply enhanced sorting
         const sortSelect = document.getElementById('sort-by');
-        const sortValue = sortSelect ? sortSelect.value : 'date_asc';
-        
-        if (sortValue === 'date_asc') {
-          allResults.sort((a, b) => {
-            const dateA = a.release_date || a.first_air_date || '';
-            const dateB = b.release_date || b.first_air_date || '';
-            return dateA.localeCompare(dateB);
-          });
-        } else if (sortValue === 'date_desc') {
-          allResults.sort((a, b) => {
-            const dateA = a.release_date || a.first_air_date || '';
-            const dateB = b.release_date || b.first_air_date || '';
-            return dateB.localeCompare(dateA);
-          });
-        } else if (sortValue === 'popularity') {
-          allResults.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
-        }
-        
-        totalPages = Math.max(Math.min(movieData.total_pages || 1, 500), Math.min(50, 500));
+        const sortValue = sortSelect ? sortSelect.value : 'closest';
+        allResults = applyEnhancedSorting(allResults, sortValue);
         
         if (allResults.length === 0) {
           grid.innerHTML = '';
-          empty.hidden = false;
+          showEmptyStateWithSuggestion();
+          announceResultsCount(0, '');
+          // BLOCK 16: no_results telemetry
+          if (window.telemetry?.track) {
+            window.telemetry.track('no_results', {
+              filters: { type: currentType, timeframe: currentTimeframe, genre: currentGenreFilter, origin: currentOriginFilter, subtitles: currentSubtitleFilter, tropes: selectedTropes }
+            });
+          }
           return;
         }
         
-        grid.innerHTML = allResults.map(item => renderCard(item)).join('');
+        allLoadedResults = allResults;
+        hasMoreResults = allResults.length > LOAD_INCREMENT;
+        currentDisplayCount = Math.min(LOAD_INCREMENT, allResults.length);
+        
+        const visibleItems = allResults.slice(0, currentDisplayCount);
+        grid.innerHTML = visibleItems.map(item => renderCardWithTrailer(item)).join('');
+        attachRatingStarListeners();
+        
+        announceResultsCount(allResults.length, `${currentType !== 'all' ? currentType : 'all content'} filtered`);
+        
+        preloadTrailerChecksWithRender(visibleItems, grid);
+        
         renderPagination();
         
+        setTimeout(() => {
+          if (hasMoreResults && !document.getElementById('load-more-sentinel') && grid.parentNode) {
+            const sentinel = document.createElement('div');
+            sentinel.id = 'load-more-sentinel';
+            sentinel.className = 'col-span-full text-center py-4';
+            sentinel.innerHTML = '<div class="inline-flex items-center gap-2 text-xs text-gray-500"><div class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"></div> Loading more...</div>';
+            grid.parentNode.insertBefore(sentinel, grid.nextSibling);
+            setupInfiniteScroll();
+          }
+          updateFilmCardsList();
+          selectedFilmIndex = -1;
+          setupDwellTimeTracking();
+          
+          const resultsHeading = document.querySelector('#main-content h1');
+          if (resultsHeading && document.activeElement?.closest?.('.chip, select, button')) {
+            resultsHeading.setAttribute('tabindex', '-1');
+            resultsHeading.focus();
+            resultsHeading.removeAttribute('tabindex');
+          }
+        }, 100);
+        
+        saveUserPreferences();
+        
       } catch (err) {
-        console.error('[ComingSoon]', err);
-        grid.innerHTML = '';
-        empty.hidden = false;
+        if (grid) grid.innerHTML = '';
+        showEmptyStateWithSuggestion();
       }
     }
     
-    function renderCard(item) {
+    function renderCardWithTrailer(item) {
       const id = item.id;
       const title = item.title || item.name || 'Unknown';
       const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
@@ -302,8 +1817,18 @@
       const poster = item.poster_path ? `${TMDB_IMG}w342${item.poster_path}` : NO_POSTER_SVG;
       const href = `/movie-detail?id=${id}&type=${type}`;
       const inWL = isInWL(id);
-      const hideRat = localStorage.getItem('hide_ratings') === 'true';
+      const hideRat = store.getHideRatings();
       const rating = item.vote_average?.toFixed(1);
+      const hasTrailer = trailerCache.get(id)?.hasTrailer || false;
+      const hasReminderFlag = hasReminder(id);
+      const anticipationCount = getAnticipationCount(id);
+      const warningBadge = getWarningBadge(item);
+      
+      let userRating = 0;
+      try {
+        const ratings = store.getRatings();
+        userRating = ratings[String(id)] || 0;
+      } catch(e) {}
       
       let dateBadge = '';
       if (daysLeft !== null && daysLeft > 0) {
@@ -320,51 +1845,71 @@
       
       const typeIcon = type === 'tv' ? 'TV' : 'Movie';
       
+      const ratingStarsHtml = `
+        <div class="flex items-center gap-0.5 mt-1" data-rating-container="${id}">
+          ${[1, 2, 3, 4, 5].map(star => `
+            <button class="rating-star text-xs leading-none transition-colors ${star <= userRating ? 'text-yellow-400' : 'text-gray-600'}" data-film-id="${id}" data-rating="${star}" aria-label="Rate ${star} stars">★</button>
+          `).join('')}
+        </div>
+      `;
+      
       return `
-        <article class="group">
+        <article class="group transition-all" data-film-id="${id}">
           <div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">
             <a href="${href}">
               <img src="${escapeAttr(poster)}" alt="${escapeAttr(title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="handleImgError(this)">
             </a>
+            ${warningBadge}
             ${dateBadge}
-            <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleCardWatchlist(event, this)">
+            ${hasTrailer ? '<span class="absolute top-2 left-12 z-10 bg-accent text-black text-[9px] px-1.5 py-0.5 rounded-full flex items-center gap-0.5 font-medium"><svg class="w-2 h-2" fill="black" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Trailer</span>' : ''}
+            <button class="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" aria-pressed="${inWL}" data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}" data-genres='${JSON.stringify(item.genre_ids || [])}' onclick="handleCardWatchlist(event, this)">
               <svg class="w-4 h-4" fill="${inWL ? '#00C4BC' : 'none'}" stroke="${inWL ? '#00C4BC' : 'white'}" viewBox="0 0 24 24">
                 <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
               </svg>
             </button>
+            <button class="absolute bottom-2 right-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" data-reminder="${hasReminderFlag}" onclick="event.preventDefault(); event.stopPropagation(); toggleReminder(event, this, ${id}, '${escapeAttr(title)}', '${releaseDate}')">
+              <svg class="w-3.5 h-3.5" fill="${hasReminderFlag ? '#00C4BC' : 'none'}" stroke="${hasReminderFlag ? '#00C4BC' : 'white'}" viewBox="0 0 24 24">
+                <path d="M12 8v4l3 3M12 2a10 10 0 0110 10 10 10 0 01-10 10 10 10 0 01-10-10 10 10 0 0110-10z"/>
+              </svg>
+            </button>
+            <button class="absolute bottom-2 left-2 z-10 p-1.5 rounded-full bg-black/60 hover:bg-black/80 transition-colors" onclick="event.preventDefault(); event.stopPropagation(); addToCalendar('${escapeAttr(title)}', '${releaseDate}', ${id})">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="white" viewBox="0 0 24 24">
+                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </button>
           </div>
-          <a href="${href}" class="block mt-2 hover:text-accent">
+          <a href="${href}" class="block mt-2 hover:text-accent transition-colors">
             <h3 class="text-xs font-semibold text-white line-clamp-1">${escapeHtml(title)}</h3>
-            <div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+            <div class="flex items-center gap-1 text-xs text-gray-400 mt-0.5 flex-wrap">
               <span>${typeIcon} ${formattedDate}</span>
               ${!hideRat && rating ? `<span class="text-yellow-400 ml-2">★ ${rating}</span>` : ''}
+              <span class="text-[9px] text-gray-500 ml-1 bg-gray-800/50 px-1.5 py-0.5 rounded-full">🎯 ${anticipationCount}</span>
             </div>
           </a>
+          ${ratingStarsHtml}
+          ${getWhereToWatchButtons(item)}
         </article>
       `;
     }
     
     function renderPagination() {
       const el = document.getElementById('pagination');
-      if (totalPages <= 1) { el.innerHTML = ''; return; }
+      if (totalPages <= 1) { 
+        el.innerHTML = ''; 
+        return; 
+      }
       let start = Math.max(1, currentPage - 2);
       const end = Math.min(totalPages, start + 4);
       if (end - start < 4) start = Math.max(1, end - 4);
-      let html = `<button onclick="goToPage(1)" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">«</button>
-                  <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">‹</button>`;
+      let html = `<button onclick="goToPage(1)" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40 transition-colors">«</button>
+                  <button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40 transition-colors">‹</button>`;
       for (let p = start; p <= end; p++) {
-        html += `<button onclick="goToPage(${p})" class="px-3 py-1.5 text-sm rounded-lg border ${p === currentPage ? 'bg-accent border-accent text-white font-semibold' : 'border-white/10 text-gray-400 hover:bg-white/10'}">${p}</button>`;
+        html += `<button onclick="goToPage(${p})" class="px-3 py-1.5 text-sm rounded-lg border transition-colors ${p === currentPage ? 'bg-accent border-accent text-black font-semibold' : 'border-white/10 text-gray-400 hover:bg-white/10'}">${p}</button>`;
       }
-      html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">›</button>
-               <button onclick="goToPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40">»</button>
+      html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40 transition-colors">›</button>
+               <button onclick="goToPage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 text-sm rounded-lg border border-white/10 text-gray-400 hover:bg-white/10 disabled:opacity-40 transition-colors">»</button>
                <span class="text-xs text-gray-500 ml-2">Page ${currentPage} of ${totalPages.toLocaleString()}</span>`;
       el.innerHTML = html;
-    }
-    
-    async function goToPage(page) {
-      currentPage = page;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      await fetchComingSoon();
     }
     
     function handleCardWatchlist(event, btn) {
@@ -385,7 +1930,8 @@
       btn.setAttribute('aria-pressed', String(added));
     }
     
-    function showToast(message, type = 'success') {
+    // BLOCK 18: Modified showToast to accept custom duration
+    function showToast(message, type = 'success', duration = 3000) {
       const c = { success: 'bg-green-800 border-green-600 text-green-100', error: 'bg-red-900 border-red-700 text-red-100', info: 'bg-blue-900 border-blue-700 text-blue-100' };
       const el = document.createElement('div');
       el.className = `pointer-events-auto max-w-sm w-full px-4 py-3 rounded-xl border text-sm font-medium shadow-xl ${c[type] || c.info} transform transition-all duration-300 translate-x-full opacity-0`;
@@ -396,7 +1942,7 @@
       setTimeout(() => {
         el.classList.add('translate-x-full', 'opacity-0');
         setTimeout(() => el.remove(), 350);
-      }, 3000);
+      }, duration);
     }
     
     // Search functionality
@@ -427,59 +1973,29 @@
       if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true;
     });
     
-    async function doSearch(q) {
-      try {
-        const data = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`).then(r => r.json());
-        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
-        if (!results.length || !searchDropdown) {
-          if (searchDropdown) searchDropdown.hidden = true;
-          return;
-        }
-        searchDropdown.innerHTML = results.map(item => {
-          const title = item.title || item.name || '';
-          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
-          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-          return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5" onclick="searchDropdown.hidden=true">
-            ${poster ? `<img src="${poster}" alt="" class="w-7 h-10 object-cover rounded" onerror="handleImgError(this)">` : '<div class="w-7 h-10 bg-gray-800 rounded"></div>'}
-            <div><p class="text-sm font-medium text-white">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
-          </a>`;
-        }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5" onclick="searchDropdown.hidden=true">See all results →</a>`;
-        searchDropdown.hidden = false;
-      } catch {
-        if (searchDropdown) searchDropdown.hidden = true;
-      }
-    }
+    // doSearch is already defined above with apiClient
     
-    // Mobile menu
-    document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
-      const m = document.getElementById('mobile-menu');
-      if (m) {
-        const hidden = m.hidden;
-        m.hidden = !hidden;
-        document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', String(hidden));
-      }
+    // BLOCK 12: Trailer cache cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      trailerCache.clear();
     });
     
-    // Theme
+    // BLOCK 14: Theme and region sync are now handled by navigation.js, but keep existing theme toggle for compatibility
+    // However, the theme toggle button was inside the removed nav. The navigation.js will inject its own.
+    // We keep the initTheme for now, but navigation.js may override.
     function initTheme() {
-      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+      if (store.getTheme() === 'light') document.documentElement.classList.remove('dark');
       else document.documentElement.classList.add('dark');
     }
-    document.getElementById('theme-toggle')?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
-    });
     initTheme();
     
-    // Region badge – no emoji
-    const regionFlag = document.getElementById('region-flag');
-    const regionCode = document.getElementById('region-code');
-    if (regionFlag && regionCode) {
-      const region = getRegion();
-      regionFlag.textContent = '';
-      regionCode.textContent = region;
+    // Region badge update (the badge element is inside the new navigation container)
+    // Keep syncRegionBadge for compatibility
+    function syncRegionBadgeCompatibility() {
+      const regionCodeElem = document.getElementById('region-code');
+      if (regionCodeElem) regionCodeElem.textContent = getRegion();
     }
+    syncRegionBadgeCompatibility();
     
     function escapeHtml(s) { return String(s ?? '').replace(/&/g, '&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
@@ -487,10 +2003,32 @@
     // Event listeners
     document.getElementById('sort-by')?.addEventListener('change', () => {
       currentPage = 1;
+      currentDisplayCount = 20;
+      hasMoreResults = true;
+      allLoadedResults = [];
       fetchComingSoon();
+      saveUserPreferences();
     });
     
-    // Initialize
+    // Initialize all blocks
+    initGenreFilter();
+    initOriginFilter();
+    initSubtitleFilter();
+    initTropeFilter();
+    initContentLengthFilter();
+    initAccessibilityAnnouncer();
+    setupKeyboardShortcuts();
+    setupSearchLogging();
+    setupTrailerTracking();
+    setupShareTracking();
+    setupHeaderTracking();
+    captureEnvironmentContext();
+    initDiscoveryFeatures();
+    
+    // Load user preferences after initialization
+    loadUserPreferences();
+    
+    // Single fetch call
     fetchComingSoon();
   </script>
 </body>

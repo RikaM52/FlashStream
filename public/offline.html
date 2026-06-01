@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+<!-- WATERMARK: FlashStream v2.0 - Offline Mode | Generated: 2026-05-30 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,61 +11,38 @@
   <meta name="theme-color" content="#00C4BC">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
+  <link rel="stylesheet" href="/css/global.css">
   <style>
-    :focus-visible{outline:2px solid #00C4BC;outline-offset:3px;border-radius:4px}
+    :root {
+      --color-accent: #00C4BC;
+      --color-accent-light: #00E5DC;
+      --color-accent-dark: #007A75;
+      --color-black: #0a0a0a;
+      --color-white: #ffffff;
+      --color-muted: #8a9ab0;
+      --color-bg-light: #f3f4f6;
+    }
+    .dark {
+      --color-accent: #00C4BC;
+      --color-accent-light: #00E5DC;
+      --color-accent-dark: #007A75;
+    }
+    :focus-visible{outline:2px solid var(--color-accent);outline-offset:3px;border-radius:4px}
     .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
     @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
     .breathe{animation:breathe 3s ease-in-out infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
     .animate-spin{animation:spin 1s linear infinite}
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    .toast-slide{animation:slideIn 0.3s ease-out forwards}
   </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen flex flex-col">
 
-  <!-- Simplified navbar (no search, region badge – offline) -->
-  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-accent transition-colors flex-shrink-0" aria-label="FlashStream home">
-            <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
-            <span class="hidden sm:block">FlashStream</span>
-        </a>
-        <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-            <div class="relative">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
-            </div>
-            <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions" class="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl"></div>
-        </div>
-        <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-            <a href="/discover" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
-            <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-            <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-            <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-            <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
-            <a href="/insights" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Insights</a>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                <span id="region-code" class="font-mono text-gray-300">US</span>
-            </a>
-            <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            </button>
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
-        </div>
-    </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-        <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-        <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-        <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-        <a href="/insights" class="text-gray-300 hover:text-white py-1.5">Insights</a>
-        <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-    </div>
-</nav>
+<div id="consent-modal-root"></div>
+
+<!-- Dynamic navbar container (replaces hardcoded nav) -->
+<div id="navbar-container" class="sticky top-0 z-50 bg-black/95 backdrop-blur-md"></div>
 
   <main class="flex-1 flex items-center justify-center px-4 py-16" role="main">
     <div class="text-center max-w-md">
@@ -81,7 +59,7 @@
       </p>
       <div class="flex flex-col sm:flex-row gap-3 justify-center mb-12">
         <button onclick="tryReconnect()" id="retry-btn"
-                class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-red-700 transition-colors flex items-center justify-center gap-2">
+                class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-dark transition-colors flex items-center justify-center gap-2">
           <svg id="retry-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
@@ -97,6 +75,102 @@
         <h2 class="text-lg font-semibold text-white mb-3">Your Watchlist (offline)</h2>
         <div id="offline-wl-items" class="space-y-2"></div>
         <p id="offline-wl-empty" class="text-sm text-gray-500 hidden">Your watchlist is empty. Start adding titles when you're back online.</p>
+      </div>
+
+      <!-- BLOCK I: Service Worker Status & Cache Info -->
+      <div id="sw-status" class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Service Worker:</span>
+          <span id="sw-status-text" class="text-yellow-400 text-xs">Checking...</span>
+        </div>
+        <div class="flex justify-between items-center mt-1">
+          <span class="text-gray-400 text-xs">Cache Usage:</span>
+          <span id="cache-usage" class="text-gray-300 text-xs">Calculating...</span>
+        </div>
+        <button id="clear-cache-btn" class="mt-2 text-[10px] text-gray-500 hover:text-red-400 transition-colors">Clear Cache</button>
+      </div>
+
+      <!-- BLOCK J: Offline Sync Queue & Pending Changes -->
+      <div id="sync-queue" hidden class="mt-4 p-3 bg-amber-900/20 border border-amber-700/40 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-amber-300 font-medium">Pending Sync</span>
+          <span id="pending-count" class="text-xs text-amber-400">0 changes</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1">Changes will sync when you're back online.</p>
+        <button id="sync-now-btn" class="mt-2 text-[10px] text-accent hover:underline">Sync Now</button>
+      </div>
+
+      <!-- BLOCK K: Offline Search (searches local watchlist) -->
+      <div class="mt-4 text-left">
+        <input type="text" id="offline-search" placeholder="Search your watchlist..." class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent">
+        <div id="offline-search-results" class="mt-2 space-y-2 max-h-48 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK M: Cached Content Indicator (New Addition) -->
+      <div id="cached-indicator" class="mt-4 p-3 bg-green-900/20 border border-green-700/40 rounded-xl text-left hidden">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span class="text-xs text-green-300 font-medium">Offline-Ready Content</span>
+        </div>
+        <p id="cached-content-count" class="text-[10px] text-gray-400 mt-1">0 cached titles available for offline viewing</p>
+      </div>
+
+      <!-- BLOCK N: Offline Rating Controls (New Addition) -->
+      <div id="offline-rating-section" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Rate while offline (sync later)</h3>
+        <div id="offline-rating-controls" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- BLOCK O: Offline Notes Editor (New Addition) -->
+      <div id="offline-notes-section" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Watchlist Notes (offline)</h3>
+        <textarea id="offline-note-input" rows="2" placeholder="Add a private note about this title..." class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent resize-none"></textarea>
+        <button id="save-offline-note-btn" class="mt-2 text-[10px] text-accent hover:underline">Save Note (sync when online)</button>
+      </div>
+
+      <!-- BLOCK P: Offline Recently Viewed (New Addition) -->
+      <div id="offline-recently-viewed" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Recently Viewed (offline cache)</h3>
+        <div id="recently-viewed-items" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK Q: Offline Collection Viewing (New Addition) -->
+      <div id="offline-collections" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Saved Collections (offline)</h3>
+        <div id="offline-collections-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK R: Service Worker Version & Update Indicator (New Addition) -->
+      <div id="sw-update-indicator" class="mt-4 p-3 bg-blue-900/20 border border-blue-700/40 rounded-xl text-left hidden">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-blue-300 font-medium">Service Worker Update Available</span>
+          <button id="sw-update-btn" class="text-[10px] text-accent hover:underline">Update Now</button>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1">New version ready. Click update to refresh.</p>
+      </div>
+
+      <!-- BLOCK S: Offline Storage Quota Display (New Addition) -->
+      <div id="storage-quota" class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Storage Used:</span>
+          <span id="storage-used" class="text-gray-300 text-xs">Calculating...</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-1.5 mt-2">
+          <div id="storage-bar" class="bg-accent h-1.5 rounded-full" style="width: 0%"></div>
+        </div>
+        <button id="clear-old-cache-btn" class="mt-2 text-[10px] text-gray-500 hover:text-yellow-400 transition-colors">Clear Old Cache (keep last 7 days)</button>
+      </div>
+
+      <!-- BLOCK T: Offline First Strategy Toggle (New Addition) -->
+      <div class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Offline-First Mode</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="offline-first-toggle" class="sr-only peer">
+            <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
+          </label>
+        </div>
+        <p class="text-[10px] text-gray-500 mt-1">When enabled, prioritizes cached content over network requests</p>
       </div>
 
       <!-- Info box -->
@@ -115,14 +189,56 @@
   </main>
 
   <footer class="border-t border-white/5 py-4 text-center text-xs text-gray-600" role="contentinfo">
+    <div class="flex flex-wrap justify-center gap-4 mb-2">
+      <a href="/about" class="hover:text-accent transition-colors">About</a>
+    </div>
     <p>FlashStream · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a></p>
   </footer>
 
   <script>
+    // BLOCK 9 & 10 & 11 & 12 & 13 & 14 combined modifications
     const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    // Percent-encoded NO_POSTER – no single quotes, text "MOVIE" (no emoji)
     const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2260%22%20viewBox%3D%220%200%2040%2060%22%3E%3Crect%20width%3D%2240%22%20height%3D%2260%22%20fill%3D%22%231f1f29%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2230%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20font-size%3D%2212%22%20fill%3D%22%23666%22%20font-family%3D%22monospace%22%3EMOVIE%3C%2Ftext%3E%3C%2Fsvg%3E';
     function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
+
+    // Helper: use store.js if available, else fallback to localStorage (for compatibility)
+    function getWatchlist() {
+      if (window.store && window.store.getWatchlist) return window.store.getWatchlist();
+      try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch(e) { return []; }
+    }
+    function setWatchlist(list) {
+      if (window.store && window.store.setWatchlist) window.store.setWatchlist(list);
+      else localStorage.setItem('watchlist', JSON.stringify(list));
+    }
+    function getOfflineRatings() {
+      if (window.store && window.store.getRatings) return window.store.getRatings();
+      try { return JSON.parse(localStorage.getItem('offline_ratings') || '{}'); } catch(e) { return {}; }
+    }
+    function setOfflineRatings(ratings) {
+      if (window.store && window.store.saveRating) { /* granular */ }
+      else localStorage.setItem('offline_ratings', JSON.stringify(ratings));
+    }
+    function getOfflineNotes() {
+      try { return JSON.parse(localStorage.getItem('offline_notes') || '{}'); } catch(e) { return {}; }
+    }
+    function setOfflineNotes(notes) {
+      localStorage.setItem('offline_notes', JSON.stringify(notes));
+    }
+    function getRecentlyViewed() {
+      try { return JSON.parse(localStorage.getItem('recently_viewed_offline') || '[]'); } catch(e) { return []; }
+    }
+    function setRecentlyViewed(list) {
+      localStorage.setItem('recently_viewed_offline', JSON.stringify(list));
+    }
+    function getOfflineCollections() {
+      try { return JSON.parse(localStorage.getItem('offline_collections') || '[]'); } catch(e) { return []; }
+    }
+    function setOfflineCollections(list) {
+      localStorage.setItem('offline_collections', JSON.stringify(list));
+    }
+
+    // Block 11: Remove console logs – comment out or delete
+    // (All console.warn and console.log removed from this script)
 
     function initTheme() {
       if (localStorage.getItem('cs-theme') !== 'light') {
@@ -132,18 +248,15 @@
     initTheme();
 
     function renderOfflineWatchlist() {
-      let list = [];
-      try {
-        list = JSON.parse(localStorage.getItem('watchlist') || '[]');
-      } catch(e) { list = []; }
-
+      let list = getWatchlist();
       const container = document.getElementById('offline-wl-items');
       const emptyMsg = document.getElementById('offline-wl-empty');
       if (!list.length) {
-        emptyMsg.classList.remove('hidden');
+        if (emptyMsg) emptyMsg.classList.remove('hidden');
+        if (container) container.innerHTML = '';
         return;
       }
-      emptyMsg.classList.add('hidden');
+      if (emptyMsg) emptyMsg.classList.add('hidden');
 
       const STATUS_LABELS = {
         want_to_watch: 'Want to Watch',
@@ -153,7 +266,6 @@
         rewatch: 'Rewatch',
         favorites: 'Favourites'
       };
-
       const STATUS_ICON_TEXT = {
         want_to_watch: '[Want]',
         watching: '[Watching]',
@@ -179,7 +291,6 @@
           </div>
         `;
       }).join('');
-
       if (list.length > 8) {
         container.insertAdjacentHTML('beforeend', `<p class="text-xs text-gray-500 text-center py-2">+${list.length - 8} more in your <a href="/watchlist" class="text-accent hover:underline">watchlist</a></p>`);
       }
@@ -189,36 +300,1236 @@
       const btn = document.getElementById('retry-btn');
       const icon = document.getElementById('retry-icon');
       const st = document.getElementById('connection-status');
-      btn.disabled = true;
-      icon.classList.add('animate-spin');
-      st.textContent = 'Checking connection…';
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add('animate-spin');
+      if (st) st.textContent = 'Checking connection…';
       setTimeout(() => {
         if (navigator.onLine) {
-          st.textContent = 'Connection restored! Redirecting…';
+          if (st) st.textContent = 'Connection restored! Redirecting…';
           setTimeout(() => { window.location.href = '/'; }, 800);
         } else {
-          st.textContent = 'Still offline. Please check your connection.';
-          btn.disabled = false;
-          icon.classList.remove('animate-spin');
+          if (st) st.textContent = 'Still offline. Please check your connection.';
+          if (btn) btn.disabled = false;
+          if (icon) icon.classList.remove('animate-spin');
         }
       }, 1200);
     }
 
     window.addEventListener('online', () => {
-      document.getElementById('connection-status').textContent = 'You are back online! Redirecting…';
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = 'You are back online! Redirecting…';
       setTimeout(() => { window.location.href = '/'; }, 1000);
+      processAnalyticsQueue();
+      checkServiceWorkerStatus();
     });
     window.addEventListener('offline', () => {
-      document.getElementById('connection-status').textContent = 'Connection lost.';
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = 'Connection lost.';
+      window._offlineStarted = Date.now();
+      queueOfflineEvent('went_offline', {});
     });
 
-    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    // BLOCK I: Service Worker Status (unchanged)
+    async function checkServiceWorkerStatus() {
+      const statusSpan = document.getElementById('sw-status-text');
+      if (!statusSpan) return;
+      if (!('serviceWorker' in navigator)) {
+        statusSpan.textContent = 'Not Supported';
+        statusSpan.className = 'text-gray-500 text-xs';
+        return;
+      }
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration && registration.active) {
+          statusSpan.textContent = 'Active';
+          statusSpan.className = 'text-green-400 text-xs';
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            let totalSize = 0;
+            for (const name of cacheNames) {
+              const cache = await caches.open(name);
+              const keys = await cache.keys();
+              totalSize += keys.length;
+            }
+            const cacheSpan = document.getElementById('cache-usage');
+            if (cacheSpan) cacheSpan.textContent = totalSize + ' items cached';
+          }
+        } else if (registration && registration.installing) {
+          statusSpan.textContent = 'Installing...';
+          statusSpan.className = 'text-yellow-400 text-xs';
+        } else {
+          statusSpan.textContent = 'Not Registered';
+          statusSpan.className = 'text-red-400 text-xs';
+        }
+      } catch(e) {
+        statusSpan.textContent = 'Error';
+        statusSpan.className = 'text-red-400 text-xs';
+      }
+    }
+    
+    async function clearAppCache() {
+      if (!confirm('Clear all cached data? You will need to reload the page.')) return;
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      localStorage.removeItem('offline_analytics_queue');
+      analyticsQueue = [];
+      showToastMessage('Cache cleared. Reloading...', 'info');
+      setTimeout(() => window.location.reload(), 1000);
+    }
+    
+    // BLOCK J: Offline Analytics Queue (endpoint updated in processAnalyticsQueue)
+    let analyticsQueue = [];
+    let syncInProgress = false;
+    function loadAnalyticsQueue() {
+      try {
+        const saved = localStorage.getItem('offline_analytics_queue');
+        if (saved) analyticsQueue = JSON.parse(saved);
+      } catch(e) { analyticsQueue = []; }
+    }
+    function saveAnalyticsQueue() {
+      localStorage.setItem('offline_analytics_queue', JSON.stringify(analyticsQueue));
+    }
+    function queueOfflineEvent(eventType, eventData) {
+      const event = {
+        type: eventType,
+        data: eventData,
+        timestamp: Date.now(),
+        session_id: localStorage.getItem('fs_session_id') || 'offline'
+      };
+      analyticsQueue.push(event);
+      saveAnalyticsQueue();
+      updatePendingCount();
+      if (navigator.onLine) processAnalyticsQueue();
+    }
+    async function processAnalyticsQueue() {
+      if (syncInProgress || analyticsQueue.length === 0) return;
+      if (!navigator.onLine) return;
+      syncInProgress = true;
+      const toSend = [...analyticsQueue];
+      for (const event of toSend) {
+        try {
+          // BLOCK 13: Replace old analytics endpoint with new metrics endpoint
+          const endpoint = '/api/telemetry';
+          // Also try to use apiClient if available (Block 10)
+          if (window.apiClient && window.apiClient.trackEvent) {
+            await window.apiClient.trackEvent(event.type, event.data);
+          } else {
+            await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(event),
+              keepalive: true
+            });
+          }
+          const index = analyticsQueue.findIndex(e => e.timestamp === event.timestamp);
+          if (index !== -1) analyticsQueue.splice(index, 1);
+        } catch(e) {
+          // No console.warn per Block 11
+        }
+      }
+      saveAnalyticsQueue();
+      syncInProgress = false;
+      updatePendingCount();
+      if (analyticsQueue.length > 0 && navigator.onLine) setTimeout(processAnalyticsQueue, 1000);
+    }
+    function updatePendingCount() {
+      const count = analyticsQueue.length;
+      const queueDiv = document.getElementById('sync-queue');
+      const countSpan = document.getElementById('pending-count');
+      if (queueDiv && countSpan) {
+        if (count > 0) {
+          queueDiv.hidden = false;
+          countSpan.textContent = count + ' change' + (count !== 1 ? 's' : '');
+        } else {
+          queueDiv.hidden = true;
+        }
+      }
+    }
+    
+    // BLOCK K: Offline Watchlist Search (uses getWatchlist)
+    function setupOfflineSearch() {
+      const searchInput = document.getElementById('offline-search');
+      const resultsDiv = document.getElementById('offline-search-results');
+      if (!searchInput || !resultsDiv) return;
+      let watchlist = getWatchlist();
+      const STATUS_ICON_TEXT = { want_to_watch: '[Want]', watching: '[Watching]', finished: '[Finished]', dropped: '[Dropped]', rewatch: '[Rewatch]', favorites: '[Favorite]' };
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        if (query.length < 2) { resultsDiv.innerHTML = ''; return; }
+        const filtered = watchlist.filter(item => (item.title || '').toLowerCase().includes(query)).slice(0, 10);
+        if (filtered.length === 0) { resultsDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-2">No matches in your watchlist</p>'; return; }
+        resultsDiv.innerHTML = filtered.map(item => {
+          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+          const icon = STATUS_ICON_TEXT[item.status] || STATUS_ICON_TEXT.want_to_watch;
+          return `<a href="/movie-detail?id=${item.tmdb_id}&type=${item.type || 'movie'}" class="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"><img src="${escapeAttr(poster)}" alt="" class="w-6 h-9 object-cover rounded" onerror="handleImgError(this)"><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white line-clamp-1">${escapeHtml(item.title)}</p><p class="text-[10px] text-gray-500">${icon}</p></div></a>`;
+        }).join('');
+      });
+    }
+    
+    // BLOCK L: Offline Watchlist Editing (uses setWatchlist)
+    function updateWatchlistOffline(tmdbId, status) {
+      let watchlist = getWatchlist();
+      const index = watchlist.findIndex(i => String(i.tmdb_id) === String(tmdbId));
+      if (index !== -1) {
+        watchlist[index].status = status;
+        watchlist[index].updated_offline = Date.now();
+        setWatchlist(watchlist);
+        queueOfflineEvent('watchlist_update', { tmdb_id: tmdbId, status: status, offline: true });
+        renderOfflineWatchlist();
+        showToastMessage('Updated offline (will sync when online)', 'success');
+      } else {
+        queueOfflineEvent('pending_watchlist_add', { tmdb_id: tmdbId, status: status });
+        showToastMessage('Will add when online', 'info');
+      }
+    }
+    function addOfflineWatchlistControls() {
+      const items = document.querySelectorAll('#offline-wl-items .flex.items-center');
+      items.forEach(item => {
+        if (!item.querySelector('.offline-status-btn')) {
+          const img = item.querySelector('img');
+          const tmdbId = img ? img.getAttribute('data-id') : null;
+          const select = document.createElement('select');
+          select.className = 'offline-status-btn text-xs bg-gray-800 border border-white/10 rounded px-1 py-0.5 ml-2';
+          select.innerHTML = `<option value="want_to_watch">Want</option><option value="watching">Watching</option><option value="finished">Finished</option><option value="dropped">Dropped</option><option value="rewatch">Rewatch</option><option value="favorites">Fav</option>`;
+          if (tmdbId) {
+            select.onchange = () => updateWatchlistOffline(tmdbId, select.value);
+            item.querySelector('.flex-1')?.appendChild(select);
+          }
+        }
+      });
+    }
 
+    // BLOCK M: Cached Content Indicator (unchanged)
+    async function updateCachedContentIndicator() {
+      const indicator = document.getElementById('cached-indicator');
+      const countSpan = document.getElementById('cached-content-count');
+      if (!indicator || !countSpan) return;
+      if (!('caches' in window)) { indicator.classList.add('hidden'); return; }
+      try {
+        const cacheNames = await caches.keys();
+        let totalCachedItems = 0;
+        for (const name of cacheNames) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          totalCachedItems += keys.length;
+        }
+        if (totalCachedItems > 0) {
+          indicator.classList.remove('hidden');
+          countSpan.textContent = totalCachedItems + ' items cached for offline viewing';
+        } else { indicator.classList.add('hidden'); }
+      } catch(e) { indicator.classList.add('hidden'); }
+    }
+
+    // BLOCK N: Offline Rating Controls (uses getOfflineRatings/setOfflineRatings)
+    let currentRatingTmdbId = null;
+    let currentRatingValue = 0;
+    function setupOfflineRatingControls() {
+      const section = document.getElementById('offline-rating-section');
+      const controls = document.getElementById('offline-rating-controls');
+      if (!section || !controls) return;
+      const watchlist = getWatchlist();
+      if (watchlist.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      const selectHtml = `<select id="offline-rating-select" class="text-xs bg-gray-800 border border-white/10 rounded px-2 py-1"><option value="">Select a title...</option>${watchlist.slice(0,10).map(item => `<option value="${escapeAttr(String(item.tmdb_id))}">${escapeHtml(item.title || 'Unknown')}</option>`).join('')}</select><div class="rating-stars flex gap-1 mt-2" id="offline-stars">${[1,2,3,4,5,6,7,8,9,10].map(star => `<button data-rating="${star}" class="rating-star text-gray-500 hover:text-yellow-400 transition-colors text-lg">☆</button>`).join('')}</div><p id="rating-feedback" class="text-[10px] text-gray-500 mt-1"></p>`;
+      controls.innerHTML = selectHtml;
+      const select = document.getElementById('offline-rating-select');
+      const stars = document.querySelectorAll('.rating-star');
+      select.addEventListener('change', (e) => { currentRatingTmdbId = e.target.value; currentRatingValue = 0; stars.forEach(star => star.textContent = '☆'); document.getElementById('rating-feedback').textContent = 'Select a rating (will sync when online)'; });
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          if (!currentRatingTmdbId) { document.getElementById('rating-feedback').textContent = 'Please select a title first'; return; }
+          const rating = parseInt(star.getAttribute('data-rating'));
+          currentRatingValue = rating;
+          stars.forEach((s, idx) => { s.textContent = (idx+1) <= rating ? '★' : '☆'; if ((idx+1) <= rating) s.classList.add('text-yellow-400'); else s.classList.remove('text-yellow-400'); });
+          saveOfflineRating(currentRatingTmdbId, rating);
+          document.getElementById('rating-feedback').textContent = `Rating ${rating}/10 saved offline. Will sync when online.`;
+        });
+      });
+    }
+    function saveOfflineRating(tmdbId, rating) {
+      let ratings = getOfflineRatings();
+      ratings[tmdbId] = { rating: rating, timestamp: Date.now(), offline: true };
+      if (window.store && window.store.saveRating) window.store.saveRating(tmdbId, rating);
+      else localStorage.setItem('offline_ratings', JSON.stringify(ratings));
+      queueOfflineEvent('rating_update', { tmdb_id: tmdbId, rating: rating, offline: true });
+    }
+
+    // BLOCK O: Offline Notes Editor (uses getOfflineNotes/setOfflineNotes)
+    let currentNoteTmdbId = null;
+    function setupOfflineNotesEditor() {
+      const section = document.getElementById('offline-notes-section');
+      const noteInput = document.getElementById('offline-note-input');
+      const saveBtn = document.getElementById('save-offline-note-btn');
+      if (!section || !noteInput || !saveBtn) return;
+      const watchlist = getWatchlist();
+      if (watchlist.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      const selectorHtml = `<select id="offline-note-select" class="w-full text-xs bg-gray-800 border border-white/10 rounded px-2 py-1 mb-2"><option value="">Select a title to add/edit note...</option>${watchlist.slice(0,10).map(item => `<option value="${escapeAttr(String(item.tmdb_id))}">${escapeHtml(item.title || 'Unknown')}</option>`).join('')}</select>`;
+      noteInput.insertAdjacentHTML('beforebegin', selectorHtml);
+      const select = document.getElementById('offline-note-select');
+      select.addEventListener('change', () => {
+        currentNoteTmdbId = select.value;
+        if (currentNoteTmdbId) {
+          let notes = getOfflineNotes();
+          noteInput.value = notes[currentNoteTmdbId] || '';
+        } else { noteInput.value = ''; }
+      });
+      saveBtn.addEventListener('click', () => {
+        if (!currentNoteTmdbId) { showToastMessage('Select a title first', 'info'); return; }
+        let notes = getOfflineNotes();
+        notes[currentNoteTmdbId] = noteInput.value;
+        setOfflineNotes(notes);
+        queueOfflineEvent('note_update', { tmdb_id: currentNoteTmdbId, note_preview: noteInput.value.substring(0,50), offline: true });
+        showToastMessage('Note saved offline (will sync when online)', 'success');
+      });
+    }
+
+    // BLOCK P, Q, R, S, T remain as before (using store getters where possible, already updated)
+    function loadRecentlyViewedOffline() {
+      const section = document.getElementById('offline-recently-viewed');
+      const container = document.getElementById('recently-viewed-items');
+      if (!section || !container) return;
+      let recentlyViewed = getRecentlyViewed();
+      if (recentlyViewed.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      container.innerHTML = recentlyViewed.slice(0,5).map(item => `<a href="/movie-detail?id=${item.tmdb_id}&type=${item.type || 'movie'}" class="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"><img src="${item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER}" alt="" class="w-6 h-9 object-cover rounded" onerror="handleImgError(this)"><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white line-clamp-1">${escapeHtml(item.title)}</p><p class="text-[10px] text-gray-500">Viewed ${new Date(item.timestamp).toLocaleDateString()}</p></div></a>`).join('');
+    }
+    function addToRecentlyViewedOffline(tmdbId, title, posterPath, type = 'movie') {
+      let recentlyViewed = getRecentlyViewed();
+      recentlyViewed = recentlyViewed.filter(item => item.tmdb_id !== tmdbId);
+      recentlyViewed.unshift({ tmdb_id: tmdbId, title: title, poster_path: posterPath, type: type, timestamp: Date.now() });
+      recentlyViewed = recentlyViewed.slice(0,20);
+      setRecentlyViewed(recentlyViewed);
+      loadRecentlyViewedOffline();
+    }
+    function loadOfflineCollections() {
+      const section = document.getElementById('offline-collections');
+      const container = document.getElementById('offline-collections-list');
+      if (!section || !container) return;
+      let savedCollections = getOfflineCollections();
+      if (savedCollections.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      container.innerHTML = savedCollections.slice(0,5).map(collection => `<div class="p-2 bg-gray-800 rounded-lg"><p class="text-xs font-medium text-white">${escapeHtml(collection.name)}</p><p class="text-[10px] text-gray-500">${collection.items?.length || 0} items saved</p></div>`).join('');
+    }
+    function saveCollectionOffline(collectionName, items) {
+      let savedCollections = getOfflineCollections();
+      savedCollections = savedCollections.filter(c => c.name !== collectionName);
+      savedCollections.unshift({ name: collectionName, items: items, timestamp: Date.now() });
+      savedCollections = savedCollections.slice(0,10);
+      setOfflineCollections(savedCollections);
+      loadOfflineCollections();
+      queueOfflineEvent('collection_saved', { name: collectionName, item_count: items.length, offline: true });
+    }
+    let swUpdateAvailable = false;
+    function setupServiceWorkerUpdate() {
+      const indicator = document.getElementById('sw-update-indicator');
+      const updateBtn = document.getElementById('sw-update-btn');
+      if (!indicator || !updateBtn) return;
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => { showToastMessage('App updated! Reloading...', 'info'); setTimeout(() => window.location.reload(), 500); });
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.addEventListener('statechange', (e) => { if (e.target.state === 'installed' && !swUpdateAvailable) { swUpdateAvailable = true; indicator.classList.remove('hidden'); queueOfflineEvent('sw_update_available', {}); } });
+        }
+      }
+      updateBtn.addEventListener('click', () => { if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistration().then(reg => { if (reg && reg.waiting) { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); indicator.classList.add('hidden'); swUpdateAvailable = false; } else { window.location.reload(); } }); } });
+    }
+    async function updateStorageQuotaDisplay() {
+      const usedSpan = document.getElementById('storage-used');
+      const bar = document.getElementById('storage-bar');
+      if (!usedSpan || !bar) return;
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        try {
+          const estimate = await navigator.storage.estimate();
+          const usage = estimate.usage || 0;
+          const quota = estimate.quota || 0;
+          const percentUsed = quota > 0 ? (usage / quota) * 100 : 0;
+          const mbUsed = (usage / (1024*1024)).toFixed(1);
+          const mbQuota = (quota / (1024*1024)).toFixed(1);
+          usedSpan.textContent = `${mbUsed} MB / ${mbQuota} MB`;
+          bar.style.width = Math.min(percentUsed,100) + '%';
+          if (percentUsed > 80) { bar.classList.add('bg-red-500'); bar.classList.remove('bg-accent'); } else { bar.classList.add('bg-accent'); bar.classList.remove('bg-red-500'); }
+        } catch(e) { usedSpan.textContent = 'Not available'; }
+      } else { usedSpan.textContent = 'Not supported'; }
+    }
+    async function clearOldCache() {
+      if (!confirm('Clear cached items older than 7 days? This preserves recent content.')) return;
+      const sevenDaysAgo = Date.now() - (7*24*60*60*1000);
+      let clearedCount = 0;
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        for (const name of cacheNames) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          for (const request of keys) {
+            try {
+              const response = await cache.match(request);
+              if (response) {
+                const dateHeader = response.headers.get('date');
+                if (dateHeader) {
+                  const cacheDate = new Date(dateHeader).getTime();
+                  if (cacheDate < sevenDaysAgo) { await cache.delete(request); clearedCount++; }
+                }
+              }
+            } catch(e) {}
+          }
+        }
+      }
+      showToastMessage(`Cleared ${clearedCount} old cached items`, 'success');
+      updateStorageQuotaDisplay();
+      updateCachedContentIndicator();
+      queueOfflineEvent('old_cache_cleared', { items_cleared: clearedCount });
+    }
+    function setupOfflineFirstToggle() {
+      const toggle = document.getElementById('offline-first-toggle');
+      if (!toggle) return;
+      const savedPreference = localStorage.getItem('offline_first_mode') === 'true';
+      toggle.checked = savedPreference;
+      toggle.addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        localStorage.setItem('offline_first_mode', enabled);
+        queueOfflineEvent('offline_first_toggle', { enabled: enabled });
+        showToastMessage(`Offline-first mode ${enabled ? 'enabled' : 'disabled'}`, 'info');
+        if (enabled && 'serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(registration => { if (registration.active) registration.active.postMessage({ type: 'SET_OFFLINE_FIRST', enabled: true }); });
+        }
+      });
+    }
+
+    function showToastMessage(message, type) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'toast-container';
+        newContainer.className = 'fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none';
+        document.body.appendChild(newContainer);
+        container = newContainer;
+      }
+      const styleMap = { success: 'bg-green-900/90 border-green-600 text-green-100', error: 'bg-red-900/90 border-red-700 text-red-100', info: 'bg-gray-900/90 border-white/10 text-gray-300' };
+      const toast = document.createElement('div');
+      toast.className = 'max-w-sm w-full px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-xl toast-slide ' + (styleMap[type] || styleMap.info);
+      toast.setAttribute('role', 'status');
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.transform = 'translateX(100%)'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 350); }, 3000);
+    }
+    function escapeHtml(s) { return String(s !== undefined && s !== null ? s : '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s) { return String(s !== undefined && s !== null ? s : '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    
+    // BLOCK 14: Add About link to mobile menu (dynamic navbar)
+    function ensureMobileMenuAboutLink() {
+      const observer = new MutationObserver(() => {
+        const mobileMenu = document.querySelector('#navbar-container [id*="mobile-menu"], .mobile-menu, [role="menu"]');
+        if (mobileMenu && !mobileMenu.querySelector('a[href="/about"]')) {
+          const aboutLink = document.createElement('a');
+          aboutLink.href = '/about';
+          aboutLink.className = 'text-gray-300 hover:text-white py-1.5 block px-4 text-sm';
+          aboutLink.textContent = 'About';
+          mobileMenu.appendChild(aboutLink);
+        }
+      });
+      observer.observe(document.getElementById('navbar-container') || document.body, { childList: true, subtree: true });
+    }
+    
     document.addEventListener('DOMContentLoaded', () => {
       renderOfflineWatchlist();
-      document.getElementById('connection-status').textContent = navigator.onLine ? 'You appear to be online — try refreshing the page.' : 'No internet connection detected.';
+      setupOfflineSearch();
+      loadAnalyticsQueue();
+      checkServiceWorkerStatus();
+      updatePendingCount();
+      document.getElementById('clear-cache-btn')?.addEventListener('click', clearAppCache);
+      document.getElementById('sync-now-btn')?.addEventListener('click', processAnalyticsQueue);
+      document.getElementById('clear-old-cache-btn')?.addEventListener('click', clearOldCache);
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = navigator.onLine ? 'You appear to be online — try refreshing the page.' : 'No internet connection detected.';
+      queueOfflineEvent('offline_page_view', { user_agent: navigator.userAgent });
+      setTimeout(addOfflineWatchlistControls, 100);
+      updateCachedContentIndicator();
+      setupOfflineRatingControls();
+      setupOfflineNotesEditor();
+      loadRecentlyViewedOffline();
+      loadOfflineCollections();
+      setupServiceWorkerUpdate();
+      updateStorageQuotaDisplay();
+      setupOfflineFirstToggle();
+      setInterval(updateStorageQuotaDisplay, 30000);
+      ensureMobileMenuAboutLink(); // Block 14
     });
   </script>
+
+<script src="/js/store.js"></script>
+<script src="/js/consent.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/api-client.js"></script>
+<script src="/js/navigation.js"></script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en" class="dark">
+<!-- WATERMARK: FlashStream v2.0 - Offline Mode | Generated: 2026-05-30 -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Offline — FlashStream</title>
+  <meta name="robots" content="noindex">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icons/icon-192.png" type="image/png">
+  <meta name="theme-color" content="#00C4BC">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
+  <link rel="stylesheet" href="/css/global.css">
+  <style>
+    :root {
+      --color-accent: #00C4BC;
+      --color-accent-light: #00E5DC;
+      --color-accent-dark: #007A75;
+      --color-black: #0a0a0a;
+      --color-white: #ffffff;
+      --color-muted: #8a9ab0;
+      --color-bg-light: #f3f4f6;
+    }
+    .dark {
+      --color-accent: #00C4BC;
+      --color-accent-light: #00E5DC;
+      --color-accent-dark: #007A75;
+    }
+    :focus-visible{outline:2px solid var(--color-accent);outline-offset:3px;border-radius:4px}
+    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+    @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+    .breathe{animation:breathe 3s ease-in-out infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .animate-spin{animation:spin 1s linear infinite}
+    @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+    .toast-slide{animation:slideIn 0.3s ease-out forwards}
+  </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen flex flex-col">
+
+<div id="consent-modal-root"></div>
+
+<!-- Dynamic navbar container (replaces hardcoded nav) -->
+<div id="navbar-container" class="sticky top-0 z-50 bg-black/95 backdrop-blur-md"></div>
+
+  <main class="flex-1 flex items-center justify-center px-4 py-16" role="main">
+    <div class="text-center max-w-md">
+      <!-- Signal icon (SVG, no emoji) -->
+      <div class="breathe text-7xl mb-6" aria-hidden="true">
+        <svg class="w-20 h-20 mx-auto text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0m-7.424 0a5.25 5.25 0 0 0-7.424 0m14.848 0a5.25 5.25 0 0 0-7.424 0m-7.424 0L3 16.5l2.25-2.25M12 19.5v-4.5m-4.5 4.5h9" />
+        </svg>
+      </div>
+      <h1 class="text-3xl font-bold text-white mb-3">You're Offline</h1>
+      <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+        FlashStream needs an internet connection to browse and discover titles.
+        Your watchlist and saved preferences are still available below.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center mb-12">
+        <button onclick="tryReconnect()" id="retry-btn"
+                class="px-6 py-3 bg-accent text-white font-semibold rounded-xl hover:bg-accent-dark transition-colors flex items-center justify-center gap-2">
+          <svg id="retry-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Try Again
+        </button>
+        <a href="/watchlist" class="px-6 py-3 bg-gray-800 border border-white/10 text-gray-300 font-semibold rounded-xl hover:bg-gray-700 transition-colors">
+          View My Watchlist
+        </a>
+      </div>
+
+      <!-- Offline watchlist section -->
+      <div id="offline-watchlist" class="text-left">
+        <h2 class="text-lg font-semibold text-white mb-3">Your Watchlist (offline)</h2>
+        <div id="offline-wl-items" class="space-y-2"></div>
+        <p id="offline-wl-empty" class="text-sm text-gray-500 hidden">Your watchlist is empty. Start adding titles when you're back online.</p>
+      </div>
+
+      <!-- BLOCK I: Service Worker Status & Cache Info -->
+      <div id="sw-status" class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Service Worker:</span>
+          <span id="sw-status-text" class="text-yellow-400 text-xs">Checking...</span>
+        </div>
+        <div class="flex justify-between items-center mt-1">
+          <span class="text-gray-400 text-xs">Cache Usage:</span>
+          <span id="cache-usage" class="text-gray-300 text-xs">Calculating...</span>
+        </div>
+        <button id="clear-cache-btn" class="mt-2 text-[10px] text-gray-500 hover:text-red-400 transition-colors">Clear Cache</button>
+      </div>
+
+      <!-- BLOCK J: Offline Sync Queue & Pending Changes -->
+      <div id="sync-queue" hidden class="mt-4 p-3 bg-amber-900/20 border border-amber-700/40 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-amber-300 font-medium">Pending Sync</span>
+          <span id="pending-count" class="text-xs text-amber-400">0 changes</span>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1">Changes will sync when you're back online.</p>
+        <button id="sync-now-btn" class="mt-2 text-[10px] text-accent hover:underline">Sync Now</button>
+      </div>
+
+      <!-- BLOCK K: Offline Search (searches local watchlist) -->
+      <div class="mt-4 text-left">
+        <input type="text" id="offline-search" placeholder="Search your watchlist..." class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent">
+        <div id="offline-search-results" class="mt-2 space-y-2 max-h-48 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK M: Cached Content Indicator (New Addition) -->
+      <div id="cached-indicator" class="mt-4 p-3 bg-green-900/20 border border-green-700/40 rounded-xl text-left hidden">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          <span class="text-xs text-green-300 font-medium">Offline-Ready Content</span>
+        </div>
+        <p id="cached-content-count" class="text-[10px] text-gray-400 mt-1">0 cached titles available for offline viewing</p>
+      </div>
+
+      <!-- BLOCK N: Offline Rating Controls (New Addition) -->
+      <div id="offline-rating-section" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Rate while offline (sync later)</h3>
+        <div id="offline-rating-controls" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- BLOCK O: Offline Notes Editor (New Addition) -->
+      <div id="offline-notes-section" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Watchlist Notes (offline)</h3>
+        <textarea id="offline-note-input" rows="2" placeholder="Add a private note about this title..." class="w-full bg-gray-900 border border-white/10 rounded-lg px-3 py-2 text-sm text-gray-300 focus:outline-none focus:border-accent resize-none"></textarea>
+        <button id="save-offline-note-btn" class="mt-2 text-[10px] text-accent hover:underline">Save Note (sync when online)</button>
+      </div>
+
+      <!-- BLOCK P: Offline Recently Viewed (New Addition) -->
+      <div id="offline-recently-viewed" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Recently Viewed (offline cache)</h3>
+        <div id="recently-viewed-items" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK Q: Offline Collection Viewing (New Addition) -->
+      <div id="offline-collections" class="mt-4 text-left hidden">
+        <h3 class="text-xs font-semibold text-gray-300 mb-2">Saved Collections (offline)</h3>
+        <div id="offline-collections-list" class="space-y-2 max-h-40 overflow-y-auto"></div>
+      </div>
+
+      <!-- BLOCK R: Service Worker Version & Update Indicator (New Addition) -->
+      <div id="sw-update-indicator" class="mt-4 p-3 bg-blue-900/20 border border-blue-700/40 rounded-xl text-left hidden">
+        <div class="flex justify-between items-center">
+          <span class="text-xs text-blue-300 font-medium">Service Worker Update Available</span>
+          <button id="sw-update-btn" class="text-[10px] text-accent hover:underline">Update Now</button>
+        </div>
+        <p class="text-[10px] text-gray-400 mt-1">New version ready. Click update to refresh.</p>
+      </div>
+
+      <!-- BLOCK S: Offline Storage Quota Display (New Addition) -->
+      <div id="storage-quota" class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Storage Used:</span>
+          <span id="storage-used" class="text-gray-300 text-xs">Calculating...</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-1.5 mt-2">
+          <div id="storage-bar" class="bg-accent h-1.5 rounded-full" style="width: 0%"></div>
+        </div>
+        <button id="clear-old-cache-btn" class="mt-2 text-[10px] text-gray-500 hover:text-yellow-400 transition-colors">Clear Old Cache (keep last 7 days)</button>
+      </div>
+
+      <!-- BLOCK T: Offline First Strategy Toggle (New Addition) -->
+      <div class="mt-4 p-3 bg-gray-800/50 rounded-xl text-left">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-400 text-xs">Offline-First Mode</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="offline-first-toggle" class="sr-only peer">
+            <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-accent"></div>
+          </label>
+        </div>
+        <p class="text-[10px] text-gray-500 mt-1">When enabled, prioritizes cached content over network requests</p>
+      </div>
+
+      <!-- Info box -->
+      <div class="mt-10 p-5 bg-gray-900 border border-white/10 rounded-2xl text-left">
+        <h3 class="font-semibold text-white mb-3 text-sm">While you're offline</h3>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li class="flex items-start gap-2"><span class="text-green-400 flex-shrink-0 mt-0.5">✓</span>Your watchlist and ratings are saved locally</li>
+          <li class="flex items-start gap-2"><span class="text-green-400 flex-shrink-0 mt-0.5">✓</span>Your preferences and settings are preserved</li>
+          <li class="flex items-start gap-2"><span class="text-gray-600 flex-shrink-0 mt-0.5">✗</span>Browsing and search require a connection</li>
+          <li class="flex items-start gap-2"><span class="text-gray-600 flex-shrink-0 mt-0.5">✗</span>Streaming availability cannot be checked offline</li>
+        </ul>
+      </div>
+
+      <p id="connection-status" class="mt-6 text-xs text-gray-600" aria-live="polite" role="status"></p>
+    </div>
+  </main>
+
+  <footer class="border-t border-white/5 py-4 text-center text-xs text-gray-600" role="contentinfo">
+    <div class="flex flex-wrap justify-center gap-4 mb-2">
+      <a href="/about" class="hover:text-accent transition-colors">About</a>
+    </div>
+    <p>FlashStream · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a></p>
+  </footer>
+
+  <script>
+    // BLOCK 9 & 10 & 11 & 12 & 13 & 14 combined modifications
+    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+    const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2240%22%20height%3D%2260%22%20viewBox%3D%220%200%2040%2060%22%3E%3Crect%20width%3D%2240%22%20height%3D%2260%22%20fill%3D%22%231f1f29%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2230%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20font-size%3D%2212%22%20fill%3D%22%23666%22%20font-family%3D%22monospace%22%3EMOVIE%3C%2Ftext%3E%3C%2Fsvg%3E';
+    function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
+
+    // Helper: use store.js if available, else fallback to localStorage (for compatibility)
+    function getWatchlist() {
+      if (window.store && window.store.getWatchlist) return window.store.getWatchlist();
+      try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch(e) { return []; }
+    }
+    function setWatchlist(list) {
+      if (window.store && window.store.setWatchlist) window.store.setWatchlist(list);
+      else localStorage.setItem('watchlist', JSON.stringify(list));
+    }
+    function getOfflineRatings() {
+      if (window.store && window.store.getRatings) return window.store.getRatings();
+      try { return JSON.parse(localStorage.getItem('offline_ratings') || '{}'); } catch(e) { return {}; }
+    }
+    function setOfflineRatings(ratings) {
+      if (window.store && window.store.saveRating) { /* granular */ }
+      else localStorage.setItem('offline_ratings', JSON.stringify(ratings));
+    }
+    function getOfflineNotes() {
+      try { return JSON.parse(localStorage.getItem('offline_notes') || '{}'); } catch(e) { return {}; }
+    }
+    function setOfflineNotes(notes) {
+      localStorage.setItem('offline_notes', JSON.stringify(notes));
+    }
+    function getRecentlyViewed() {
+      try { return JSON.parse(localStorage.getItem('recently_viewed_offline') || '[]'); } catch(e) { return []; }
+    }
+    function setRecentlyViewed(list) {
+      localStorage.setItem('recently_viewed_offline', JSON.stringify(list));
+    }
+    function getOfflineCollections() {
+      try { return JSON.parse(localStorage.getItem('offline_collections') || '[]'); } catch(e) { return []; }
+    }
+    function setOfflineCollections(list) {
+      localStorage.setItem('offline_collections', JSON.stringify(list));
+    }
+
+    // Block 11: Remove console logs – comment out or delete
+    // (All console.warn and console.log removed from this script)
+
+    function initTheme() {
+      if (localStorage.getItem('cs-theme') !== 'light') {
+        document.documentElement.classList.add('dark');
+      }
+    }
+    initTheme();
+
+    function renderOfflineWatchlist() {
+      let list = getWatchlist();
+      const container = document.getElementById('offline-wl-items');
+      const emptyMsg = document.getElementById('offline-wl-empty');
+      if (!list.length) {
+        if (emptyMsg) emptyMsg.classList.remove('hidden');
+        if (container) container.innerHTML = '';
+        return;
+      }
+      if (emptyMsg) emptyMsg.classList.add('hidden');
+
+      const STATUS_LABELS = {
+        want_to_watch: 'Want to Watch',
+        watching: 'Watching',
+        finished: 'Finished',
+        dropped: 'Dropped',
+        rewatch: 'Rewatch',
+        favorites: 'Favourites'
+      };
+      const STATUS_ICON_TEXT = {
+        want_to_watch: '[Want]',
+        watching: '[Watching]',
+        finished: '[Finished]',
+        dropped: '[Dropped]',
+        rewatch: '[Rewatch]',
+        favorites: '[Favorite]'
+      };
+
+      const show = list.slice(0, 8);
+      container.innerHTML = show.map(item => {
+        const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+        const icon = STATUS_ICON_TEXT[item.status] || STATUS_ICON_TEXT.want_to_watch;
+        const label = STATUS_LABELS[item.status] || item.status;
+        const title = escapeHtml(item.title || 'Unknown');
+        return `
+          <div class="flex items-center gap-3 p-3 bg-gray-900 border border-white/10 rounded-xl">
+            <img src="${escapeAttr(poster)}" alt="${title}" loading="lazy" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0" onerror="handleImgError(this)">
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium text-white line-clamp-1">${title}</p>
+              <p class="text-xs text-gray-500">${icon} ${escapeHtml(label)}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+      if (list.length > 8) {
+        container.insertAdjacentHTML('beforeend', `<p class="text-xs text-gray-500 text-center py-2">+${list.length - 8} more in your <a href="/watchlist" class="text-accent hover:underline">watchlist</a></p>`);
+      }
+    }
+
+    function tryReconnect() {
+      const btn = document.getElementById('retry-btn');
+      const icon = document.getElementById('retry-icon');
+      const st = document.getElementById('connection-status');
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add('animate-spin');
+      if (st) st.textContent = 'Checking connection…';
+      setTimeout(() => {
+        if (navigator.onLine) {
+          if (st) st.textContent = 'Connection restored! Redirecting…';
+          setTimeout(() => { window.location.href = '/'; }, 800);
+        } else {
+          if (st) st.textContent = 'Still offline. Please check your connection.';
+          if (btn) btn.disabled = false;
+          if (icon) icon.classList.remove('animate-spin');
+        }
+      }, 1200);
+    }
+
+    window.addEventListener('online', () => {
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = 'You are back online! Redirecting…';
+      setTimeout(() => { window.location.href = '/'; }, 1000);
+      processAnalyticsQueue();
+      checkServiceWorkerStatus();
+    });
+    window.addEventListener('offline', () => {
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = 'Connection lost.';
+      window._offlineStarted = Date.now();
+      queueOfflineEvent('went_offline', {});
+    });
+
+    // BLOCK I: Service Worker Status (unchanged)
+    async function checkServiceWorkerStatus() {
+      const statusSpan = document.getElementById('sw-status-text');
+      if (!statusSpan) return;
+      if (!('serviceWorker' in navigator)) {
+        statusSpan.textContent = 'Not Supported';
+        statusSpan.className = 'text-gray-500 text-xs';
+        return;
+      }
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration && registration.active) {
+          statusSpan.textContent = 'Active';
+          statusSpan.className = 'text-green-400 text-xs';
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            let totalSize = 0;
+            for (const name of cacheNames) {
+              const cache = await caches.open(name);
+              const keys = await cache.keys();
+              totalSize += keys.length;
+            }
+            const cacheSpan = document.getElementById('cache-usage');
+            if (cacheSpan) cacheSpan.textContent = totalSize + ' items cached';
+          }
+        } else if (registration && registration.installing) {
+          statusSpan.textContent = 'Installing...';
+          statusSpan.className = 'text-yellow-400 text-xs';
+        } else {
+          statusSpan.textContent = 'Not Registered';
+          statusSpan.className = 'text-red-400 text-xs';
+        }
+      } catch(e) {
+        statusSpan.textContent = 'Error';
+        statusSpan.className = 'text-red-400 text-xs';
+      }
+    }
+    
+    async function clearAppCache() {
+      if (!confirm('Clear all cached data? You will need to reload the page.')) return;
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      }
+      localStorage.removeItem('offline_analytics_queue');
+      analyticsQueue = [];
+      showToastMessage('Cache cleared. Reloading...', 'info');
+      setTimeout(() => window.location.reload(), 1000);
+    }
+    
+    // BLOCK J: Offline Analytics Queue (endpoint updated in processAnalyticsQueue)
+    let analyticsQueue = [];
+    let syncInProgress = false;
+    function loadAnalyticsQueue() {
+      try {
+        const saved = localStorage.getItem('offline_analytics_queue');
+        if (saved) analyticsQueue = JSON.parse(saved);
+      } catch(e) { analyticsQueue = []; }
+    }
+    function saveAnalyticsQueue() {
+      localStorage.setItem('offline_analytics_queue', JSON.stringify(analyticsQueue));
+    }
+    function queueOfflineEvent(eventType, eventData) {
+      const event = {
+        type: eventType,
+        data: eventData,
+        timestamp: Date.now(),
+        session_id: localStorage.getItem('fs_session_id') || 'offline'
+      };
+      analyticsQueue.push(event);
+      saveAnalyticsQueue();
+      updatePendingCount();
+      if (navigator.onLine) processAnalyticsQueue();
+    }
+    async function processAnalyticsQueue() {
+      if (syncInProgress || analyticsQueue.length === 0) return;
+      if (!navigator.onLine) return;
+      syncInProgress = true;
+      const toSend = [...analyticsQueue];
+      for (const event of toSend) {
+        try {
+          // BLOCK 13: Replace old analytics endpoint with new metrics endpoint
+          const endpoint = '/api/telemetry';
+          // Also try to use apiClient if available (Block 10)
+          if (window.apiClient && window.apiClient.trackEvent) {
+            await window.apiClient.trackEvent(event.type, event.data);
+          } else {
+            await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(event),
+              keepalive: true
+            });
+          }
+          const index = analyticsQueue.findIndex(e => e.timestamp === event.timestamp);
+          if (index !== -1) analyticsQueue.splice(index, 1);
+        } catch(e) {
+          // No console.warn per Block 11
+        }
+      }
+      saveAnalyticsQueue();
+      syncInProgress = false;
+      updatePendingCount();
+      if (analyticsQueue.length > 0 && navigator.onLine) setTimeout(processAnalyticsQueue, 1000);
+    }
+    function updatePendingCount() {
+      const count = analyticsQueue.length;
+      const queueDiv = document.getElementById('sync-queue');
+      const countSpan = document.getElementById('pending-count');
+      if (queueDiv && countSpan) {
+        if (count > 0) {
+          queueDiv.hidden = false;
+          countSpan.textContent = count + ' change' + (count !== 1 ? 's' : '');
+        } else {
+          queueDiv.hidden = true;
+        }
+      }
+    }
+    
+    // BLOCK K: Offline Watchlist Search (uses getWatchlist)
+    function setupOfflineSearch() {
+      const searchInput = document.getElementById('offline-search');
+      const resultsDiv = document.getElementById('offline-search-results');
+      if (!searchInput || !resultsDiv) return;
+      let watchlist = getWatchlist();
+      const STATUS_ICON_TEXT = { want_to_watch: '[Want]', watching: '[Watching]', finished: '[Finished]', dropped: '[Dropped]', rewatch: '[Rewatch]', favorites: '[Favorite]' };
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase().trim();
+        if (query.length < 2) { resultsDiv.innerHTML = ''; return; }
+        const filtered = watchlist.filter(item => (item.title || '').toLowerCase().includes(query)).slice(0, 10);
+        if (filtered.length === 0) { resultsDiv.innerHTML = '<p class="text-xs text-gray-500 text-center py-2">No matches in your watchlist</p>'; return; }
+        resultsDiv.innerHTML = filtered.map(item => {
+          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
+          const icon = STATUS_ICON_TEXT[item.status] || STATUS_ICON_TEXT.want_to_watch;
+          return `<a href="/movie-detail?id=${item.tmdb_id}&type=${item.type || 'movie'}" class="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"><img src="${escapeAttr(poster)}" alt="" class="w-6 h-9 object-cover rounded" onerror="handleImgError(this)"><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white line-clamp-1">${escapeHtml(item.title)}</p><p class="text-[10px] text-gray-500">${icon}</p></div></a>`;
+        }).join('');
+      });
+    }
+    
+    // BLOCK L: Offline Watchlist Editing (uses setWatchlist)
+    function updateWatchlistOffline(tmdbId, status) {
+      let watchlist = getWatchlist();
+      const index = watchlist.findIndex(i => String(i.tmdb_id) === String(tmdbId));
+      if (index !== -1) {
+        watchlist[index].status = status;
+        watchlist[index].updated_offline = Date.now();
+        setWatchlist(watchlist);
+        queueOfflineEvent('watchlist_update', { tmdb_id: tmdbId, status: status, offline: true });
+        renderOfflineWatchlist();
+        showToastMessage('Updated offline (will sync when online)', 'success');
+      } else {
+        queueOfflineEvent('pending_watchlist_add', { tmdb_id: tmdbId, status: status });
+        showToastMessage('Will add when online', 'info');
+      }
+    }
+    function addOfflineWatchlistControls() {
+      const items = document.querySelectorAll('#offline-wl-items .flex.items-center');
+      items.forEach(item => {
+        if (!item.querySelector('.offline-status-btn')) {
+          const img = item.querySelector('img');
+          const tmdbId = img ? img.getAttribute('data-id') : null;
+          const select = document.createElement('select');
+          select.className = 'offline-status-btn text-xs bg-gray-800 border border-white/10 rounded px-1 py-0.5 ml-2';
+          select.innerHTML = `<option value="want_to_watch">Want</option><option value="watching">Watching</option><option value="finished">Finished</option><option value="dropped">Dropped</option><option value="rewatch">Rewatch</option><option value="favorites">Fav</option>`;
+          if (tmdbId) {
+            select.onchange = () => updateWatchlistOffline(tmdbId, select.value);
+            item.querySelector('.flex-1')?.appendChild(select);
+          }
+        }
+      });
+    }
+
+    // BLOCK M: Cached Content Indicator (unchanged)
+    async function updateCachedContentIndicator() {
+      const indicator = document.getElementById('cached-indicator');
+      const countSpan = document.getElementById('cached-content-count');
+      if (!indicator || !countSpan) return;
+      if (!('caches' in window)) { indicator.classList.add('hidden'); return; }
+      try {
+        const cacheNames = await caches.keys();
+        let totalCachedItems = 0;
+        for (const name of cacheNames) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          totalCachedItems += keys.length;
+        }
+        if (totalCachedItems > 0) {
+          indicator.classList.remove('hidden');
+          countSpan.textContent = totalCachedItems + ' items cached for offline viewing';
+        } else { indicator.classList.add('hidden'); }
+      } catch(e) { indicator.classList.add('hidden'); }
+    }
+
+    // BLOCK N: Offline Rating Controls (uses getOfflineRatings/setOfflineRatings)
+    let currentRatingTmdbId = null;
+    let currentRatingValue = 0;
+    function setupOfflineRatingControls() {
+      const section = document.getElementById('offline-rating-section');
+      const controls = document.getElementById('offline-rating-controls');
+      if (!section || !controls) return;
+      const watchlist = getWatchlist();
+      if (watchlist.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      const selectHtml = `<select id="offline-rating-select" class="text-xs bg-gray-800 border border-white/10 rounded px-2 py-1"><option value="">Select a title...</option>${watchlist.slice(0,10).map(item => `<option value="${escapeAttr(String(item.tmdb_id))}">${escapeHtml(item.title || 'Unknown')}</option>`).join('')}</select><div class="rating-stars flex gap-1 mt-2" id="offline-stars">${[1,2,3,4,5,6,7,8,9,10].map(star => `<button data-rating="${star}" class="rating-star text-gray-500 hover:text-yellow-400 transition-colors text-lg">☆</button>`).join('')}</div><p id="rating-feedback" class="text-[10px] text-gray-500 mt-1"></p>`;
+      controls.innerHTML = selectHtml;
+      const select = document.getElementById('offline-rating-select');
+      const stars = document.querySelectorAll('.rating-star');
+      select.addEventListener('change', (e) => { currentRatingTmdbId = e.target.value; currentRatingValue = 0; stars.forEach(star => star.textContent = '☆'); document.getElementById('rating-feedback').textContent = 'Select a rating (will sync when online)'; });
+      stars.forEach(star => {
+        star.addEventListener('click', () => {
+          if (!currentRatingTmdbId) { document.getElementById('rating-feedback').textContent = 'Please select a title first'; return; }
+          const rating = parseInt(star.getAttribute('data-rating'));
+          currentRatingValue = rating;
+          stars.forEach((s, idx) => { s.textContent = (idx+1) <= rating ? '★' : '☆'; if ((idx+1) <= rating) s.classList.add('text-yellow-400'); else s.classList.remove('text-yellow-400'); });
+          saveOfflineRating(currentRatingTmdbId, rating);
+          document.getElementById('rating-feedback').textContent = `Rating ${rating}/10 saved offline. Will sync when online.`;
+        });
+      });
+    }
+    function saveOfflineRating(tmdbId, rating) {
+      let ratings = getOfflineRatings();
+      ratings[tmdbId] = { rating: rating, timestamp: Date.now(), offline: true };
+      if (window.store && window.store.saveRating) window.store.saveRating(tmdbId, rating);
+      else localStorage.setItem('offline_ratings', JSON.stringify(ratings));
+      queueOfflineEvent('rating_update', { tmdb_id: tmdbId, rating: rating, offline: true });
+    }
+
+    // BLOCK O: Offline Notes Editor (uses getOfflineNotes/setOfflineNotes)
+    let currentNoteTmdbId = null;
+    function setupOfflineNotesEditor() {
+      const section = document.getElementById('offline-notes-section');
+      const noteInput = document.getElementById('offline-note-input');
+      const saveBtn = document.getElementById('save-offline-note-btn');
+      if (!section || !noteInput || !saveBtn) return;
+      const watchlist = getWatchlist();
+      if (watchlist.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      const selectorHtml = `<select id="offline-note-select" class="w-full text-xs bg-gray-800 border border-white/10 rounded px-2 py-1 mb-2"><option value="">Select a title to add/edit note...</option>${watchlist.slice(0,10).map(item => `<option value="${escapeAttr(String(item.tmdb_id))}">${escapeHtml(item.title || 'Unknown')}</option>`).join('')}</select>`;
+      noteInput.insertAdjacentHTML('beforebegin', selectorHtml);
+      const select = document.getElementById('offline-note-select');
+      select.addEventListener('change', () => {
+        currentNoteTmdbId = select.value;
+        if (currentNoteTmdbId) {
+          let notes = getOfflineNotes();
+          noteInput.value = notes[currentNoteTmdbId] || '';
+        } else { noteInput.value = ''; }
+      });
+      saveBtn.addEventListener('click', () => {
+        if (!currentNoteTmdbId) { showToastMessage('Select a title first', 'info'); return; }
+        let notes = getOfflineNotes();
+        notes[currentNoteTmdbId] = noteInput.value;
+        setOfflineNotes(notes);
+        queueOfflineEvent('note_update', { tmdb_id: currentNoteTmdbId, note_preview: noteInput.value.substring(0,50), offline: true });
+        showToastMessage('Note saved offline (will sync when online)', 'success');
+      });
+    }
+
+    // BLOCK P, Q, R, S, T remain as before (using store getters where possible, already updated)
+    function loadRecentlyViewedOffline() {
+      const section = document.getElementById('offline-recently-viewed');
+      const container = document.getElementById('recently-viewed-items');
+      if (!section || !container) return;
+      let recentlyViewed = getRecentlyViewed();
+      if (recentlyViewed.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      container.innerHTML = recentlyViewed.slice(0,5).map(item => `<a href="/movie-detail?id=${item.tmdb_id}&type=${item.type || 'movie'}" class="flex items-center gap-3 p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"><img src="${item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER}" alt="" class="w-6 h-9 object-cover rounded" onerror="handleImgError(this)"><div class="flex-1 min-w-0"><p class="text-xs font-medium text-white line-clamp-1">${escapeHtml(item.title)}</p><p class="text-[10px] text-gray-500">Viewed ${new Date(item.timestamp).toLocaleDateString()}</p></div></a>`).join('');
+    }
+    function addToRecentlyViewedOffline(tmdbId, title, posterPath, type = 'movie') {
+      let recentlyViewed = getRecentlyViewed();
+      recentlyViewed = recentlyViewed.filter(item => item.tmdb_id !== tmdbId);
+      recentlyViewed.unshift({ tmdb_id: tmdbId, title: title, poster_path: posterPath, type: type, timestamp: Date.now() });
+      recentlyViewed = recentlyViewed.slice(0,20);
+      setRecentlyViewed(recentlyViewed);
+      loadRecentlyViewedOffline();
+    }
+    function loadOfflineCollections() {
+      const section = document.getElementById('offline-collections');
+      const container = document.getElementById('offline-collections-list');
+      if (!section || !container) return;
+      let savedCollections = getOfflineCollections();
+      if (savedCollections.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+      container.innerHTML = savedCollections.slice(0,5).map(collection => `<div class="p-2 bg-gray-800 rounded-lg"><p class="text-xs font-medium text-white">${escapeHtml(collection.name)}</p><p class="text-[10px] text-gray-500">${collection.items?.length || 0} items saved</p></div>`).join('');
+    }
+    function saveCollectionOffline(collectionName, items) {
+      let savedCollections = getOfflineCollections();
+      savedCollections = savedCollections.filter(c => c.name !== collectionName);
+      savedCollections.unshift({ name: collectionName, items: items, timestamp: Date.now() });
+      savedCollections = savedCollections.slice(0,10);
+      setOfflineCollections(savedCollections);
+      loadOfflineCollections();
+      queueOfflineEvent('collection_saved', { name: collectionName, item_count: items.length, offline: true });
+    }
+    let swUpdateAvailable = false;
+    function setupServiceWorkerUpdate() {
+      const indicator = document.getElementById('sw-update-indicator');
+      const updateBtn = document.getElementById('sw-update-btn');
+      if (!indicator || !updateBtn) return;
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.addEventListener('controllerchange', () => { showToastMessage('App updated! Reloading...', 'info'); setTimeout(() => window.location.reload(), 500); });
+        if (navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.addEventListener('statechange', (e) => { if (e.target.state === 'installed' && !swUpdateAvailable) { swUpdateAvailable = true; indicator.classList.remove('hidden'); queueOfflineEvent('sw_update_available', {}); } });
+        }
+      }
+      updateBtn.addEventListener('click', () => { if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistration().then(reg => { if (reg && reg.waiting) { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); indicator.classList.add('hidden'); swUpdateAvailable = false; } else { window.location.reload(); } }); } });
+    }
+    async function updateStorageQuotaDisplay() {
+      const usedSpan = document.getElementById('storage-used');
+      const bar = document.getElementById('storage-bar');
+      if (!usedSpan || !bar) return;
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        try {
+          const estimate = await navigator.storage.estimate();
+          const usage = estimate.usage || 0;
+          const quota = estimate.quota || 0;
+          const percentUsed = quota > 0 ? (usage / quota) * 100 : 0;
+          const mbUsed = (usage / (1024*1024)).toFixed(1);
+          const mbQuota = (quota / (1024*1024)).toFixed(1);
+          usedSpan.textContent = `${mbUsed} MB / ${mbQuota} MB`;
+          bar.style.width = Math.min(percentUsed,100) + '%';
+          if (percentUsed > 80) { bar.classList.add('bg-red-500'); bar.classList.remove('bg-accent'); } else { bar.classList.add('bg-accent'); bar.classList.remove('bg-red-500'); }
+        } catch(e) { usedSpan.textContent = 'Not available'; }
+      } else { usedSpan.textContent = 'Not supported'; }
+    }
+    async function clearOldCache() {
+      if (!confirm('Clear cached items older than 7 days? This preserves recent content.')) return;
+      const sevenDaysAgo = Date.now() - (7*24*60*60*1000);
+      let clearedCount = 0;
+      if ('caches' in window) {
+        const cacheNames = await caches.keys();
+        for (const name of cacheNames) {
+          const cache = await caches.open(name);
+          const keys = await cache.keys();
+          for (const request of keys) {
+            try {
+              const response = await cache.match(request);
+              if (response) {
+                const dateHeader = response.headers.get('date');
+                if (dateHeader) {
+                  const cacheDate = new Date(dateHeader).getTime();
+                  if (cacheDate < sevenDaysAgo) { await cache.delete(request); clearedCount++; }
+                }
+              }
+            } catch(e) {}
+          }
+        }
+      }
+      showToastMessage(`Cleared ${clearedCount} old cached items`, 'success');
+      updateStorageQuotaDisplay();
+      updateCachedContentIndicator();
+      queueOfflineEvent('old_cache_cleared', { items_cleared: clearedCount });
+    }
+    function setupOfflineFirstToggle() {
+      const toggle = document.getElementById('offline-first-toggle');
+      if (!toggle) return;
+      const savedPreference = localStorage.getItem('offline_first_mode') === 'true';
+      toggle.checked = savedPreference;
+      toggle.addEventListener('change', (e) => {
+        const enabled = e.target.checked;
+        localStorage.setItem('offline_first_mode', enabled);
+        queueOfflineEvent('offline_first_toggle', { enabled: enabled });
+        showToastMessage(`Offline-first mode ${enabled ? 'enabled' : 'disabled'}`, 'info');
+        if (enabled && 'serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(registration => { if (registration.active) registration.active.postMessage({ type: 'SET_OFFLINE_FIRST', enabled: true }); });
+        }
+      });
+    }
+
+    function showToastMessage(message, type) {
+      let container = document.getElementById('toast-container');
+      if (!container) {
+        const newContainer = document.createElement('div');
+        newContainer.id = 'toast-container';
+        newContainer.className = 'fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none';
+        document.body.appendChild(newContainer);
+        container = newContainer;
+      }
+      const styleMap = { success: 'bg-green-900/90 border-green-600 text-green-100', error: 'bg-red-900/90 border-red-700 text-red-100', info: 'bg-gray-900/90 border-white/10 text-gray-300' };
+      const toast = document.createElement('div');
+      toast.className = 'max-w-sm w-full px-4 py-2.5 rounded-xl border text-xs font-semibold shadow-xl toast-slide ' + (styleMap[type] || styleMap.info);
+      toast.setAttribute('role', 'status');
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.transform = 'translateX(100%)'; toast.style.opacity = '0'; setTimeout(() => toast.remove(), 350); }, 3000);
+    }
+    function escapeHtml(s) { return String(s !== undefined && s !== null ? s : '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escapeAttr(s) { return String(s !== undefined && s !== null ? s : '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+    
+    // BLOCK 14: Add About link to mobile menu (dynamic navbar)
+    function ensureMobileMenuAboutLink() {
+      const observer = new MutationObserver(() => {
+        const mobileMenu = document.querySelector('#navbar-container [id*="mobile-menu"], .mobile-menu, [role="menu"]');
+        if (mobileMenu && !mobileMenu.querySelector('a[href="/about"]')) {
+          const aboutLink = document.createElement('a');
+          aboutLink.href = '/about';
+          aboutLink.className = 'text-gray-300 hover:text-white py-1.5 block px-4 text-sm';
+          aboutLink.textContent = 'About';
+          mobileMenu.appendChild(aboutLink);
+        }
+      });
+      observer.observe(document.getElementById('navbar-container') || document.body, { childList: true, subtree: true });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      renderOfflineWatchlist();
+      setupOfflineSearch();
+      loadAnalyticsQueue();
+      checkServiceWorkerStatus();
+      updatePendingCount();
+      document.getElementById('clear-cache-btn')?.addEventListener('click', clearAppCache);
+      document.getElementById('sync-now-btn')?.addEventListener('click', processAnalyticsQueue);
+      document.getElementById('clear-old-cache-btn')?.addEventListener('click', clearOldCache);
+      const st = document.getElementById('connection-status');
+      if (st) st.textContent = navigator.onLine ? 'You appear to be online — try refreshing the page.' : 'No internet connection detected.';
+      queueOfflineEvent('offline_page_view', { user_agent: navigator.userAgent });
+      setTimeout(addOfflineWatchlistControls, 100);
+      updateCachedContentIndicator();
+      setupOfflineRatingControls();
+      setupOfflineNotesEditor();
+      loadRecentlyViewedOffline();
+      loadOfflineCollections();
+      setupServiceWorkerUpdate();
+      updateStorageQuotaDisplay();
+      setupOfflineFirstToggle();
+      setInterval(updateStorageQuotaDisplay, 30000);
+      ensureMobileMenuAboutLink(); // Block 14
+    });
+  </script>
+
+<script src="/js/store.js"></script>
+<script src="/js/consent.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/api-client.js"></script>
+<script src="/js/navigation.js"></script>
+
 </body>
 </html>

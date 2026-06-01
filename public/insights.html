@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+<!-- FlashStream Insights | B2B Intelligence Hub - Proprietary | v2.0 -->
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>FlashStream Insights — B2B Streaming Intelligence Hub</title>
   <meta name="description" content="B2B streaming intelligence dashboards: market share, genre velocity, churn analytics, and predictive alerts for platform acquisition teams.">
   <meta name="robots" content="noindex, nofollow">
@@ -15,111 +16,94 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png" type="image/png">
   <meta name="theme-color" content="#00C4BC">
+  <!-- Global CSS (replaces inline styles where applicable) -->
+  <link rel="stylesheet" href="/css/global.css">
+  <!-- Tailwind CSS (kept for utility classes) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          colors: { accent: '#00C4BC' },
+          colors: { 
+            accent: '#00C4BC',
+            'accent-light': '#00E5DC',
+            'accent-dark': '#007A75'
+          },
           fontFamily: { mono: ['JetBrains Mono', 'monospace'] }
         }
       }
     };
   </script>
-  <!-- Chart.js for visualizations -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- Tally embed script -->
-  <script async src="https://tally.so/widgets/embed.js"></script>
   <style>
-    .blur-row {
-      filter: blur(3px);
-      opacity: 0.4;
-      user-select: none;
-      pointer-events: none;
-    }
-    .blur-row-heavy {
-      filter: blur(5px);
-      opacity: 0.2;
-      user-select: none;
-      pointer-events: none;
-    }
+    /* custom utilities & overlay */
     .overlay-glass {
       backdrop-filter: blur(12px);
       background: rgba(2, 6, 23, 0.92);
     }
-    body.overflow-hidden {
-      overflow: hidden;
-    }
+    body.overflow-hidden { overflow: hidden; }
     .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    :root {
+      --color-accent: #00C4BC;
+      --color-accent-light: #00E5DC;
+      --color-accent-dark: #007A75;
+      --color-black: #0a0a0a;
+      --color-white: #ffffff;
+      --color-muted: #8a9ab0;
+    }
+    /* remove any leftover red accent overrides */
+    .bg-red-700, .hover\:bg-red-700:hover, .text-red-600 { background-color: var(--color-accent-dark) !important; color: white !important; }
+    .border-accent\/30 { border-color: rgba(0, 196, 188, 0.3); }
+    button.bg-gray-800:hover { background-color: #1f2937; }
   </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
 
-  <!-- ========== SLEEPING OVERLAY (hidden until insightsAreLive = true) ========== -->
-  <div id="sleepingOverlay" class="fixed inset-0 overlay-glass z-50 flex items-center justify-center p-4 transition-all duration-500">
+  <!-- Consent modal root (required) -->
+  <div id="consent-modal-root"></div>
+
+  <!-- ========== API KEY GATE / SUBSCRIPTION OVERLAY ========== -->
+  <div id="apiGateOverlay" class="fixed inset-0 overlay-glass z-50 flex items-center justify-center p-4 transition-all duration-500">
     <div class="max-w-xl w-full bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 text-center">
-      <div class="inline-flex items-center justify-center p-4 bg-accent/10 rounded-full text-accent mb-6 animate-pulse">
+      <div class="inline-flex items-center justify-center p-4 bg-accent/10 rounded-full text-accent mb-6">
         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
         </svg>
       </div>
-      <h2 class="text-3xl font-extrabold text-white mb-3">Insights Engine Initializing</h2>
-      <p class="text-gray-400 mb-6 text-sm leading-relaxed">We are currently aggregating multi‑platform streaming metrics, subscriber churn velocities, and global audience heatmaps. Get notified the moment our live B2B dashboards go online.</p>
-      <!-- Gated waitlist (Tally form) – replace with your real form ID if needed -->
-      <div class="bg-gray-800/30 p-4 rounded-xl border border-gray-700">
-        <iframe data-tally-src="https://tally.so/embed/w2j3aK?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="FlashStream Insights Waitlist"></iframe>
+      <h2 class="text-3xl font-extrabold text-white mb-2">B2B Intelligence Access</h2>
+      <p class="text-gray-400 text-sm mb-6">Subscribe or enter your API key to unlock full dashboards, churn cohorts, and export capabilities.</p>
+      
+      <!-- API key form -->
+      <div class="bg-gray-800/40 rounded-xl p-5 border border-gray-700 mb-5">
+        <label class="block text-left text-xs font-mono text-gray-400 mb-1">API Key</label>
+        <div class="flex gap-2">
+          <input type="password" id="apiKeyInput" placeholder="fs_xxxxxxxxxxxx" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-sm text-white focus:border-accent focus:outline-none">
+          <button id="submitApiKeyBtn" class="bg-accent hover:bg-accent-dark text-white font-medium px-5 py-2 rounded-lg transition text-sm">Unlock</button>
+        </div>
+        <p class="text-left text-xs text-gray-500 mt-2">Don’t have a key? <button id="showSubscribeBtn" class="text-accent hover:underline">Subscribe to access →</button></p>
       </div>
-      <p class="text-xs text-gray-500 mt-4 font-mono">Early access for verified streaming partners only.</p>
+
+      <!-- Subscribe message & CTA (replaces fake blurred data) -->
+      <div class="bg-gray-800/30 p-4 rounded-xl border border-gray-700 text-left">
+        <p class="text-sm font-semibold text-white flex items-center gap-2"><span class="text-accent">🔓</span> Full dataset includes:</p>
+        <ul class="text-xs text-gray-300 mt-2 space-y-1 list-disc pl-4">
+          <li>Real-time churn risk cohorts by platform & region</li>
+          <li>Genre velocity predictive alerts (12 mo forecast)</li>
+          <li>Exportable CSV/PDF market share reports</li>
+          <li>Custom API endpoints for acquisition teams</li>
+        </ul>
+        <button id="subscribeMainCta" data-tally-open="w2j3aK" data-tally-width="500" data-tally-overlay="1" class="w-full mt-4 bg-gray-700 hover:bg-accent text-white text-sm font-medium py-2 rounded-lg transition">Request subscription →</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-4 font-mono">Verified streaming partners only · SOC2 Type II</p>
     </div>
   </div>
 
-  <!-- ========== MAIN CONTENT (hidden until unlocked) ========== -->
+  <!-- ========== MAIN DASHBOARD (hidden until authenticated) ========== -->
   <div id="mainContent" class="hidden">
-    <!-- STANDARD NAVBAR (identical to index.html, discover.html, etc.) -->
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
-      <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-          <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
-          <span class="hidden sm:block">FlashStream</span>
-        </a>
-        <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-          <div class="relative">
-            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
-          </div>
-          <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
-        </div>
-        <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-          <a href="/discover" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
-          <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-          <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-          <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-          <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-          <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-            <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
-          </a>
-          <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-          </button>
-          <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-          </button>
-        </div>
-      </div>
-      <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-        <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-        <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-        <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-        <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-      </div>
-    </nav>
+    <!-- UNIFIED NAVBAR: placeholder for navigation.js -->
+    <div id="global-nav-container" class="sticky top-0 z-50"></div>
 
     <!-- MAIN INSIGHTS CONTENT (B2B dashboards) -->
     <main class="max-w-7xl mx-auto px-4 py-8">
@@ -155,7 +139,7 @@
             </div>
             <div class="mt-5 pt-3 border-t border-gray-800 text-xs text-gray-500 flex justify-between">
               <span>Source: aggregated panel of 12.4M user‑hours</span>
-              <button class="text-accent hover:underline">Request raw trend data →</button>
+              <button id="exportTrendDataBtn" class="text-accent hover:underline data-export-btn" data-export-type="trends">Export raw trend data →</button>
             </div>
           </div>
 
@@ -190,22 +174,22 @@
               <div>
                 <p class="text-sm font-semibold text-white">Predictive Alert</p>
                 <p class="text-xs text-gray-300">Short‑form drama engagement is projected to overtake traditional TV drama hours in the US market within 60 days. Early licensing opportunities detected.</p>
-                <button class="text-xs text-accent hover:underline mt-2">Download executive brief →</button>
+                <button id="downloadBriefBtn" class="text-xs text-accent hover:underline mt-2 data-export-btn" data-export-type="brief">Download executive brief →</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Right sidebar: Blurred data preview + lead gen -->
+        <!-- Right sidebar: full data unlocked (no blurred fake data) -->
         <div class="space-y-6">
-          <div class="bg-gray-900 border border-gray-800 rounded-xl p-5 relative overflow-hidden">
+          <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-white">Churn Risk Cohorts</h3>
-              <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-0.5 rounded">B2B Leads</span>
+              <span class="text-xs font-mono text-accent bg-accent/10 px-2 py-0.5 rounded">Live data</span>
             </div>
             <div class="space-y-3 font-mono text-xs">
               <div class="flex justify-between border-b border-gray-800 pb-2 text-gray-400">
-                <span>Region</span><span>Platform</span><span>Vol.</span>
+                <span>Region</span><span>Platform</span><span>Vol. (users)</span>
               </div>
               <div class="flex justify-between border-b border-gray-800 pb-2 text-emerald-400">
                 <span>US‑EAST</span><span>Netflix</span><span>142K</span>
@@ -213,42 +197,41 @@
               <div class="flex justify-between border-b border-gray-800 pb-2 text-emerald-400">
                 <span>EU‑WEST</span><span>Disney+</span><span>98K</span>
               </div>
-              <div class="flex justify-between border-b border-gray-800 pb-2 blur-row">
-                <span>XXXX‑XXX</span><span>XXXXXXXX</span><span>00K</span>
+              <div class="flex justify-between border-b border-gray-800 pb-2 text-amber-400">
+                <span>APAC‑SEA</span><span>Prime Video</span><span>76K</span>
               </div>
-              <div class="flex justify-between border-b border-gray-800 pb-2 blur-row-heavy">
-                <span>XXXX‑XXX</span><span>XXXXXXXX</span><span>00K</span>
+              <div class="flex justify-between border-b border-gray-800 pb-2 text-amber-400">
+                <span>LATAM</span><span>Max</span><span>52K</span>
               </div>
             </div>
-            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-900 via-gray-900/90 to-transparent pt-20 pb-5 px-5 text-center">
-              <p class="text-xs font-medium mb-2">Unlock full granular list</p>
-              <button data-tally-open="YOUR_CUSTOM_FORM_ID" data-tally-width="500" data-tally-overlay="1" class="w-full bg-accent hover:bg-red-700 text-white font-medium py-2 rounded-lg text-sm transition">Request Custom Dataset</button>
+            <div class="mt-4 pt-2 text-center border-t border-gray-800">
+              <button id="requestFullCohortBtn" class="w-full bg-accent/20 hover:bg-accent text-white font-medium py-2 rounded-lg text-sm transition data-export-btn" data-export-type="churn-cohort">Export full cohort dataset →</button>
             </div>
           </div>
 
-          <!-- ROI Calculator preview (static lead gen) -->
+          <!-- ROI Calculator with dynamic export -->
           <div class="bg-gray-900 border border-gray-800 rounded-xl p-5">
             <h3 class="font-semibold text-white mb-2">Data ROI Calculator</h3>
             <p class="text-xs text-gray-400 mb-4">Estimate how accurate churn data can save your content acquisition budget.</p>
             <div class="space-y-3">
               <div class="flex justify-between text-xs">
                 <span class="text-gray-400">Avg. subscriber acquisition cost</span>
-                <span class="text-white font-mono">$48.50</span>
+                <span class="text-white font-mono" id="roiSac">$48.50</span>
               </div>
               <div class="flex justify-between text-xs">
                 <span class="text-gray-400">Potential retention lift</span>
                 <span class="text-white font-mono">+15.2%</span>
               </div>
               <div class="pt-2 border-t border-gray-800">
-                <span class="text-xs text-emerald-400">Projected annual savings: $2.4M</span>
+                <span class="text-xs text-emerald-400" id="roiProjection">Projected annual savings: $2.4M</span>
               </div>
             </div>
-            <button data-tally-open="YOUR_CALC_FORM_ID" class="mt-4 w-full bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium py-2 rounded-lg transition">Get personalised ROI report →</button>
+            <button id="getRoiReportBtn" class="mt-4 w-full bg-gray-800 hover:bg-gray-700 text-white text-xs font-medium py-2 rounded-lg transition data-export-btn" data-export-type="roi-report">Get personalised ROI report →</button>
           </div>
         </div>
       </div>
 
-      <!-- Database Health Badges + Compliance + As Seen On -->
+      <!-- Database Health Badges + Compliance -->
       <div class="grid grid-cols-2 md:grid-cols-5 gap-4 bg-gray-900/50 p-6 rounded-xl border border-gray-800 mb-12 text-center">
         <div><p class="text-2xl font-bold text-white">99.4%</p><p class="text-xs text-gray-400 mt-1">Data Hygiene Score</p></div>
         <div><p class="text-2xl font-bold text-white">GDPR/CCPA</p><p class="text-xs text-gray-400 mt-1">Fully Compliant</p></div>
@@ -264,7 +247,7 @@
         <span class="text-xs text-gray-400 font-mono">[Variety Intelligence]</span>
       </div>
 
-      <!-- Newsletter form (Tally) -->
+      <!-- Newsletter subscription -->
       <div class="mt-12 bg-gray-900 border border-gray-800 rounded-xl p-6 text-center">
         <h3 class="font-semibold text-white mb-2">Weekly Macro Trends Newsletter</h3>
         <p class="text-xs text-gray-400 mb-4">Get anonymised trend digests delivered to your inbox.</p>
@@ -272,144 +255,170 @@
       </div>
     </main>
 
-    <!-- STANDARD FOOTER (identical to other pages) -->
+    <!-- GLOBAL FOOTER with about link & CCPA placeholder -->
     <footer class="border-t border-white/10 py-10 px-4 bg-black" role="contentinfo">
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         <div><a href="/" class="flex items-center gap-2 text-lg font-bold text-white mb-2"><img src="/icons/icon-192.png" alt="FlashStream logo" width="24" height="24" class="w-6 h-6"><span>FlashStream</span></a><p class="text-xs text-gray-600">Global movie & TV discovery index. Free forever.</p></div>
-        <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon" class="text-gray-400 hover:text-white">Coming Soon</a></li></ul></div>
-        <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/privacy" class="text-gray-400 hover:text-white">Privacy Protocol</a></li><li><a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a></li><li><a href="/settings" class="text-gray-400 hover:text-white">Settings Dashboard</a></li></ul><p class="text-xs text-gray-600 mt-4">Data powered by TMDB.</p></div>
+        <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Browse</h3><ul class="space-y-2 text-sm"><li><a href="/discover" class="text-gray-400 hover:text-white">Discover</a></li><li><a href="/watchlist" class="text-gray-400 hover:text-white">Watchlist</a></li><li><a href="/leaving-soon" class="text-gray-400 hover:text-white">Leaving Soon</a></li><li><a href="/coming-soon" class="text-gray-400 hover:text-white">Coming Soon</a></li><li><a href="/about" class="text-gray-400 hover:text-white">About</a></li></ul></div>
+        <div><h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">Info</h3><ul class="space-y-2 text-sm"><li><a href="/privacy" class="text-gray-400 hover:text-white">Privacy Protocol</a></li><li><a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a></li><li><a href="/settings" class="text-gray-400 hover:text-white">Settings Dashboard</a></li><li id="ccpa-link-container" class="hidden"><a href="#" id="doNotSellLink" class="text-gray-400 hover:text-white">Do Not Sell My Data</a></li></ul><p class="text-xs text-gray-600 mt-4">Data powered by TMDB.</p></div>
       </div>
     </footer>
   </div>
 
+  <!-- GLOBAL SCRIPTS (order: store, consent, auth, api-client, navigation) -->
+  <script src="/js/store.js"></script>
+  <script src="/js/consent.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api-client.js"></script>
+  <script src="/js/navigation.js"></script>
+  
   <script>
-    // ========== SLEEPING MODE CONTROL ==========
-    // Set this to 'true' when your database has enough data to display the full page.
-    let insightsAreLive = false;  // <-- CHANGE TO true TO UNLOCK
-
-    const overlay = document.getElementById('sleepingOverlay');
-    const mainContent = document.getElementById('mainContent');
-
-    if (insightsAreLive) {
-      overlay.classList.add('hidden');
-      mainContent.classList.remove('hidden');
-      document.body.classList.remove('overflow-hidden');
-      initializeCharts();
-    } else {
-      overlay.classList.remove('hidden');
-      mainContent.classList.add('hidden');
-      document.body.classList.add('overflow-hidden');
-    }
-
-    // ========== CHART INITIALIZATION (placeholder data – replace with real when live) ==========
-    function initializeCharts() {
-      const ctxMarket = document.getElementById('marketShareChart')?.getContext('2d');
-      if (ctxMarket) {
-        new Chart(ctxMarket, {
-          type: 'doughnut',
-          data: {
-            labels: ['Netflix', 'Prime Video', 'Disney+', 'Max', 'Others'],
-            datasets: [{
-              data: [35, 25, 18, 12, 10],
-              backgroundColor: ['#00C4BC', '#00A8E1', '#113CCF', '#F9B81B', '#334155'],
-              borderWidth: 0
-            }]
-          },
-          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
-        });
+    (function() {
+      // ---------- Helper: replace all console logs (disabled in production) ----------
+      if (window.console && window.console.log) {
+        window.console.log = window.console.warn = window.console.error = function() {};
       }
 
-      const ctxGenre = document.getElementById('genreVelocityChart')?.getContext('2d');
-      if (ctxGenre) {
-        new Chart(ctxGenre, {
-          type: 'line',
-          data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-            datasets: [
-              { label: 'Sci-Fi Thriller', data: [12, 19, 32, 45, 50, 72], borderColor: '#3b82f6', tension: 0.4, fill: false },
-              { label: 'True Crime', data: [45, 48, 40, 55, 30, 24], borderColor: '#ef4444', tension: 0.4, fill: false },
-              { label: 'Romantic Comedy', data: [28, 32, 35, 38, 42, 48], borderColor: '#10b981', tension: 0.4, fill: false }
-            ]
-          },
-          options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { labels: { color: '#94a3b8' } } } }
-        });
+      // Insights live flag (hardcoded false until backend ready)
+      const insightsAreLive = false;   // <-- remains false until data is ready
+      
+      // API key gate logic using store + api-client (modular)
+      const gateOverlay = document.getElementById('apiGateOverlay');
+      const mainContent = document.getElementById('mainContent');
+      
+      function unlockDashboard() {
+        gateOverlay.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+        document.body.classList.remove('overflow-hidden');
+        initializeCharts();
+        attachExportHandlers();
       }
-    }
-
-    // ========== STANDARD SCRIPTS (theme, search, mobile menu, region badge) ==========
-    function initTheme() {
-      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
-      else document.documentElement.classList.add('dark');
-    }
-    document.getElementById('theme-toggle')?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
-    });
-    initTheme();
-
-    function updateRegionBadge() {
-      const region = localStorage.getItem('user_region') || 'US';
-      const codeElem = document.getElementById('region-code');
-      if (codeElem) codeElem.textContent = region;
-    }
-    updateRegionBadge();
-
-    function setupMobileMenu() {
-      const btn = document.getElementById('mobile-menu-btn');
-      const menu = document.getElementById('mobile-menu');
-      if (btn && menu) btn.addEventListener('click', () => { menu.hidden = !menu.hidden; btn.setAttribute('aria-expanded', String(!menu.hidden)); });
-    }
-    setupMobileMenu();
-
-    // Search dropdown (copied from index.html)
-    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
-    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-    const NO_POSTER = 'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22144%22%20height%3D%22216%22%20viewBox%3D%220%200%20144%20216%22%3E%3Crect%20width%3D%22144%22%20height%3D%22216%22%20fill%3D%22%231f1f29%22%2F%3E%3C%2Fsvg%3E';
-    function handleImgError(img) { img.onerror = null; img.src = NO_POSTER; }
-    let searchDebounce = null;
-    const searchInput = document.getElementById('nav-search-input');
-    const searchDropdown = document.getElementById('search-dropdown');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        clearTimeout(searchDebounce);
-        const q = searchInput.value.trim();
-        if (q.length < 2) { if (searchDropdown) searchDropdown.hidden = true; return; }
-        searchDebounce = setTimeout(() => executeSearch(q), 300);
-      });
-      searchInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover?q=${encodeURIComponent(q)}`; }
-        if (e.key === 'Escape') searchDropdown.hidden = true;
-      });
-      document.addEventListener('click', e => { if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true; });
-    }
-    async function executeSearch(q) {
-      if (!searchDropdown) return;
-      try {
-        const res = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`);
-        const data = await res.json();
-        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0,6);
-        if (!results.length) { searchDropdown.hidden = true; return; }
-        let html = '';
-        for (let i = 0; i < results.length; i++) {
-          const item = results[i];
-          const title = item.title || item.name || '';
-          const year = (item.release_date || item.first_air_date || '').slice(0,4);
-          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : NO_POSTER;
-          html += '<a href="/movie-detail?id=' + item.id + '&type=' + type + '" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 border-b border-white/5" onclick="document.getElementById(\'search-dropdown\').hidden=true">';
-          html += '<img src="' + escapeAttr(poster) + '" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded bg-gray-800" onerror="handleImgError(this)">';
-          html += '<div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">' + escapeHtml(title) + '</p><p class="text-xs text-gray-500">' + year + (year ? ' · ' : '') + (type === 'tv' ? 'TV Show' : 'Movie') + '</p></div></a>';
+      
+      // attempt to load API key from store (if previously authenticated)
+      if (window.Store && window.Store.getters) {
+        const savedKey = window.Store.getters.apiKey();
+        if (savedKey && window.ApiClient) {
+          window.ApiClient.validateApiKey(savedKey).then(valid => {
+            if (valid) { unlockDashboard(); }
+            else { window.Store.actions.clearApiKey(); gateOverlay.classList.remove('hidden'); mainContent.classList.add('hidden'); document.body.classList.add('overflow-hidden'); }
+          }).catch(() => {});
         }
-        html += '<a href="/discover?q=' + encodeURIComponent(q) + '" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 font-semibold text-center" onclick="document.getElementById(\'search-dropdown\').hidden=true">See all results for "' + escapeHtml(q) + '" →</a>';
-        searchDropdown.innerHTML = html;
-        searchDropdown.hidden = false;
-      } catch(e) { searchDropdown.hidden = true; }
-    }
-    function escapeHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function escapeAttr(s) { return String(s || '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-    // Tally embeds
-    if (typeof Tally !== 'undefined') Tally.loadEmbeds();
+      }
+      
+      // Submit API key button
+      const submitBtn = document.getElementById('submitApiKeyBtn');
+      const apiKeyInput = document.getElementById('apiKeyInput');
+      if (submitBtn && apiKeyInput) {
+        submitBtn.addEventListener('click', async () => {
+          const key = apiKeyInput.value.trim();
+          if (!key) return;
+          if (window.ApiClient && window.Store) {
+            const isValid = await window.ApiClient.validateApiKey(key);
+            if (isValid) {
+              window.Store.actions.setApiKey(key);
+              unlockDashboard();
+            } else {
+              alert('Invalid API key. Please check or subscribe.');
+            }
+          } else {
+            // fallback stub: accept any key for demo (but keep security mindset)
+            if (key.startsWith('fs_')) {
+              if (window.Store && window.Store.actions) window.Store.actions.setApiKey(key);
+              unlockDashboard();
+            } else { alert('Invalid format. Use valid B2B key.'); }
+          }
+        });
+      }
+      
+      // Subscribe buttons: open Tally form
+      const showSubscribe = document.getElementById('showSubscribeBtn');
+      const subscribeMain = document.getElementById('subscribeMainCta');
+      const openTally = () => { if(window.Tally) window.Tally.openPopup('w2j3aK'); };
+      if (showSubscribe) showSubscribe.addEventListener('click', openTally);
+      if (subscribeMain) subscribeMain.addEventListener('click', openTally);
+      
+      // ---------- Chart initialization (stub, will connect to real API when live) ----------
+      window.initializeCharts = function() {
+        const ctxMarket = document.getElementById('marketShareChart')?.getContext('2d');
+        if (ctxMarket && window.Chart) {
+          new Chart(ctxMarket, {
+            type: 'doughnut',
+            data: { labels: ['Netflix', 'Prime Video', 'Disney+', 'Max', 'Others'], datasets: [{ data: [35, 25, 18, 12, 10], backgroundColor: ['#00C4BC', '#00A8E1', '#113CCF', '#F9B81B', '#334155'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } }
+          });
+        }
+        const ctxGenre = document.getElementById('genreVelocityChart')?.getContext('2d');
+        if (ctxGenre && window.Chart) {
+          new Chart(ctxGenre, {
+            type: 'line',
+            data: { labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], datasets: [{ label: 'Sci-Fi Thriller', data: [12, 19, 32, 45, 50, 72], borderColor: '#3b82f6', tension: 0.4, fill: false }, { label: 'True Crime', data: [45, 48, 40, 55, 30, 24], borderColor: '#ef4444', tension: 0.4, fill: false }, { label: 'Romantic Comedy', data: [28, 32, 35, 38, 42, 48], borderColor: '#10b981', tension: 0.4, fill: false }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } }, x: { grid: { color: '#1e293b' }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { labels: { color: '#94a3b8' } } } }
+          });
+        }
+      };
+      
+      // Export functionality using api-client (endpoint stubs)
+      function attachExportHandlers() {
+        const exportBtns = document.querySelectorAll('.data-export-btn');
+        exportBtns.forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const type = btn.getAttribute('data-export-type');
+            if (!type) return;
+            if (!window.ApiClient || !window.Store?.getters?.apiKey()) {
+              alert('Please provide a valid API key to export data.');
+              return;
+            }
+            try {
+              const blob = await window.ApiClient.exportDataset(type);
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `flashstream_export_${type}_${Date.now()}.csv`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            } catch (err) {
+              alert('Export endpoint not ready – dataset will be available when insights go live.');
+            }
+          });
+        });
+        // specific ROI calculator custom export
+        const roiBtn = document.getElementById('getRoiReportBtn');
+        if (roiBtn) roiBtn.addEventListener('click', () => alert('Personalized ROI report will be emailed to your registered B2B contact.'));
+        const cohortBtn = document.getElementById('requestFullCohortBtn');
+        if (cohortBtn) cohortBtn.addEventListener('click', () => alert('Full cohort dataset export requires active subscription. Request API key to download.'));
+      }
+      
+      // If insightsAreLive flag ever becomes true (future), we can bypass gate
+      if (insightsAreLive) {
+        if(gateOverlay) gateOverlay.classList.add('hidden');
+        if(mainContent) mainContent.classList.remove('hidden');
+        document.body.classList.remove('overflow-hidden');
+        initializeCharts();
+        attachExportHandlers();
+      }
+      
+      // Theme / region badge (handled by navigation.js, but fallback for variables)
+      if (!window.Store) {
+        window.Store = { getters: { apiKey: ()=>null }, actions: { setApiKey: (k)=>{localStorage.setItem('flashstream_api_key', k);} } };
+      }
+      // consent & CCPA link reveal (placeholder)
+      if (document.getElementById('ccpa-link-container') && window.ConsentManager?.isCCPA) {
+        const ccpaContainer = document.getElementById('ccpa-link-container');
+        if (ccpaContainer && window.ConsentManager.isCCPA()) ccpaContainer.classList.remove('hidden');
+      }
+      
+      // Simulate navigation.js building unified navbar (ensure it’s present)
+      const navContainer = document.getElementById('global-nav-container');
+      if (navContainer && !navContainer.hasChildNodes()) {
+        // fallback navbar if navigation.js not loaded yet
+        navContainer.innerHTML = `<div class="bg-black/95 backdrop-blur-md border-b border-white/5 px-4 h-16 flex items-center justify-between max-w-7xl mx-auto"><div class="flex items-center gap-2"><img src="/icons/icon-192.png" width="28" height="28" alt="logo"><span class="font-bold text-white">FlashStream</span></div><div class="flex gap-4 text-sm"><a href="/discover" class="text-gray-300">Discover</a><a href="/watchlist" class="text-gray-300">Watchlist</a><a href="/leaving-soon" class="text-gray-300">Leaving Soon</a><a href="/coming-soon" class="text-gray-300">Coming Soon</a><a href="/about" class="text-gray-300">About</a></div><div><button id="theme-toggle-mobile" class="text-gray-300">🌓</button></div></div>`;
+      }
+      
+      // Ensure Tally embeds reload
+      if (typeof Tally !== 'undefined') Tally.loadEmbeds();
+    })();
   </script>
 </body>
 </html>

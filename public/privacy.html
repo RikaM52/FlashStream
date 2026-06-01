@@ -1,245 +1,322 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+<!-- WATERMARK: FlashStream · Privacy-First Architecture · Version 2.0 -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Privacy Policy — FlashStream</title>
-  <meta name="description" content="FlashStream privacy policy — how we handle your data, analytics, and advertising. Local-first, GDPR and CCPA compliant.">
+  <meta name="description" content="FlashStream respects your privacy. Your watchlist stays on your device. Anonymous usage helps us improve the site. No spam. No pop-ups.">
   <link rel="canonical" href="https://flashstream.pages.dev/privacy">
-  <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png" type="image/png">
-  <meta name="theme-color" content="#00C4BC">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
-  <style>
-    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-    .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
-    #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
-    [hidden]{display:none!important}
-    :focus-visible{outline:2px solid #00C4BC;outline-offset:3px;border-radius:4px}
-    .prose h2{font-size:1.25rem;font-weight:600;color:#f3f4f6;margin:2rem 0 .75rem}
-    .prose h3{font-size:1rem;font-weight:600;color:#f3f4f6;margin:1.25rem 0 .5rem}
-    .prose p{color:#9ca3af;line-height:1.75;margin-bottom:.875rem}
-    .prose ul{list-style:disc;padding-left:1.5rem;margin-bottom:.875rem}
-    .prose ul li{color:#9ca3af;line-height:1.7;margin-bottom:.375rem}
-    .prose a{color:#00C4BC;text-decoration:underline;text-underline-offset:2px}
-  </style>
+  <link rel="stylesheet" href="/css/global.css">
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
-  <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+  <div id="consent-modal-root"></div>
+  <div id="global-nav-container" class="sticky top-0 z-50"></div>
 
-  <!-- ══ NAVBAR (identical to all pages) ══ -->
-  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-      <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
-        <span class="hidden sm:block">FlashStream</span>
-      </a>
-      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-white mb-3">Privacy Policy</h1>
+      <p class="text-gray-400 text-lg max-w-2xl mx-auto">FlashStream is designed differently. Your personal preferences stay on your device. We only see anonymous patterns that help us make the site better.</p>
+      <!-- Block 13: Update last updated date -->
+      <p class="text-gray-500 text-sm mt-4">Last updated: May 30, 2026</p>
+    </div>
+
+    <!-- What we don't do - framed positively and softly -->
+    <div class="info-box">
+      <p class="text-white font-medium mb-2">Our approach to privacy</p>
+      <ul class="text-gray-300 text-sm space-y-1 mb-0">
+        <li>Your watchlist, ratings, and personal preferences never leave your device</li>
+        <li>We do not send promotional emails or newsletters</li>
+        <li>We do not use pop-up ads or interrupt your experience</li>
+        <li>We do not ask for your name, email address, or payment information</li>
+        <li>We do not track you across other websites</li>
+      </ul>
+    </div>
+
+    <div class="prose max-w-none">
+      <!-- ================= SECTION 1: WHAT STAYS ON YOUR DEVICE ================= -->
+      <h2>Information that stays on your device</h2>
+      <p>The following information is stored exclusively in your browser and is never sent to FlashStream servers. You have complete control, and clearing your browser data removes it permanently.</p>
+      
+      <table class="data-table">
+        <thead>
+          <tr><th>Information type</th><th>Description</th><th>Does FlashStream see this?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Your watchlist</td><td>Titles you save, your ratings, personal notes</td><td class="text-accent">No</td></tr>
+          <tr><td>Your viewing history</td><td>Episode progress, what you have finished watching</td><td class="text-accent">No</td></tr>
+          <tr><td>Your preferences</td><td>Favorite genres, languages, streaming platforms</td><td class="text-accent">No</td></tr>
+          <tr><td>Your filter settings</td><td>Content warnings you avoid, taste preferences</td><td class="text-accent">No</td></tr>
+          <tr><td>Your saved presets</td><td>Custom search and filter combinations</td><td class="text-accent">No</td></tr>
+          <tr><td>Your community contributions</td><td>Ratings, reviews, and tag submissions</td><td class="text-accent">No</td></tr>
+        </tbody>
+      </table>
+      
+      <p>Because this data stays on your device, you do not need an account. You can export your watchlist at any time from Settings, and you can delete everything by clearing your browser storage.</p>
+
+      <!-- ================= SECTION 2: ANONYMOUS USAGE PATTERNS ================= -->
+      <h2>Anonymous usage patterns that help improve FlashStream</h2>
+      <p>To make FlashStream faster, more reliable, and more useful, we look at anonymous patterns of how people use the site. This information is grouped together so we only see patterns across many users, not individual activity. This is similar to how a store might notice that many customers browse the science fiction section — they learn what people want without knowing who those people are.</p>
+      
+      <div class="info-box">
+        <p class="text-white font-medium mb-2">How this helps you</p>
+        <ul class="text-gray-300 text-sm space-y-1 mb-0">
+          <li>When searches return no results, we know what content to add</li>
+          <li>When certain features are slow, we know what to optimize</li>
+          <li>When recommendations miss the mark, we improve them</li>
+          <li>When something breaks, we see it and fix it quickly</li>
+        </ul>
+      </div>
+
+      <h3>What we observe (always anonymous)</h3>
+      <ul>
+        <li><strong>Search and filter patterns</strong> — which combinations of filters people use, and when searches return no results</li>
+        <li><strong>Content engagement</strong> — which titles people hover over or click on (never your specific watchlist)</li>
+        <li><strong>Trailer interaction</strong> — whether trailers are played, how long they are watched</li>
+        <li><strong>Outbound clicks</strong> — which streaming platforms people click through to (Netflix, Viki, iQIYI, and others)</li>
+        <li><strong>General location</strong> — country level only, so we can show relevant streaming options</li>
+        <li><strong>Device type</strong> — whether you use mobile, tablet, or desktop, so we know what to optimize</li>
+        <li><strong>Episode patterns</strong> — which episodes people watch or stop watching, which helps storytellers understand pacing</li>
+        <li><strong>Feature usage</strong> — which parts of the site are most used, so we know where to focus improvements</li>
+        <li><strong>Watchlist patterns</strong> — which titles are saved most often (aggregated counts, never individual lists)</li>
+        <li><strong>Returning usage</strong> — a hashed, non-reversible identifier helps us understand how often people come back to FlashStream</li>
+      </ul>
+
+      <h3>What we do not observe</h3>
+      <ul>
+        <li>Your name, email address, or any contact information</li>
+        <li>Your full IP address (it is shortened before we see it)</li>
+        <li>Your precise location (only country level)</li>
+        <li>Your private watchlist contents or personal ratings</li>
+        <li>Your browsing activity on other websites</li>
+      </ul>
+
+      <!-- ================= SECTION 3: HOW WE PROTECT ANONYMOUS DATA ================= -->
+      <h2>How we protect anonymous information</h2>
+      <p>Before any usage information is stored, we apply several protections to ensure it cannot be linked back to you:</p>
+      <ul>
+        <li>IP addresses are shortened — for example, 192.168.1.45 becomes 192.168.1.x</li>
+        <li>Detailed browser version information is removed</li>
+        <li>Timestamps are rounded to the nearest hour</li>
+        <li>Session identifiers are changed daily</li>
+        <li>We never store email addresses, names, or contact information</li>
+      </ul>
+
+      <!-- ================= SECTION 4: THIRD-PARTY SERVICES ================= -->
+      <h2>Services we use</h2>
+      <p>FlashStream works with a few trusted services to provide movie data and subtitles. These services receive only the information necessary to perform their function.</p>
+      
+      <table class="data-table">
+        <thead>
+          <tr><th>Service</th><th>Purpose</th><th>Information shared</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>TMDB (The Movie Database)</td><td>Movie posters, descriptions, cast information</td><td>Search terms and content IDs (anonymized)</td></tr>
+          <tr><td>Cloudflare</td><td>Hosting, security, and performance</td><td>Anonymized request headers</td></tr>
+          <tr><td>OpenSubtitles</td><td>Subtitle search links</td><td>No information — only provides links</td></tr>
+          <tr><td>Tally.so</td><td>Community suggestion forms</td><td>Form submissions (only when you use those tabs)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Optional services (require your permission)</h3>
+      <ul>
+        <li><strong>Google Analytics</strong> — helps us understand which features are most popular. Your IP is anonymized before any processing. You can decline this in the consent banner.</li>
+        <li><strong>Advertising partners</strong> — may show relevant banners on the site. These only activate if you give permission. No pop-ups, just standard banner advertisements.</li>
+      </ul>
+      <p>You can change your mind about these optional services at any time in Settings under Privacy.</p>
+
+      <!-- ================= SECTION 5: COOKIES AND STORAGE ================= -->
+      <h2>Cookies and local storage</h2>
+      <p>FlashStream uses the following storage methods. No optional cookies are placed before you give permission.</p>
+      <!-- Block 12: Modify cookie categories to Functional, Analytics, Marketing -->
+      <table class="data-table">
+        <thead>
+          <tr><th>Storage type</th><th>Category</th><th>What it stores</th><th>Duration</th><th>Requires permission?</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Local storage</td><td>Functional</td><td>Your watchlist, preferences, and settings</td><td>Until you clear it</td><td>No (essential)</td></tr>
+          <tr><td>Session storage</td><td>Functional</td><td>Temporary session data</td><td>Until you close your tab</td><td>No (essential)</td></tr>
+          <tr><td>Analytics cookies</td><td>Analytics</td><td>Anonymous usage patterns</td><td>Up to 2 years</td><td>Yes</td></tr>
+          <tr><td>Advertising cookies</td><td>Marketing</td><td>Relevant banner advertisements</td><td>Varies</td><td>Yes</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ================= SECTION 6: YOUR CHOICES AND RIGHTS ================= -->
+      <h2>Your choices</h2>
+      <p>You are always in control of your information.</p>
+      <ul>
+        <li><strong>View your data</strong> — Open your browser's developer tools, go to Application, then Local Storage. All your data is there in plain text.</li>
+        <li><strong>Delete your data</strong> — Go to Settings and select "Reset all preferences", or clear your browser storage.</li>
+        <li><strong>Export your data</strong> — Download your watchlist as CSV or JSON from Settings or the Watchlist page.</li>
+        <li><strong>Export your data (enhanced)</strong> — Download your watchlist and preferences as JSON/CSV from <a href="/settings#export" class="text-accent">Settings → Export</a>.</li>
+        <li><strong>Manage analytics consent</strong> — Use the consent banner at the bottom of this page or go to Settings → Privacy.</li>
+      </ul>
+
+      <h3>Additional rights for European users (GDPR)</h3>
+      <p><strong>Data controller:</strong> FlashStream (contact: privacy@flashstream.app). Our lawful basis for processing anonymous analytics is your consent (Article 6(1)(a)). Functional storage (watchlist, preferences) is based on legitimate interest (Article 6(1)(f)).</p>
+      <ul>
+        <li>Right to access the anonymous information we hold</li>
+        <li>Right to rectification of inaccurate data</li>
+        <li>Right to erasure ('right to be forgotten')</li>
+        <li>Right to restriction of processing</li>
+        <li>Right to data portability</li>
+        <li>Right to object to processing</li>
+        <li>Right to withdraw consent at any time</li>
+        <li>Right to lodge a complaint with your local DPA (e.g., ICO, CNIL, BfDi)</li>
+      </ul>
+      <p>To exercise these rights, email <a href="mailto:privacy@flashstream.app">privacy@flashstream.app</a>. We will respond within 30 days.</p>
+
+      <!-- Data Deletion Request Form -->
+      <h2>Request deletion of your anonymous data</h2>
+      <p>Although we never collect personal identifiable information, you may request deletion of any anonymous data associated with your browser's hashed identifier.</p>
+      <form id="deletion-request-form" class="mt-4 p-4 bg-white/5 rounded-lg">
+        <label class="block text-sm font-medium mb-2">Your contact email (only used to confirm deletion)</label>
+        <input type="email" id="deletion-email" class="w-full max-w-md px-3 py-2 bg-black border border-white/10 rounded-lg text-white" placeholder="email@example.com" required>
+        <button type="submit" class="mt-3 px-4 py-2 bg-accent text-black rounded-lg text-sm font-medium">Request deletion</button>
+        <p class="text-xs text-gray-500 mt-2">We will send a confirmation link to verify ownership.</p>
+      </form>
+      <script>
+        (function() {
+          const form = document.getElementById('deletion-request-form');
+          if (form) {
+            form.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const email = document.getElementById('deletion-email').value;
+              if (window.FlashAPI && window.FlashAPI.requestDeletion) {
+                await window.FlashAPI.requestDeletion(email);
+              } else {
+                await fetch('/api/request-deletion', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) });
+              }
+              alert('Deletion request received. Check your email to confirm.');
+            });
+          }
+        })();
+      </script>
+
+      <h3>Additional rights for California users (CCPA/CPRA)</h3>
+      <ul>
+        <li>Right to know what information we collect</li>
+        <li>Right to request deletion of your information</li>
+        <li>Right to non-discrimination for exercising your rights</li>
+      </ul>
+
+      <h3>Do Not Track</h3>
+      <p>FlashStream respects Do Not Track signals. If your browser sends a DNT header, we disable non-essential analytics automatically.</p>
+
+      <!-- ================= SECTION 7: DATA RETENTION ================= -->
+      <h2>How long we keep information</h2>
+      <table class="data-table">
+        <thead>
+          <tr><th>Information type</th><th>Retention period</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Raw anonymous usage logs</td><td>30 days</td><td>Automatically deleted after 30 days</td></tr>
+          <tr><td>Aggregated anonymous patterns</td><td>24 months</td><td>Used to identify long-term trends</td></tr>
+          <tr><td>Your watchlist and preferences</td><td>Until you clear it</td><td>Stored on your device, not on our servers</td></tr>
+          <tr><td>Unmatched search terms</td><td>90 days</td><td>Hashed and anonymized</td></tr>
+        </tbody>
+      </table>
+
+      <!-- ================= SECTION 8: SECURITY ================= -->
+      <h2>Security measures</h2>
+      <ul>
+        <li>All data transmission uses TLS encryption (the same standard used by banks)</li>
+        <li>IP addresses are shortened before any storage</li>
+        <li>Browser details are stripped of version information</li>
+        <li>Timestamps are rounded to the nearest hour</li>
+        <li>Cloudflare provides DDoS protection and edge security</li>
+      </ul>
+
+      <!-- ================= SECTION 9: CHILDREN'S PRIVACY ================= -->
+      <h2>Children's privacy</h2>
+      <p>FlashStream is not intended for children under 13 years of age. We do not knowingly collect any information from children under 13. If you believe a child has used FlashStream, please contact us at privacy@flashstream.app and we will help remove any related information.</p>
+
+      <!-- ================= SECTION 10: DISCLAIMERS ================= -->
+      <h2>What FlashStream does not do</h2>
+      <ul>
+        <li>FlashStream does not host, stream, or download any video content</li>
+        <li>FlashStream does not provide playback controls, download buttons, or subtitle customization</li>
+        <li>All "Watch Now" buttons link to third-party streaming platforms such as Netflix, Viki, and iQIYI</li>
+        <li>You must have your own active subscriptions with those services</li>
+      </ul>
+
+      <!-- ================= SECTION 11: CHANGES TO THIS POLICY ================= -->
+      <h2>Changes to this policy</h2>
+      <p>If we make material changes to this privacy policy, we will notify you via a notice on the website. The "Last updated" date at the top of this page will always show the latest version. Your continued use of FlashStream after changes means you accept the updated policy.</p>
+
+      <!-- ================= SECTION 12: CONTACT ================= -->
+      <h2>Contact us</h2>
+      <p>If you have questions about this privacy policy or how FlashStream handles information, you can reach us at:</p>
+      <ul>
+        <li>Email: <a href="mailto:privacy@flashstream.app">privacy@flashstream.app</a></li>
+        <li>For legal matters: <a href="mailto:legal@flashstream.app">legal@flashstream.app</a></li>
+        <li>For general support: <a href="mailto:support@flashstream.com">support@flashstream.com</a></li>
+      </ul>
+    </div>
+
+    <!-- Block 14: Replace footer with global footer items including About and CCPA link -->
+    <footer class="mt-10 pt-8 border-t border-white/10">
+      <div class="flex flex-wrap gap-6 justify-between items-center text-sm">
+        <div class="flex flex-wrap gap-6">
+          <a href="/about" class="text-gray-400 hover:text-accent transition">About</a>
+          <a href="/privacy" class="text-gray-400 hover:text-accent transition">Privacy</a>
+          <a href="/terms" class="text-gray-400 hover:text-accent transition">Terms</a>
+          <a href="/settings" class="text-gray-400 hover:text-accent transition">Settings</a>
+          <a href="/contact" class="text-gray-400 hover:text-accent transition">Contact</a>
+          <a href="#" id="ccpa-opt-out-link" class="text-gray-400 hover:text-accent transition hidden" data-ccpa="true">Do Not Sell My Data</a>
         </div>
-        <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+        <p class="text-xs text-gray-600">FlashStream · Movie and TV discovery platform</p>
       </div>
-      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-        <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-        <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-        <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
-      </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-          <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
-        </a>
-        <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        </button>
-        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-      <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-      <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-      <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-      <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-      <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-      <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-    </div>
-  </nav>
-
-  <main id="main-content" class="max-w-3xl mx-auto px-4 py-12">
-    <h1 class="text-4xl font-bold text-white mb-2">Privacy Policy</h1>
-    <p class="text-gray-500 text-sm mb-10">Last updated: May 2026</p>
-
-    <div class="prose">
-      <h2>Overview</h2>
-      <p>FlashStream is a movie and TV discovery platform. We are committed to protecting your privacy. This policy explains what data we collect, how we use it, and your rights as a user.</p>
-
-      <h2>Data Stored Locally On Your Device</h2>
-      <p>The following data is stored exclusively in your browser's localStorage and is <strong class="text-white">never sent to our servers</strong>:</p>
-      <ul>
-        <li>Your watchlist (titles, status, ratings, notes)</li>
-        <li>Viewing history and episode progress</li>
-        <li>Content preferences (genres, languages, platforms)</li>
-        <li>Content trigger filters and emotional safety settings</li>
-        <li>Taste profile and veto settings</li>
-        <li>Filter presets and personalisation settings</li>
-        <li>Session timer data and break reminder settings</li>
-        <li>Community ratings and reviews</li>
-      </ul>
-      <p>Clearing your browser data or using a different browser/device will remove this data. We recommend regular exports via the watchlist export function.</p>
-
-      <h2>Analytics (Consent Required)</h2>
-      <p>If you accept analytics, we use <strong class="text-white">Google Analytics 4</strong> to collect:</p>
-      <ul>
-        <li>Page views and session duration</li>
-        <li>Device type and browser</li>
-        <li>Approximate geographic region (city-level only)</li>
-        <li>Interactions with filters, watchlist, and recommendations</li>
-      </ul>
-      <p>IP addresses are anonymised. No personally identifiable information is collected. You can withdraw consent at any time in Settings → Privacy.</p>
-      <p>See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google's Privacy Policy</a> for how they handle analytics data.</p>
-
-      <h2>Advertising (Consent Required)</h2>
-      <p>If you accept analytics, we may display ads via <strong class="text-white">Google AdSense</strong> and/or <strong class="text-white">Adcash</strong>. These services may set advertising cookies to show relevant ads. You can opt out via your browser's ad settings or by declining consent.</p>
-      <p>FlashStream does not sell personal data to advertisers. We use contextual advertising only.</p>
-
-      <h2>TMDB Attribution</h2>
-      <p>Movie and TV metadata is provided by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer">The Movie Database (TMDB)</a> under their terms of use. This product uses the TMDB API but is not endorsed, certified, or otherwise approved by TMDB. TMDB data is subject to <a href="https://www.themoviedb.org/privacy-policy" target="_blank" rel="noopener noreferrer">TMDB's privacy policy</a>.</p>
-
-      <h2>Third-Party Services</h2>
-      <h3>OpenSubtitles</h3>
-      <p>Subtitle search links to <a href="https://www.opensubtitles.org" target="_blank" rel="noopener noreferrer">OpenSubtitles</a>. FlashStream is not affiliated with OpenSubtitles.</p>
-      <h3>Tally.so (Forms)</h3>
-      <p>The Community page embeds Tally forms for tip sharing and title suggestions. Tally has its own <a href="https://tally.so/privacy" target="_blank" rel="noopener noreferrer">privacy policy</a>. Forms are only loaded when you navigate to those tabs.</p>
-      <h3>Cloudflare Turnstile (Bot Protection)</h3>
-      <p>We use Cloudflare Turnstile to protect our API from automated abuse. Turnstile is privacy-preserving and does not track users across sites. See <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare's privacy policy</a>.</p>
-
-      <h2>Content Disclaimer</h2>
-      <p><strong class="text-white">FlashStream does not host any video content.</strong> FlashStream is a discovery and recommendation platform. All "Watch Now" links direct you to third-party streaming platforms. You must have your own active subscriptions with those services.</p>
-      <p><strong class="text-white">Availability varies by country and date.</strong> Always confirm streaming availability on the platform before subscribing. FlashStream accepts no liability for inaccurate or outdated availability information.</p>
-      <p><strong class="text-white">No copyright infringement.</strong> FlashStream links to legally licensed streaming content only and does not facilitate access to pirated content.</p>
-
-      <h2>Cookies</h2>
-      <p>FlashStream uses the following storage mechanisms:</p>
-      <ul>
-        <li><strong class="text-white">localStorage</strong> — all user preferences and watchlist data (no expiry, stays on device)</li>
-        <li><strong class="text-white">sessionStorage</strong> — session-specific data (cleared on tab close)</li>
-        <li><strong class="text-white">Google Analytics cookies</strong> — analytics tracking (only after consent)</li>
-        <li><strong class="text-white">Advertising cookies</strong> — interest-based advertising (only after consent)</li>
-      </ul>
-      <p>No cookies are set before you give consent. Declining consent disables all analytics and advertising cookies.</p>
-
-      <h2>Your Rights</h2>
-
-      <h3>GDPR (EEA users)</h3>
-      <ul>
-        <li><strong class="text-white">Right of access</strong> — all your data is in your browser's localStorage. You can inspect it directly via browser DevTools.</li>
-        <li><strong class="text-white">Right to erasure</strong> — clear your browser's localStorage to delete all FlashStream data from your device. Settings → Watchlist &amp; Data → Reset All Preferences.</li>
-        <li><strong class="text-white">Right to withdraw consent</strong> — Settings → Privacy → Change consent settings at any time.</li>
-        <li><strong class="text-white">Right to data portability</strong> — export your watchlist as CSV or JSON from Settings or the Watchlist page at any time.</li>
-      </ul>
-
-      <h3>CCPA (California users)</h3>
-      <ul>
-        <li>FlashStream does not sell personal data to third parties under any circumstances.</li>
-        <li>To opt out of analytics data collection: Settings → Privacy → Decline analytics consent.</li>
-      </ul>
-
-      <h2>Children's Privacy</h2>
-      <p>FlashStream is not directed at children under 13. We do not knowingly collect data from children under 13. Family Mode is provided for family viewing contexts only and does not constitute a children's service.</p>
-
-      <h2>Data Security</h2>
-      <p>All data transit is over HTTPS (TLS). Cloudflare Workers and Pages provide DDoS protection and edge security. No passwords or payment information are collected by FlashStream.</p>
-
-      <h2>Changes to This Policy</h2>
-      <p>We may update this policy from time to time. Changes will be reflected by the "Last updated" date above. Continued use of FlashStream after changes constitutes acceptance of the updated policy.</p>
-
-      <h2>Contact</h2>
-      <p>For privacy enquiries: <a href="mailto:privacy@flashstream.app">privacy@flashstream.app</a></p>
-    </div>
-
-    <div class="mt-10 pt-8 border-t border-white/10 flex flex-wrap gap-4">
-      <a href="/" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">← Back to FlashStream</a>
-      <a href="/terms" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">Terms of Service</a>
-    </div>
+    </footer>
   </main>
 
-  <footer class="border-t border-white/10 py-8 px-4 mt-4" role="contentinfo">
-    <div class="max-w-4xl mx-auto text-center text-xs text-gray-600">
-      <p>FlashStream v1.0.0 · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a> · Streaming availability sourced from public platform APIs.</p>
-    </div>
-  </footer>
+  <!-- Block 11: Remove standalone consent banner (old banner removed) -->
 
+  <!-- Block 6: Script tags (kept from previous) -->
+  <script src="/js/store.js"></script>
+  <script src="/js/consent.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api-client.js"></script>
+  <script src="/js/navigation.js"></script>
+
+  <!-- Block 7: Replace inline localStorage logic with store.js methods (kept) -->
   <script>
-    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
-    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
+    (function() {
+      function init() {
+        if (!window.FlashStore) {
+          setTimeout(init, 100);
+          return;
+        }
+        const store = window.FlashStore;
 
-    function initTheme() {
-      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
-      else document.documentElement.classList.add('dark');
-    }
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
-    });
-    initTheme();
+        // Theme handling via store
+        const currentTheme = store.getTheme();
+        if (currentTheme === 'light') {
+          document.documentElement.classList.remove('dark');
+        } else {
+          document.documentElement.classList.add('dark');
+        }
 
-    function updateRegionBadge() {
-      const region = localStorage.getItem('user_region') || 'US';
-      document.getElementById('region-flag').textContent = '';
-      document.getElementById('region-code').textContent = region;
-    }
-    updateRegionBadge();
+        // Theme toggle button (fallback if not yet added by navigation.js)
+        const themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) {
+          themeBtn.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.toggle('dark');
+            store.setTheme(isDark ? 'dark' : 'light');
+          });
+        }
+      }
 
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      const m = document.getElementById('mobile-menu');
-      if (m) { const hidden = m.hidden; m.hidden = !hidden; document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', String(hidden)); }
-    });
-
-    let searchDebounce = null;
-    const searchInput = document.getElementById('nav-search-input');
-    const searchDropdown = document.getElementById('search-dropdown');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        clearTimeout(searchDebounce);
-        const q = searchInput.value.trim();
-        if (q.length < 2) { if (searchDropdown) searchDropdown.hidden = true; return; }
-        searchDebounce = setTimeout(() => doSearch(q), 300);
-      });
-      searchInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover?q=${encodeURIComponent(q)}`; }
-        if (e.key === 'Escape' && searchDropdown) searchDropdown.hidden = true;
-      });
-    }
-    document.addEventListener('click', e => { if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true; });
-
-    async function doSearch(q) {
-      try {
-        const data = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`).then(r => r.json());
-        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
-        if (!results.length || !searchDropdown) { if (searchDropdown) searchDropdown.hidden = true; return; }
-        searchDropdown.innerHTML = results.map(item => {
-          const title = item.title || item.name || '';
-          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
-          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-          return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors" onclick="searchDropdown.hidden=true">
-            ${poster ? `<img src="${poster}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0">` : '<div class="w-7 h-10 bg-gray-800 rounded flex-shrink-0"></div>'}
-            <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
-          </a>`;
-        }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 transition-colors" onclick="searchDropdown.hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
-        searchDropdown.hidden = false;
-      } catch(e) { if (searchDropdown) searchDropdown.hidden = true; }
-    }
-
-    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
   </script>
 </body>
 </html>

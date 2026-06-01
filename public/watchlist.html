@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- HTML source watermark - FlashStream Watchlist Manager v2.0 -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
@@ -19,7 +20,7 @@
             --text-primary: #ffffff;
             --text-secondary: #b3b3b3;
             --accent: #00C4BC;
-            --accent-hover: #00C4BC;
+            --accent-hover: #00a8a0;
             --success: #2ecc71;
             --warning: #f39c12;
             --info: #3498db;
@@ -621,49 +622,19 @@
     <meta name="theme-color" content="#00C4BC">
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold text-white hover:text-accent transition-colors flex-shrink-0" aria-label="FlashStream home">
-            <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
-            <span class="hidden sm:block">FlashStream</span>
-        </a>
-        <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-            <div class="relative">
-                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people…" class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search FlashStream" aria-autocomplete="list" aria-controls="search-dropdown" autocomplete="off">
-            </div>
-            <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions" class="absolute top-full left-0 right-0 mt-1 bg-gray-900 border border-white/10 rounded-xl overflow-hidden z-50 shadow-2xl"></div>
-        </div>
-        <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-            <a href="/discover" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Discover</a>
-            <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Watchlist</a>
-            <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Leaving Soon</a>
-            <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Coming Soon</a>
-            <a href="/community" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Community</a>
-            <a href="/insights" class="text-gray-400 hover:text-white transition-colors whitespace-nowrap">Insights</a>
-        </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Change region">
-                <span id="region-code" class="font-mono text-gray-300">US</span>
-            </a>
-            <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-            </button>
-            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-            </button>
-        </div>
+    <!-- Consent Modal Root -->
+    <div id="consent-modal-root"></div>
+    <!-- Sync Status Indicator -->
+    <div id="sync-status" class="fixed bottom-4 left-4 z-50 bg-gray-900 rounded-lg px-3 py-1.5 text-xs text-gray-300 border border-gray-700 hidden">
+        <span id="sync-status-text">Synced</span>
     </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-        <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-        <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-        <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-        <a href="/insights" class="text-gray-300 hover:text-white py-1.5">Insights</a>
-        <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
+    <!-- Offline Indicator -->
+    <div id="offline-indicator" class="fixed bottom-4 left-4 z-50 bg-yellow-900 rounded-lg px-3 py-1.5 text-xs text-yellow-300 border border-yellow-700 hidden">
+        Offline Mode - Data from cache
     </div>
-</nav>
+
+    <!-- Navigation will be populated by navigation.js (Block 11) -->
+    <div id="nav-placeholder"></div>
 
     <div class="max-w-7xl mx-auto px-4 py-6">
         <div class="header">
@@ -762,6 +733,23 @@
         </div>
     </div>
 
+    <!-- Footer (Blocks 8, 10) -->
+    <footer class="max-w-7xl mx-auto px-4 py-8 mt-8 border-t border-gray-800">
+        <div class="flex flex-wrap justify-between items-center gap-4 text-sm text-gray-400">
+            <div class="flex gap-6">
+                <a href="/about" class="hover:text-accent transition-colors">About</a>
+                <a href="/privacy" class="hover:text-accent transition-colors">Privacy</a>
+                <a href="/terms" class="hover:text-accent transition-colors">Terms</a>
+            </div>
+            <div class="vpn-disclaimer text-xs">
+                <span class="opacity-75"> For unblocked streaming, we recommend using a trusted VPN service.</span>
+            </div>
+            <div>
+                <a href="#" id="ccpa-link" class="hover:text-accent transition-colors hidden">Do Not Sell My Data</a>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // Storage keys
         const STORAGE_KEY = 'watchlist_manager';
@@ -776,6 +764,9 @@
             'on-hold': 'On Hold',
             'dropped': 'Dropped'
         };
+
+        // TRACKED_PROVIDERS for platform filter
+        const TRACKED_PROVIDERS = ['Netflix', 'Hulu', 'Disney+', 'Amazon Prime', 'Apple TV+', 'Max', 'Peacock', 'Paramount+'];
 
         // Global state
         let watchlist = [];
@@ -792,65 +783,247 @@
             minRating: 0,
             urgentOnly: false
         };
+        let isLoadingMore = false;
+        let hasMoreItems = true;
+        let currentPage = 0;
+        const PAGE_SIZE = 20;
+        let observer = null;
 
-        // Load watchlist from localStorage
-        function loadWatchlist() {
+        // Authentication check
+        async function checkAuthentication() {
+            if (typeof auth !== 'undefined' && auth.isAuthenticated) {
+                const isLoggedIn = await auth.isAuthenticated();
+                if (!isLoggedIn) {
+                    window.location.href = '/login';
+                    return false;
+                }
+                return true;
+            } else if (typeof store !== 'undefined') {
+                const token = store.getState('authToken');
+                if (!token) {
+                    window.location.href = '/login';
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+
+        // Sync status update
+        function updateSyncStatus(status, isError = false) {
+            const syncDiv = document.getElementById('sync-status');
+            const syncText = document.getElementById('sync-status-text');
+            if (syncDiv && syncText) {
+                syncDiv.classList.remove('hidden');
+                syncText.textContent = status;
+                if (isError) {
+                    syncText.classList.add('text-red-400');
+                } else {
+                    syncText.classList.remove('text-red-400');
+                }
+                setTimeout(() => {
+                    syncDiv.classList.add('hidden');
+                }, 2000);
+            }
+        }
+
+        // Offline indicator
+        function updateOfflineIndicator(isOffline) {
+            const offlineDiv = document.getElementById('offline-indicator');
+            if (offlineDiv) {
+                if (isOffline) {
+                    offlineDiv.classList.remove('hidden');
+                } else {
+                    offlineDiv.classList.add('hidden');
+                }
+            }
+        }
+
+        // Network status monitoring
+        window.addEventListener('online', () => updateOfflineIndicator(false));
+        window.addEventListener('offline', () => updateOfflineIndicator(true));
+        updateOfflineIndicator(!navigator.onLine);
+
+        // Load watchlist via API
+        async function loadWatchlist(reset = true, append = false) {
+            if (reset) {
+                currentPage = 0;
+                hasMoreItems = true;
+                if (!append) watchlist = [];
+            }
+            
+            if (!hasMoreItems && !reset) return;
+            
             try {
+                updateSyncStatus('Syncing...');
+                if (typeof apiClient !== 'undefined' && apiClient.getWatchlist) {
+                    const result = await apiClient.getWatchlist({
+                        page: currentPage,
+                        limit: PAGE_SIZE,
+                        status: currentFilters.status !== 'all' ? currentFilters.status : undefined,
+                        type: currentFilters.type !== 'all' ? currentFilters.type : undefined,
+                        sort: currentSort.field,
+                        order: currentSort.order
+                    });
+                    
+                    if (result && result.items) {
+                        if (reset || !append) {
+                            watchlist = result.items;
+                        } else {
+                            watchlist = [...watchlist, ...result.items];
+                        }
+                        hasMoreItems = result.hasMore || result.items.length === PAGE_SIZE;
+                        currentPage++;
+                        updateSyncStatus(`Synced (${watchlist.length} items)`);
+                    } else if (result && Array.isArray(result)) {
+                        if (reset || !append) {
+                            watchlist = result;
+                        } else {
+                            watchlist = [...watchlist, ...result];
+                        }
+                        hasMoreItems = false;
+                        updateSyncStatus(`Synced (${watchlist.length} items)`);
+                    }
+                } else {
+                    // Fallback to localStorage
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        watchlist = JSON.parse(stored);
+                    }
+                    updateSyncStatus('Using local storage', true);
+                }
+                renderAll();
+            } catch (e) {
+                updateSyncStatus('Sync failed', true);
+                // Fallback to localStorage
                 const stored = localStorage.getItem(STORAGE_KEY);
                 if (stored) {
                     watchlist = JSON.parse(stored);
-                } else {
-                    watchlist = [];
+                    renderAll();
                 }
-                renderAll();
-            } catch (e) {
-                console.error('Error loading watchlist:', e);
-                showToastNotification('Error loading watchlist', 'error');
-                watchlist = [];
-                renderAll();
             }
         }
 
-        // Save watchlist to localStorage
-        function saveWatchlist() {
+        // Save watchlist via API
+        async function saveWatchlist() {
             try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist));
-                trackB2BEvent('watchlist_save', { count: watchlist.length });
+                updateSyncStatus('Saving...');
+                if (typeof apiClient !== 'undefined' && apiClient.batchUpdateWatchlist) {
+                    await apiClient.batchUpdateWatchlist(watchlist);
+                    updateSyncStatus('Saved');
+                } else {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist));
+                    updateSyncStatus('Saved locally', true);
+                }
                 renderAll();
             } catch (e) {
-                if (e.name === 'QuotaExceededError') {
-                    showToastNotification('Storage quota exceeded. Please export and clear some items.', 'error');
-                } else {
-                    showToastNotification('Error saving watchlist', 'error');
+                updateSyncStatus('Save failed', true);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist));
+            }
+        }
+
+        // Remove from watchlist via API
+        async function removeItem(id) {
+            const item = watchlist.find(w => w.id === id);
+            if (!item) return;
+            
+            try {
+                if (typeof apiClient !== 'undefined' && apiClient.removeFromWatchlist) {
+                    await apiClient.removeFromWatchlist(id);
+                }
+                watchlist = watchlist.filter(w => w.id !== id);
+                selectedItems.delete(id);
+                await saveWatchlist();
+                showToastNotification('Item removed from watchlist');
+            } catch (e) {
+                showToastNotification('Failed to remove item', 'error');
+            }
+        }
+
+        // Change status via API
+        async function changeStatus(id, newStatus) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.updateWatchlistStatus) {
+                        await apiClient.updateWatchlistStatus(id, newStatus);
+                    }
+                    item.status = newStatus;
+                    if (newStatus === 'completed' && !item.date_watched) {
+                        item.date_watched = new Date().toISOString();
+                    }
+                    await saveWatchlist();
+                    showToastNotification(`Status changed to ${STATUS_NAMES[newStatus]}`);
+                } catch (e) {
+                    showToastNotification('Failed to update status', 'error');
                 }
             }
         }
 
-        // B2B Tracking function - SILENT (no console output)
-        function trackB2BEvent(eventName, eventData = {}) {
-            const trackingData = {
-                event: eventName,
-                timestamp: new Date().toISOString(),
-                user_id: localStorage.getItem('user_id') || 'anonymous',
-                ...eventData
-            };
-            // NO CONSOLE LOG - completely silent
-            
-            // Send to analytics endpoint if available
-            if (window.sendAnalytics) {
-                window.sendAnalytics(trackingData);
-            } else {
-                // Store for later sending
-                let events = JSON.parse(localStorage.getItem('b2b_events') || '[]');
-                events.push(trackingData);
-                localStorage.setItem('b2b_events', JSON.stringify(events.slice(-100)));
+        // Set rating via API
+        async function setRating(id, rating) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.submitRating) {
+                        await apiClient.submitRating(id, rating, item.type);
+                    }
+                    item.user_rating = rating;
+                    await saveWatchlist();
+                    showToastNotification(`Rating set to ${rating} stars`);
+                } catch (e) {
+                    showToastNotification('Failed to save rating', 'error');
+                }
+            }
+        }
+
+        // Save note via API
+        async function saveNote(id, note) {
+            const item = watchlist.find(w => w.id === id);
+            if (item) {
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.updateWatchlistNotes) {
+                        await apiClient.updateWatchlistNotes(id, note);
+                    }
+                    item.notes = note;
+                    await saveWatchlist();
+                    showToastNotification('Note saved');
+                } catch (e) {
+                    showToastNotification('Failed to save note', 'error');
+                }
+            }
+        }
+
+        // Increment episode via API
+        async function incrementEpisode(id, delta) {
+            const item = watchlist.find(w => w.id === id);
+            if (item && item.type === 'tv') {
+                const newCount = Math.max(0, Math.min(item.total_episodes || Infinity, (item.episodes_watched || 0) + delta));
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.recordEpisodeProgress) {
+                        await apiClient.recordEpisodeProgress(id, newCount);
+                    }
+                    item.episodes_watched = newCount;
+                    
+                    if (newCount >= (item.total_episodes || Infinity) && item.status !== 'completed') {
+                        item.status = 'completed';
+                        item.date_watched = new Date().toISOString();
+                    } else if (newCount > 0 && item.status === 'watchlist') {
+                        item.status = 'watching';
+                    }
+                    
+                    await saveWatchlist();
+                    showToastNotification(`${delta > 0 ? '+' : ''}${delta} episode${Math.abs(delta) !== 1 ? 's' : ''}`);
+                } catch (e) {
+                    showToastNotification('Failed to update progress', 'error');
+                }
             }
         }
 
         // Add to watchlist
-        function addToWatchlist(item) {
+        async function addToWatchlist(item) {
             if (!watchlist.find(w => w.id === item.id)) {
-                watchlist.unshift({
+                const newItem = {
                     ...item,
                     status: 'watchlist',
                     user_rating: 0,
@@ -858,152 +1031,60 @@
                     episodes_watched: 0,
                     date_added: new Date().toISOString(),
                     date_watched: null
-                });
-                saveWatchlist();
-                trackB2BEvent('watchlist_add', { item_id: item.id, title: item.title });
+                };
+                watchlist.unshift(newItem);
+                await saveWatchlist();
                 showToastNotification(`Added "${item.title}" to watchlist`);
             }
         }
 
-        // Remove from watchlist
-        function removeItem(id) {
-            const item = watchlist.find(w => w.id === id);
-            trackB2BEvent('watchlist_remove', { item_id: id, title: item?.title });
-            watchlist = watchlist.filter(w => w.id !== id);
-            selectedItems.delete(id);
-            saveWatchlist();
-            showToastNotification('Item removed from watchlist');
-        }
-
-        // Change status
-        function changeStatus(id, newStatus) {
-            const item = watchlist.find(w => w.id === id);
-            if (item) {
-                const oldStatus = item.status;
-                item.status = newStatus;
-                if (newStatus === 'completed' && !item.date_watched) {
-                    item.date_watched = new Date().toISOString();
+        // Populate genre filter from API
+        async function populateGenreFilter() {
+            const genreSelect = document.getElementById('genre-filter');
+            if (!genreSelect) return;
+            
+            try {
+                if (typeof apiClient !== 'undefined' && apiClient.getGenres) {
+                    const genres = await apiClient.getGenres();
+                    if (genres && Array.isArray(genres)) {
+                        genreSelect.innerHTML = '<option value="all">All Genres</option>' + 
+                            genres.map(g => `<option value="${g}">${g}</option>`).join('');
+                    }
                 }
-                saveWatchlist();
-                trackB2BEvent('watchlist_status_change', { 
-                    item_id: id, 
-                    title: item.title,
-                    old_status: oldStatus,
-                    new_status: newStatus
-                });
-                showToastNotification(`Status changed to ${STATUS_NAMES[newStatus]}`);
+            } catch (e) {
+                // Keep default options
             }
         }
 
-        // Set rating
-        function setRating(id, rating) {
-            const item = watchlist.find(w => w.id === id);
-            if (item) {
-                item.user_rating = rating;
-                saveWatchlist();
-                trackB2BEvent('watchlist_rating_change', { 
-                    item_id: id, 
-                    title: item.title,
-                    rating: rating 
-                });
-                showToastNotification(`Rating set to ${rating} stars`);
-            }
+        // Populate platform filter from TRACKED_PROVIDERS
+        function populatePlatformFilter() {
+            const platformSelect = document.getElementById('platform-filter');
+            if (!platformSelect) return;
+            
+            platformSelect.innerHTML = '<option value="all">All Platforms</option>' + 
+                TRACKED_PROVIDERS.map(p => `<option value="${p}">${p}</option>`).join('');
         }
 
-        // Save note
-        function saveNote(id, note) {
-            const item = watchlist.find(w => w.id === id);
-            if (item) {
-                item.notes = note;
-                saveWatchlist();
-                trackB2BEvent('watchlist_note_save', { 
-                    item_id: id, 
-                    title: item.title,
-                    note_length: note?.length || 0 
-                });
-                showToastNotification('Note saved');
-            }
-        }
-
-        // Increment episode
-        function incrementEpisode(id, delta) {
-            const item = watchlist.find(w => w.id === id);
-            if (item && item.type === 'tv') {
-                const newCount = Math.max(0, Math.min(item.total_episodes || Infinity, (item.episodes_watched || 0) + delta));
-                const oldCount = item.episodes_watched;
-                item.episodes_watched = newCount;
-                
-                if (newCount >= (item.total_episodes || Infinity) && item.status !== 'completed') {
-                    item.status = 'completed';
-                    item.date_watched = new Date().toISOString();
-                } else if (newCount > 0 && item.status === 'watchlist') {
-                    item.status = 'watching';
+        // Setup infinite scroll
+        function setupInfiniteScroll() {
+            const grid = document.getElementById('watchlist-grid');
+            if (!grid) return;
+            
+            observer = new IntersectionObserver((entries) => {
+                const lastEntry = entries[0];
+                if (lastEntry.isIntersecting && hasMoreItems && !isLoadingMore && watchlist.length > 0) {
+                    isLoadingMore = true;
+                    loadWatchlist(false, true).finally(() => {
+                        isLoadingMore = false;
+                    });
                 }
-                
-                saveWatchlist();
-                trackB2BEvent('watchlist_episode_change', { 
-                    item_id: id, 
-                    title: item.title,
-                    delta: delta,
-                    old_count: oldCount,
-                    new_count: newCount
-                });
-                showToastNotification(`${delta > 0 ? '+' : ''}${delta} episode${Math.abs(delta) !== 1 ? 's' : ''}`);
-            }
-        }
-
-        // Bulk actions
-        function applyBulkStatus(status) {
-            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
-            itemsToUpdate.forEach(item => {
-                item.status = status;
-                if (status === 'completed' && !item.date_watched) {
-                    item.date_watched = new Date().toISOString();
-                }
-            });
-            saveWatchlist();
-            trackB2BEvent('watchlist_bulk_status', { count: itemsToUpdate.length, status });
-            showToastNotification(`Updated ${itemsToUpdate.length} items to ${STATUS_NAMES[status]}`);
-        }
-
-        function applyBulkRating(rating) {
-            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
-            itemsToUpdate.forEach(item => {
-                item.user_rating = parseFloat(rating);
-            });
-            saveWatchlist();
-            trackB2BEvent('watchlist_bulk_rating', { count: itemsToUpdate.length, rating });
-            showToastNotification(`Set rating for ${itemsToUpdate.length} items`);
-        }
-
-        function applyBulkNote(note) {
-            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
-            itemsToUpdate.forEach(item => {
-                item.notes = (item.notes ? item.notes + '\n\n' : '') + note;
-            });
-            saveWatchlist();
-            trackB2BEvent('watchlist_bulk_note', { count: itemsToUpdate.length });
-            showToastNotification(`Added note to ${itemsToUpdate.length} items`);
-        }
-
-        function deleteBulkSelected() {
-            const count = selectedItems.size;
-            if (confirm(`Delete ${count} selected item${count !== 1 ? 's' : ''}?`)) {
-                trackB2BEvent('watchlist_bulk_delete', { count });
-                watchlist = watchlist.filter(item => !selectedItems.has(item.id));
-                selectedItems.clear();
-                saveWatchlist();
-                showToastNotification(`Deleted ${count} items`);
-            }
-        }
-
-        // Calculate hype score (mock - would call API)
-        function getHypeScore(item) {
-            let score = 50;
-            if (item.user_rating > 0) score += item.user_rating * 8;
-            if (item.type === 'tv') score += 10;
-            score += Math.random() * 20;
-            return Math.min(100, Math.max(0, Math.floor(score)));
+            }, { threshold: 0.1, rootMargin: '100px' });
+            
+            const sentinel = document.createElement('div');
+            sentinel.id = 'infinite-scroll-sentinel';
+            sentinel.style.height = '20px';
+            grid.parentNode.insertBefore(sentinel, grid.nextSibling);
+            observer.observe(sentinel);
         }
 
         // Get lifecycle badge
@@ -1048,7 +1129,6 @@
 
         // Render card with all features
         function renderCard(item) {
-            const hypeScore = getHypeScore(item);
             const lifecycleBadge = getLifecycleBadge(item);
             const advisory = getContentAdvisory(item);
             const isSelected = selectedItems.has(item.id);
@@ -1080,13 +1160,6 @@
                         </select>
                         
                         ${renderStars(item.user_rating || 0, item.id)}
-                        
-                        <div class="hype-meter">
-                            <div class="hype-bar">
-                                <div class="hype-fill" style="width: ${hypeScore}%"></div>
-                            </div>
-                            <div class="hype-label">Hype Score: ${hypeScore}%</div>
-                        </div>
                         
                         ${item.type === 'tv' ? `
                             <div class="episode-tracker">
@@ -1243,59 +1316,11 @@
                     }).join('')}
                 </div>
             `;
-            
-            document.querySelectorAll('.smart-list-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const listName = card.dataset.listName;
-                    trackB2BEvent('smart_list_click', { list_name: listName });
-                });
-            });
         }
 
         // Add random from smart list
         function addRandomFromList(listName) {
             showToastNotification(`Add from ${listName} - Feature coming soon!`);
-            trackB2BEvent('smart_list_add_click', { list_name: listName });
-        }
-
-        // Render recommendations
-        async function renderRecommendations() {
-            const section = document.getElementById('recommendations-section');
-            if (watchlist.length === 0) {
-                section.style.display = 'none';
-                return;
-            }
-            
-            const recommendations = [
-                { title: "Dune: Part Two", year: 2024, type: "movie", match: 94 },
-                { title: "The Last of Us", year: 2023, type: "tv", match: 89 },
-                { title: "Oppenheimer", year: 2023, type: "movie", match: 92 },
-                { title: "Succession", year: 2023, type: "tv", match: 87 }
-            ];
-            
-            section.style.display = 'block';
-            section.innerHTML = `
-                <h2 class="text-xl font-bold text-white mb-4">Personalized Recommendations</h2>
-                <div class="recommendations-grid">
-                    ${recommendations.map(rec => `
-                        <div class="smart-list-card" onclick="addRecommendedItem({id: 'rec_${Math.random()}', title: '${rec.title}', year: ${rec.year}, type: '${rec.type}'})">
-                            <div class="card-title">${rec.title}</div>
-                            <div class="card-meta">${rec.year} • ${rec.type === 'tv' ? 'TV' : 'Movie'}</div>
-                            <div class="hype-meter">
-                                <div class="hype-bar">
-                                    <div class="hype-fill" style="width: ${rec.match}%"></div>
-                                </div>
-                                <div class="hype-label">${rec.match}% Match</div>
-                            </div>
-                            <div class="smart-list-add">+</div>
-                        </div>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        function addRecommendedItem(item) {
-            addToWatchlist(item);
         }
 
         // Render stats
@@ -1364,13 +1389,16 @@
                 try {
                     const imported = JSON.parse(decodeURIComponent(shared));
                     if (Array.isArray(imported) && imported.length > 0) {
-                        watchlist = [...watchlist, ...imported];
-                        saveWatchlist();
-                        showToastNotification(`Imported ${imported.length} items from shared link`);
-                        window.history.replaceState({}, document.title, window.location.pathname);
+                        (async () => {
+                            for (const item of imported) {
+                                await addToWatchlist(item);
+                            }
+                            showToastNotification(`Imported ${imported.length} items from shared link`);
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                        })();
                     }
                 } catch(e) {
-                    console.error('Failed to parse shared list');
+                    // Silent fail
                 }
             }
         }
@@ -1414,18 +1442,18 @@
             
             document.getElementById('status-filter').onchange = (e) => {
                 currentFilters.status = e.target.value;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             document.getElementById('type-filter').onchange = (e) => {
                 currentFilters.type = e.target.value;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             
             const genreFilter = document.getElementById('genre-filter');
             if (genreFilter) {
                 genreFilter.onchange = (e) => {
                     currentFilters.genre = e.target.value;
-                    renderWatchlist();
+                    loadWatchlist(true);
                 };
             }
             
@@ -1433,29 +1461,29 @@
             if (platformFilter) {
                 platformFilter.onchange = (e) => {
                     currentFilters.platform = e.target.value;
-                    renderWatchlist();
+                    loadWatchlist(true);
                 };
             }
             
             document.getElementById('date-added-from').onchange = (e) => {
                 currentFilters.dateFrom = e.target.value;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             document.getElementById('date-added-to').onchange = (e) => {
                 currentFilters.dateTo = e.target.value;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             document.getElementById('rating-min').onchange = (e) => {
                 currentFilters.minRating = parseFloat(e.target.value);
                 document.getElementById('rating-min-label').textContent = `Min Rating: ${currentFilters.minRating}`;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             
             const urgentToggle = document.getElementById('urgent-toggle');
             if (urgentToggle) {
                 urgentToggle.onchange = (e) => {
                     currentFilters.urgentOnly = e.target.checked;
-                    renderWatchlist();
+                    loadWatchlist(true);
                 };
             }
             
@@ -1474,15 +1502,15 @@
             
             document.getElementById('sort-by').onchange = (e) => {
                 currentSort.field = e.target.value;
-                renderWatchlist();
+                loadWatchlist(true);
             };
             document.getElementById('sort-asc').onclick = () => {
                 currentSort.order = 'asc';
-                renderWatchlist();
+                loadWatchlist(true);
             };
             document.getElementById('sort-desc').onclick = () => {
                 currentSort.order = 'desc';
-                renderWatchlist();
+                loadWatchlist(true);
             };
             
             document.getElementById('nav-search').oninput = (e) => {
@@ -1499,29 +1527,88 @@
                 }
             };
             
-            document.getElementById('theme-toggle').onclick = () => {
-                const root = document.documentElement;
-                const currentBg = getComputedStyle(root).getPropertyValue('--bg-primary').trim();
-                if (currentBg === '#121212') {
-                    root.style.setProperty('--bg-primary', '#ffffff');
-                    root.style.setProperty('--bg-secondary', '#f5f5f5');
-                    root.style.setProperty('--bg-card', '#e8e8e8');
-                    root.style.setProperty('--text-primary', '#000000');
-                    root.style.setProperty('--text-secondary', '#666666');
-                    root.style.setProperty('--border', '#cccccc');
-                } else {
-                    root.style.setProperty('--bg-primary', '#121212');
-                    root.style.setProperty('--bg-secondary', '#1e1e1e');
-                    root.style.setProperty('--bg-card', '#2a2a2a');
-                    root.style.setProperty('--text-primary', '#ffffff');
-                    root.style.setProperty('--text-secondary', '#b3b3b3');
-                    root.style.setProperty('--border', '#404040');
-                }
-            };
+            // Theme toggle - removed inline style manipulation, handled by navigation.js
             
-            document.getElementById('mobile-menu-btn').onclick = () => {
-                document.getElementById('nav-links').classList.toggle('active');
-            };
+            // Mobile menu button - removed since navigation.js handles this (Block 11)
+            // The nav placeholder will be populated by navigation.js
+
+            // CCPA link handler (Block 10)
+            const ccpaLink = document.getElementById('ccpa-link');
+            if (ccpaLink && typeof consent !== 'undefined' && consent.showCcpaLink) {
+                if (consent.showCcpaLink()) {
+                    ccpaLink.classList.remove('hidden');
+                    ccpaLink.onclick = (e) => {
+                        e.preventDefault();
+                        if (typeof consent !== 'undefined' && consent.showConsentModal) {
+                            consent.showConsentModal();
+                        }
+                    };
+                }
+            }
+        }
+
+        // Bulk actions
+        async function applyBulkStatus(status) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            for (const item of itemsToUpdate) {
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.updateWatchlistStatus) {
+                        await apiClient.updateWatchlistStatus(item.id, status);
+                    }
+                    item.status = status;
+                    if (status === 'completed' && !item.date_watched) {
+                        item.date_watched = new Date().toISOString();
+                    }
+                } catch (e) {}
+            }
+            await saveWatchlist();
+            showToastNotification(`Updated ${itemsToUpdate.length} items to ${STATUS_NAMES[status]}`);
+        }
+
+        async function applyBulkRating(rating) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            for (const item of itemsToUpdate) {
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.submitRating) {
+                        await apiClient.submitRating(item.id, parseFloat(rating), item.type);
+                    }
+                    item.user_rating = parseFloat(rating);
+                } catch (e) {}
+            }
+            await saveWatchlist();
+            showToastNotification(`Set rating for ${itemsToUpdate.length} items`);
+        }
+
+        async function applyBulkNote(note) {
+            const itemsToUpdate = watchlist.filter(item => selectedItems.has(item.id));
+            for (const item of itemsToUpdate) {
+                const newNote = (item.notes ? item.notes + '\n\n' : '') + note;
+                try {
+                    if (typeof apiClient !== 'undefined' && apiClient.updateWatchlistNotes) {
+                        await apiClient.updateWatchlistNotes(item.id, newNote);
+                    }
+                    item.notes = newNote;
+                } catch (e) {}
+            }
+            await saveWatchlist();
+            showToastNotification(`Added note to ${itemsToUpdate.length} items`);
+        }
+
+        async function deleteBulkSelected() {
+            const count = selectedItems.size;
+            if (confirm(`Delete ${count} selected item${count !== 1 ? 's' : ''}?`)) {
+                for (const id of selectedItems) {
+                    try {
+                        if (typeof apiClient !== 'undefined' && apiClient.removeFromWatchlist) {
+                            await apiClient.removeFromWatchlist(id);
+                        }
+                    } catch (e) {}
+                }
+                watchlist = watchlist.filter(item => !selectedItems.has(item.id));
+                selectedItems.clear();
+                await saveWatchlist();
+                showToastNotification(`Deleted ${count} items`);
+            }
         }
 
         // Render all sections
@@ -1529,19 +1616,45 @@
             renderStats();
             renderContinueWatching();
             renderSmartLists();
-            renderRecommendations();
             renderWatchlist();
         }
 
         // Initialize
-        function init() {
-            loadWatchlist();
+        async function init() {
+            const isAuthenticated = await checkAuthentication();
+            if (!isAuthenticated) return;
+            
+            await populateGenreFilter();
+            populatePlatformFilter();
+            await loadWatchlist(true);
             setupEventListeners();
+            setupInfiniteScroll();
             handleSharedList();
-            trackB2BEvent('watchlist_page_view', { count: watchlist.length });
         }
         
         init();
+    </script>
+
+    <!-- Scripts (Block 2) -->
+    <script src="/js/store.js"></script>
+    <script src="/js/consent.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api-client.js"></script>
+    <script src="/js/navigation.js"></script>
+
+    <!-- Nav initialization script (Block 11) -->
+    <script>
+        // Initialize unified navigation after scripts load
+        document.addEventListener('DOMContentLoaded', function() {
+            const navPlaceholder = document.getElementById('nav-placeholder');
+            if (navPlaceholder) {
+                if (typeof renderNavigation === 'function') {
+                    renderNavigation('nav-placeholder');
+                } else if (typeof navigation !== 'undefined' && navigation.render) {
+                    navigation.render('nav-placeholder');
+                }
+            }
+        });
     </script>
 </body>
 </html>

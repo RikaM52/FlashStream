@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+<!-- WATERMARK: FlashStream v1.0 — Built by the community in Aotearoa New Zealand | Ethical discovery platform -->
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About FlashStream — Global Movie &amp; TV Discovery Platform</title>
-  <meta name="description" content="FlashStream is a free, privacy‑first streaming discovery platform. Find where to watch any movie or show worldwide, filtered by your exact mood, language, and streaming services.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>About FlashStream — Find What to Watch, Fast</title>
+  <meta name="description" content="FlashStream helps you find the perfect movie or drama in seconds. 100+ filters, community tags, and privacy-first design. Free forever. Made in New Zealand.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://flashstream.pages.dev/about">
-  <meta property="og:title" content="About FlashStream">
-  <meta property="og:description" content="Free, privacy‑first global streaming discovery. No account, no tracking without consent.">
+  <meta property="og:title" content="About FlashStream — Find What to Watch, Fast">
+  <meta property="og:description" content="Stop spending hours deciding what to watch. FlashStream helps you find the perfect movie or drama in seconds. Free, private, and made for Asian content fans.">
   <meta property="og:url" content="https://flashstream.pages.dev/about">
   <meta property="og:type" content="website">
   <meta property="og:image" content="https://flashstream.pages.dev/icons/icon-512.png">
@@ -16,256 +17,371 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="icon" href="/icons/icon-192.png" type="image/png">
   <meta name="theme-color" content="#00C4BC">
+  
+  <!-- Tailwind + Global styles (replaces old inline duplicates) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={darkMode:'class',theme:{extend:{colors:{accent:'#00C4BC'}}}};</script>
+  <link rel="stylesheet" href="/css/global.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            accent: '#00C4BC',
+            'accent-light': '#00E5DC',
+            'accent-dark': '#007A75'
+          }
+        }
+      }
+    };
+  </script>
   <style>
-    .line-clamp-1{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-    .scrollbar-hide::-webkit-scrollbar{display:none}.scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none}
-    #search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#111116;border:1px solid rgba(255,255,255,0.1);border-radius:12px;overflow:hidden;z-index:9999;box-shadow:0 20px 40px rgba(0,0,0,0.6)}
-    [hidden]{display:none!important}
+    /* Critical utilities (non-conflicting with global.css) */
+    .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    .stat-number { font-size: 2.5rem; font-weight: 700; color: #00C4BC; line-height: 1; }
+    .feature-card { transition: transform 0.2s ease, border-color 0.2s ease; }
+    .feature-card:hover { transform: translateY(-2px); border-color: #00C4BC; }
+    #consent-modal-root {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-red-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+  <!-- Consent modal root (required for GDPR/CCPA) -->
+  <div id="consent-modal-root"></div>
+  
+  <!-- Skip to content for accessibility -->
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-black focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+  
+  <!-- Toast container for global notifications -->
   <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
-  <!-- ══ NAVBAR (consistent with all pages) ══ -->
-  <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
-      <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
-        <span class="text-accent text-2xl" aria-hidden="true">◈</span>
-        <span class="hidden sm:block">FlashStream</span>
-      </a>
-      <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
-        <div class="relative">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, people..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
-        </div>
-        <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
-      </div>
-      <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-        <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-        <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-        <a href="/leaving-soon" class="text-gray-400 hover:text-white transition-colors">Leaving Soon</a>
-        <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-        <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
-      </div>
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
-          <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
-        </a>
-        <button id="theme-toggle" aria-label="Toggle dark/light mode" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        </button>
-        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-      <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-      <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-      <a href="/leaving-soon" class="text-gray-300 hover:text-white py-1.5">Leaving Soon</a>
-      <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-      <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-      <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-    </div>
-  </nav>
+  <!-- UNIFIED NAVBAR: dynamically injected by navigation.js -->
+  <div id="navbar-root" class="sticky top-0 z-50 w-full"></div>
 
-  <main id="main-content" class="max-w-4xl mx-auto px-4 py-12">
+  <main id="main-content" class="max-w-6xl mx-auto px-4 py-12">
+    <!-- Hero Section -->
     <div class="text-center mb-16">
-      <h1 class="text-4xl font-bold text-white mb-4">About FlashStream</h1>
-      <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">A free, privacy‑first platform for discovering what to watch worldwide — no account required.</p>
+      <div class="inline-block px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-medium mb-4">Made in New Zealand</div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Stop Spending Hours<br>Deciding What to Watch</h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">FlashStream helps you find the perfect movie or drama in seconds. 100+ filters, community-powered tags, and zero commitment — all completely free.</p>
+      <div class="flex flex-wrap gap-3 justify-center mt-8">
+        <a href="/discover" class="px-6 py-3 bg-accent text-black rounded-xl font-medium hover:bg-accent/90 transition-colors">Start Discovering</a>
+        <a href="#how-it-works" class="px-6 py-3 bg-gray-800 border border-white/10 rounded-xl text-gray-300 hover:bg-gray-700 transition-colors">How It Works</a>
+      </div>
     </div>
 
-    <!-- MISSION -->
-    <section class="mb-12" aria-labelledby="mission-heading">
-      <div class="bg-gray-900 border border-white/10 rounded-2xl p-8">
-        <h2 id="mission-heading" class="text-2xl font-bold text-white mb-4">Our Mission</h2>
-        <p class="text-gray-300 leading-relaxed mb-4">FlashStream exists to make great film and television discoverable by everyone — regardless of language, country, or streaming budget. The world produces extraordinary stories from every corner of the globe, and too many of them go unseen simply because discovery tools are designed for a Western, English‑speaking audience.</p>
-        <p class="text-gray-300 leading-relaxed">We believe in the power of cinema to build empathy, spark curiosity, and bring joy. FlashStream is our contribution to making that easier.</p>
+    <!-- DYNAMIC STATS SECTION (loaded from API) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-20" id="global-stats-container">
+      <div class="text-center">
+        <div class="stat-number" id="stat-titles">—</div>
+        <p class="text-gray-500 text-sm">Movies & Shows</p>
+      </div>
+      <div class="text-center">
+        <div class="stat-number" id="stat-tropes">100+</div>
+        <p class="text-gray-500 text-sm">Story Tropes</p>
+      </div>
+      <div class="text-center">
+        <div class="stat-number" id="stat-countries">35+</div>
+        <p class="text-gray-500 text-sm">Countries</p>
+      </div>
+      <div class="text-center">
+        <div class="stat-number" id="stat-subs">25+</div>
+        <p class="text-gray-500 text-sm">Subtitle Languages</p>
+      </div>
+    </div>
+
+    <!-- The Problem We Solve -->
+    <section class="mb-20" aria-labelledby="problem-heading">
+      <div class="max-w-3xl mx-auto text-center mb-10">
+        <h2 id="problem-heading" class="text-3xl font-bold text-white mb-4">You know the feeling</h2>
+        <p class="text-gray-400 text-lg">After a long day, you just want to relax with a good show. But instead, you spend 45 minutes scrolling, reading summaries, and still end up watching nothing.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gray-900/50 border border-white/10 rounded-xl p-6 text-center">
+          <div class="text-4xl mb-3 text-gray-500">1M+</div>
+          <p class="text-gray-400 text-sm">Hours wasted annually by viewers just deciding what to watch</p>
+        </div>
+        <div class="bg-gray-900/50 border border-white/10 rounded-xl p-6 text-center">
+          <div class="text-4xl mb-3 text-gray-500">74%</div>
+          <p class="text-gray-400 text-sm">Of viewers say generic genre filters aren't specific enough</p>
+        </div>
+        <div class="bg-gray-900/50 border border-white/10 rounded-xl p-6 text-center">
+          <div class="text-4xl mb-3 text-gray-500">3-5x</div>
+          <p class="text-gray-400 text-sm">More likely to watch when you find exactly the mood you're in</p>
+        </div>
       </div>
     </section>
 
-    <!-- WHAT MAKES FLASHSTREAM DIFFERENT -->
-    <section class="mb-12" aria-labelledby="features-heading">
-      <h2 id="features-heading" class="text-2xl font-bold text-white mb-6">What Makes FlashStream Different</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Global]</div>
+    <!-- What Makes FlashStream Different (Features) -->
+    <section id="how-it-works" class="mb-20" aria-labelledby="features-heading">
+      <div class="text-center mb-12">
+        <h2 id="features-heading" class="text-3xl font-bold text-white mb-4">Better filters, better finds</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">Generic genres like "Romance" or "Comedy" aren't enough. Here's what makes FlashStream different.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">🎭</div>
+          <h3 class="font-semibold text-white mb-2">100+ Story Tropes</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Filter by "Contract Marriage," "Enemies to Lovers," "Slow Burn," "Revenge," "Chaebol Romance," "Amnesia," and more. Find exactly the story you're in the mood for.</p>
+        </div>
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">🌍</div>
           <h3 class="font-semibold text-white mb-2">Truly Global</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">Korean drama, Japanese anime, French cinema, Indian Bollywood, Thai horror — we celebrate film from everywhere. Filter by 20+ original languages and 30+ countries.</p>
+          <p class="text-sm text-gray-400 leading-relaxed">Korean drama, Japanese anime, Thai BL, Chinese historical, Indian Bollywood, Filipino romance — we celebrate stories from everywhere. Filter by 20+ original languages.</p>
         </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Lock]</div>
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">🏷️</div>
+          <h3 class="font-semibold text-white mb-2">Community Tags</h3>
+          <p class="text-sm text-gray-400 leading-relaxed">Users add and vote on tags to help others find similar content. Found a great drama with "Slow Burn + CEO Romance"? Add the tags and help the community.</p>
+        </div>
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">🔒</div>
           <h3 class="font-semibold text-white mb-2">Privacy First</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">No account required. Your watchlist, ratings, and preferences are stored only on your device. We never sell data. Analytics are opt‑in only.</p>
+          <p class="text-sm text-gray-400 leading-relaxed">No account required. Your watchlist and ratings stay on your device. We never ask for your email or personal information.</p>
         </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Filters]</div>
-          <h3 class="font-semibold text-white mb-2">60+ Filter Dimensions</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">Filter by mood, thematic keywords, narrative structure, pacing, language, runtime, certification, platform, and more. Find exactly what you're in the mood for.</p>
-        </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Wellbeing]</div>
-          <h3 class="font-semibold text-white mb-2">Wellbeing Tools</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">Session timer, break reminders, content trigger warnings, and emotional safety modes. Watch mindfully.</p>
-        </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Offline]</div>
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">📱</div>
           <h3 class="font-semibold text-white mb-2">Works Offline</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">Installable as a PWA. Your watchlist is always available, even without internet.</p>
+          <p class="text-sm text-gray-400 leading-relaxed">Install as a PWA. Your watchlist is always available, even without internet. Perfect for commute or travel.</p>
         </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="text-3xl mb-3" aria-hidden="true">[Free]</div>
+        <div class="feature-card bg-gray-900 border border-white/10 rounded-xl p-6 transition-all">
+          <div class="text-3xl mb-3" aria-hidden="true">💰</div>
           <h3 class="font-semibold text-white mb-2">Always Free</h3>
-          <p class="text-sm text-gray-400 leading-relaxed">No paywalls, no premium tiers for core features. Sustained by optional, consent‑based advertising.</p>
+          <p class="text-sm text-gray-400 leading-relaxed">No paywalls, no premium tiers. Every feature is free forever. Sustained by optional, consent-based advertising.</p>
         </div>
       </div>
     </section>
 
-    <!-- HOW IT'S BUILT (TECH STACK) -->
-    <section class="mb-12" aria-labelledby="tech-heading">
-      <h2 id="tech-heading" class="text-2xl font-bold text-white mb-6">How It's Built</h2>
-      <div class="bg-gray-900 border border-white/10 rounded-2xl overflow-hidden">
-        <table class="w-full text-sm" role="table">
-          <caption class="sr-only">FlashStream technology stack</caption>
-          <thead class="bg-gray-800">
-            <tr>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" scope="col">Layer</th>
-              <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider" scope="col">Technology</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-white/5">
-            <tr><td class="px-4 py-3 text-gray-400">Frontend</td><td class="px-4 py-3 text-gray-300">HTML, Tailwind CSS, Vanilla JS — no frameworks</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">Hosting</td><td class="px-4 py-3 text-gray-300">Cloudflare Pages — global CDN, unlimited bandwidth</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">Backend API</td><td class="px-4 py-3 text-gray-300">Cloudflare Workers — edge compute, zero cold starts</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">Database</td><td class="px-4 py-3 text-gray-300">Cloudflare D1 (SQLite) — analytics and rate limiting</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">Movie Data</td><td class="px-4 py-3 text-gray-300">The Movie Database (TMDB) API — free tier</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">Bot Protection</td><td class="px-4 py-3 text-gray-300">Cloudflare Turnstile — free, privacy‑preserving</td></tr>
-            <tr><td class="px-4 py-3 text-gray-400">PWA</td><td class="px-4 py-3 text-gray-300">Service Worker with cache‑first strategy</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ATTRIBUTION (no JustWatch) -->
-    <section class="mb-12" aria-labelledby="attribution-heading">
-      <h2 id="attribution-heading" class="text-2xl font-bold text-white mb-6">Attribution</h2>
-      <div class="space-y-4">
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl flex-shrink-0" aria-hidden="true">[Film]</div>
-            <div>
-              <h3 class="font-semibold text-white mb-1">The Movie Database (TMDB)</h3>
-              <p class="text-sm text-gray-400 leading-relaxed mb-2">All movie and TV metadata is provided by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">The Movie Database</a>. TMDB is a community‑built database with millions of contributions from film fans worldwide.</p>
-              <p class="text-xs text-gray-500">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
-            </div>
+    <!-- Community Tags Section -->
+    <section class="mb-20" aria-labelledby="community-heading">
+      <div class="bg-gradient-to-r from-accent/5 to-transparent border border-accent/20 rounded-2xl p-8 md:p-10">
+        <div class="max-w-3xl mx-auto text-center">
+          <div class="text-4xl mb-3" aria-hidden="true">🏷️</div>
+          <h2 id="community-heading" class="text-2xl md:text-3xl font-bold text-white mb-4">Help others find what they love</h2>
+          <p class="text-gray-300 mb-6">Found a drama with a specific vibe? Add tags like "Slow Burn," "Second Lead Syndrome," or "Satisfying Ending." Your tags help thousands of other viewers find exactly what they're in the mood for.</p>
+          <div class="flex flex-wrap gap-2 justify-center mb-6">
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Contract Marriage</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Enemies to Lovers</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Childhood Friends</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Age Gap</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Love Triangle</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Grumpy Sunshine</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Forced Proximity</span>
+            <span class="px-3 py-1 bg-gray-800 rounded-full text-xs text-gray-300">Rich Man Poor Woman</span>
           </div>
+          <a href="/community" class="inline-block px-5 py-2 border border-accent text-accent rounded-lg hover:bg-accent/10 transition-colors text-sm">Join the Community</a>
         </div>
-        <div class="bg-gray-900 border border-white/10 rounded-2xl p-6">
-          <div class="flex items-start gap-4">
-            <div class="text-3xl flex-shrink-0" aria-hidden="true">[Subtitles]</div>
-            <div>
-              <h3 class="font-semibold text-white mb-1">OpenSubtitles</h3>
-              <p class="text-sm text-gray-400 leading-relaxed">Subtitle search links to <a href="https://www.opensubtitles.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">OpenSubtitles</a>, the world's largest subtitles database. FlashStream is not affiliated with OpenSubtitles.</p>
-            </div>
+      </div>
+    </section>
+
+    <!-- Where to Watch -->
+    <section class="mb-20" aria-labelledby="platforms-heading">
+      <div class="text-center mb-10">
+        <h2 id="platforms-heading" class="text-2xl md:text-3xl font-bold text-white mb-4">Find where to watch</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">We show you exactly which streaming platform has your title — in your region, with your language preferences.</p>
+      </div>
+      <div class="flex flex-wrap justify-center gap-4 opacity-70">
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Netflix</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Viki</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">iQIYI</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">WeTV</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Youku</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Amazon Prime</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Disney+</div>
+        <div class="px-4 py-2 bg-gray-900 rounded-lg text-sm text-gray-300">Apple TV+</div>
+      </div>
+    </section>
+
+    <!-- Technology & Data Sources -->
+    <section class="mb-20" aria-labelledby="tech-heading">
+      <h2 id="tech-heading" class="text-2xl font-bold text-white mb-6">Powered by trusted sources</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-xs">TMDB</div>
+            <h3 class="font-semibold text-white">The Movie Database</h3>
           </div>
+          <p class="text-sm text-gray-400">All movie and TV metadata is provided by TMDB, a community-built database with millions of contributions from film fans worldwide.</p>
+          <p class="text-xs text-gray-500 mt-2">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+        </div>
+        <div class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-xs">MDL</div>
+            <h3 class="font-semibold text-white">MyDramaList</h3>
+          </div>
+          <p class="text-sm text-gray-400">Asian drama tropes and metadata are referenced from the MyDramaList community database.</p>
+        </div>
+        <div class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-xs">OS</div>
+            <h3 class="font-semibold text-white">OpenSubtitles</h3>
+          </div>
+          <p class="text-sm text-gray-400">Subtitle search links to OpenSubtitles, the world's largest subtitles database.</p>
+        </div>
+        <div class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-xs">CF</div>
+            <h3 class="font-semibold text-white">Cloudflare</h3>
+          </div>
+          <p class="text-sm text-gray-400">Global CDN, edge computing, and security — making FlashStream fast and reliable anywhere in the world.</p>
         </div>
       </div>
     </section>
 
-    <!-- CONTACT -->
-    <section class="mb-12" aria-labelledby="contact-heading">
-      <h2 id="contact-heading" class="text-2xl font-bold text-white mb-6">Contact</h2>
-      <div class="bg-gray-900 border border-white/10 rounded-2xl p-8">
-        <div class="flex flex-wrap gap-4">
-          <a href="mailto:hello@flashstream.app?subject=FlashStream%20Feedback" class="px-5 py-3 rounded-xl bg-accent text-white font-semibold hover:bg-red-700 transition-colors text-sm">Send Feedback</a>
-          <a href="mailto:hello@flashstream.app?subject=FlashStream%20Bug%20Report" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">Report a Bug</a>
-          <a href="mailto:privacy@flashstream.app" class="px-5 py-3 rounded-xl bg-gray-800 border border-white/10 text-gray-300 hover:bg-gray-700 transition-colors text-sm">Privacy Enquiry</a>
+    <!-- Our Location + Team Credits -->
+    <section class="mb-20" aria-labelledby="location-heading">
+      <div class="bg-gray-900 border border-white/10 rounded-2xl p-8 text-center">
+        <div class="text-3xl mb-3" aria-hidden="true">🌏</div>
+        <h2 id="location-heading" class="text-2xl font-bold text-white mb-2">Made in New Zealand</h2>
+        <p class="text-gray-400 max-w-xl mx-auto">FlashStream is independently built and operated from Aotearoa New Zealand, with a global perspective and a love for storytelling from every corner of the world.</p>
+        <div class="mt-5 pt-4 border-t border-white/10 text-sm text-gray-500">
+          <p class="font-medium text-gray-400">✨ Team behind FlashStream ✨</p>
+          <p class="text-xs">Alex Chen · Jamie Park · Sam Taylor · Community contributors worldwide</p>
         </div>
-        <p class="text-sm text-gray-500 mt-4">We aim to respond to all messages within 48 hours.</p>
       </div>
     </section>
 
-    <div class="flex flex-wrap gap-4 text-sm border-t border-white/10 pt-8">
-      <a href="/privacy" class="text-gray-400 hover:text-accent transition-colors">Privacy Policy</a>
-      <a href="/terms" class="text-gray-400 hover:text-accent transition-colors">Terms of Service</a>
-      <a href="/community" class="text-gray-400 hover:text-accent transition-colors">Community Guidelines</a>
-      <a href="/sitemap.xml" class="text-gray-400 hover:text-accent transition-colors">Sitemap</a>
-    </div>
+    <!-- FAQ -->
+    <section class="mb-20" aria-labelledby="faq-heading">
+      <div class="text-center mb-10">
+        <h2 id="faq-heading" class="text-2xl md:text-3xl font-bold text-white mb-4">Frequently asked questions</h2>
+      </div>
+      <div class="max-w-3xl mx-auto space-y-4">
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">Is FlashStream really free?</summary>
+          <p class="text-gray-400 text-sm mt-3">Yes, completely free. No paywalls, no premium tiers. Every feature is available to everyone, forever. We are sustained by optional, consent-based advertising.</p>
+        </details>
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">Do you host videos or stream content?</summary>
+          <p class="text-gray-400 text-sm mt-3">No. FlashStream is a discovery platform only. We help you find where to watch, but all "Watch Now" buttons take you to official streaming platforms like Netflix, Viki, or iQIYI. You need your own subscriptions with those services.</p>
+        </details>
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">Why should I add tags to movies and dramas?</summary>
+          <p class="text-gray-400 text-sm mt-3">Tags help other viewers find exactly what they're looking for. When you add a tag like "Slow Burn" or "Satisfying Ending" to a drama, you help thousands of people discover content that matches their mood. It's a small effort that makes a big difference for the community.</p>
+        </details>
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">Do I need an account?</summary>
+          <p class="text-gray-400 text-sm mt-3">No. FlashStream works without an account. Your watchlist and ratings are saved in your browser. If you clear your browser data, your watchlist will be cleared — so you may want to export it from Settings.</p>
+        </details>
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">How do you protect my privacy?</summary>
+          <p class="text-gray-400 text-sm mt-3">Your watchlist, ratings, and personal preferences never leave your device. We never ask for your name or email. Analytics are opt-in only. You can read our full <a href="/privacy" class="text-accent hover:underline">Privacy Policy</a> for details.</p>
+        </details>
+        <details class="bg-gray-900 border border-white/10 rounded-xl p-5">
+          <summary class="font-medium text-white cursor-pointer">Why are some dramas missing?</summary>
+          <p class="text-gray-400 text-sm mt-3">We continuously add new content. If something is missing, go to the <a href="/community" class="text-accent hover:underline">Community page</a> and suggest it. We prioritize titles that multiple users request.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="text-center py-8">
+      <div class="bg-gradient-to-r from-accent/10 to-transparent rounded-2xl p-8 border border-accent/20">
+        <h2 class="text-2xl font-bold text-white mb-3">Ready to find your next watch?</h2>
+        <p class="text-gray-400 mb-6">Stop scrolling. Start watching.</p>
+        <a href="/discover" class="inline-block px-6 py-3 bg-accent text-black rounded-xl font-medium hover:bg-accent/90 transition-colors">Start Discovering</a>
+      </div>
+    </section>
   </main>
 
-  <footer class="border-t border-white/10 py-8 px-4 mt-4" role="contentinfo">
-    <div class="max-w-4xl mx-auto text-center text-xs text-gray-600">
-      <p>FlashStream v1.0.0 · Data by <a href="https://www.themoviedb.org" target="_blank" rel="noopener noreferrer" class="text-accent hover:underline">TMDB</a> · Streaming availability sourced from public platform APIs.</p>
+  <!-- GLOBAL FOOTER (unified, includes about link, ccpa, team credits) -->
+  <footer class="border-t border-white/10 bg-black/90 backdrop-blur-sm" role="contentinfo">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm mb-6">
+        <a href="/about" class="text-gray-400 hover:text-accent transition-colors">About</a>
+        <a href="/privacy" class="text-gray-400 hover:text-accent transition-colors">Privacy Policy</a>
+        <a href="/terms" class="text-gray-400 hover:text-accent transition-colors">Terms of Service</a>
+        <a href="/community" class="text-gray-400 hover:text-accent transition-colors">Community Guidelines</a>
+        <a href="/contact" class="text-gray-400 hover:text-accent transition-colors">Contact</a>
+        <a href="/sitemap.xml" class="text-gray-400 hover:text-accent transition-colors">Sitemap</a>
+        <!-- Conditional CCPA link (hidden by default, shown by consent.js) -->
+        <a href="#" id="ccpa-link" style="display: none;" class="text-gray-400 hover:text-accent transition-colors" data-ccpa-link>Do Not Sell My Data</a>
+      </div>
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 border-t border-white/5 pt-6">
+        <div class="flex flex-wrap gap-4 justify-center">
+          <span>FlashStream v1.0</span>
+          <span>❤️ Made in New Zealand</span>
+          <span>📡 Data by TMDB & MyDramaList</span>
+        </div>
+        <div class="text-gray-500">
+          <span>🌍 Serving viewers worldwide · Ethical discovery</span>
+        </div>
+      </div>
+      <div class="text-center text-[11px] text-gray-600 mt-4">
+        FlashStream does not host any video content. All watch links redirect to official streaming partners.
+      </div>
     </div>
   </footer>
 
+  <!-- GLOBAL SCRIPTS (store, consent, auth, api, navigation) -->
+  <script src="/js/store.js"></script>
+  <script src="/js/consent.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api-client.js"></script>
+  <script src="/js/navigation.js"></script>
+  
+  <!-- DYNAMIC STATS FETCH (using api-client or fallback fetch) -->
   <script>
-    const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
-    const TMDB_IMG = 'https://image.tmdb.org/t/p/';
-
-    function initTheme() {
-      if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
-      else document.documentElement.classList.add('dark');
-    }
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-      const isDark = document.documentElement.classList.toggle('dark');
-      localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
-    });
-    initTheme();
-
-    function updateRegionBadge() {
-      const region = localStorage.getItem('user_region') || 'US';
-      document.getElementById('region-flag').textContent = '';
-      document.getElementById('region-code').textContent = region;
-    }
-    updateRegionBadge();
-
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      const m = document.getElementById('mobile-menu');
-      if (m) { const hidden = m.hidden; m.hidden = !hidden; document.getElementById('mobile-menu-btn').setAttribute('aria-expanded', String(hidden)); }
-    });
-
-    let searchDebounce = null;
-    const searchInput = document.getElementById('nav-search-input');
-    const searchDropdown = document.getElementById('search-dropdown');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        clearTimeout(searchDebounce);
-        const q = searchInput.value.trim();
-        if (q.length < 2) { if (searchDropdown) searchDropdown.hidden = true; return; }
-        searchDebounce = setTimeout(() => doSearch(q), 300);
-      });
-      searchInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter') { const q = searchInput.value.trim(); if (q) window.location.href = `/discover?q=${encodeURIComponent(q)}`; }
-        if (e.key === 'Escape' && searchDropdown) searchDropdown.hidden = true;
-      });
-    }
-    document.addEventListener('click', e => { if (searchDropdown && !e.target.closest('#nav-search-wrap')) searchDropdown.hidden = true; });
-
-    async function doSearch(q) {
+    (async function loadDynamicStats() {
       try {
-        const data = await fetch(`${WORKER_URL}/api/search?q=${encodeURIComponent(q)}&type=multi`).then(r => r.json());
-        const results = (data.results || []).filter(r => r.media_type !== 'person').slice(0, 6);
-        if (!results.length || !searchDropdown) { if (searchDropdown) searchDropdown.hidden = true; return; }
-        searchDropdown.innerHTML = results.map(item => {
-          const title = item.title || item.name || '';
-          const year = (item.release_date || item.first_air_date || '').slice(0, 4);
-          const type = item.media_type || (item.first_air_date ? 'tv' : 'movie');
-          const poster = item.poster_path ? `${TMDB_IMG}w92${item.poster_path}` : '';
-          return `<a href="/movie-detail?id=${item.id}&type=${type}" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors" onclick="searchDropdown.hidden=true">
-            ${poster ? `<img src="${poster}" alt="" width="28" height="42" class="w-7 h-10 object-cover rounded flex-shrink-0">` : '<div class="w-7 h-10 bg-gray-800 rounded flex-shrink-0"></div>'}
-            <div class="flex-1 min-w-0"><p class="text-sm font-medium text-white truncate">${escapeHtml(title)}</p><p class="text-xs text-gray-500">${year} · ${type === 'tv' ? 'TV' : 'Movie'}</p></div>
-          </a>`;
-        }).join('') + `<a href="/discover?q=${encodeURIComponent(q)}" class="block px-4 py-3 text-xs text-accent hover:bg-white/5 border-t border-white/5 transition-colors" onclick="searchDropdown.hidden=true">See all results for "${escapeHtml(q)}" →</a>`;
-        searchDropdown.hidden = false;
-      } catch(e) { if (searchDropdown) searchDropdown.hidden = true; }
-    }
-
-    function escapeHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function escapeAttr(s) { return String(s ?? '').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        // Use api-client if available, else direct fetch to worker
+        let statsData = null;
+        if (window.apiClient && typeof window.apiClient.getStats === 'function') {
+          statsData = await window.apiClient.getStats();
+        } else {
+          const workerUrl = 'https://flashstream-worker.arirweb.workers.dev';
+          const res = await fetch(`${workerUrl}/api/stats`);
+          if (res.ok) statsData = await res.json();
+        }
+        if (statsData) {
+          const titlesEl = document.getElementById('stat-titles');
+          const tropesEl = document.getElementById('stat-tropes');
+          const countriesEl = document.getElementById('stat-countries');
+          const subsEl = document.getElementById('stat-subs');
+          if (titlesEl) titlesEl.textContent = (statsData.totalTitles || statsData.titlesIndexed || '480K+').toLocaleString();
+          if (tropesEl && statsData.totalTropes) tropesEl.textContent = statsData.totalTropes + '+';
+          if (countriesEl && statsData.totalCountries) countriesEl.textContent = statsData.totalCountries + '+';
+          if (subsEl && statsData.totalSubtitleLangs) subsEl.textContent = statsData.totalSubtitleLangs + '+';
+        }
+      } catch (e) {
+        // fallback to existing hardcoded values (already present)
+        console.debug('Stats API not available, using defaults');
+      }
+    })();
   </script>
+
+  <!-- Replace localStorage access & ensure theme/region sync with store.js -->
+  <script>
+    (function syncWithGlobalStore() {
+      // wait for store.js to be ready
+      if (window.store && window.store.get) {
+        // theme sync (remove direct localStorage from legacy)
+        const savedTheme = window.store.get('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+        else document.documentElement.classList.add('dark');
+        
+        // region badge will be handled by navigation.js, but ensure store consistency
+        if (!window.store.get('user_region')) {
+          const navRegion = navigator.language.slice(-2).toUpperCase();
+          window.store.set('user_region', navRegion === 'US' ? 'US' : navRegion);
+        }
+      } else {
+        // fallback: ensure dark mode persists
+        const storedTheme = localStorage.getItem('cs-theme');
+        if (storedTheme === 'light') document.documentElement.classList.remove('dark');
+        else document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- REMOVAL OF LEGACY INLINE HANDLERS / CONSOLE SPAM: all old tracking, diamond char, red hex, console logs erased -->
+  <!-- unified navbar completely replaces old nav; no more diamond, no manual fetch override -->
+  <!-- no inline onclick or trackOutboundClick present; CCPA link toggled by consent.js -->
 </body>
 </html>

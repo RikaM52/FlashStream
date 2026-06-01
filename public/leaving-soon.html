@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
+<!-- FlashStream - Unified Frontend v2.0 | Source available internally -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +17,8 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icons/icon-192.png" type="image/png">
     <meta name="theme-color" content="#00C4BC">
+    <!-- Global styles for consistent design -->
+    <link rel="stylesheet" href="/css/global.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -45,14 +48,27 @@
         [hidden] { display: none !important; }
         .badge-pulse { animation: bpulse 1.5s ease-in-out infinite; }
         @keyframes bpulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        
+        /* BLOCK R: Trope chip styles */
+        .trope-chip.active {
+            background: #00C4BC !important;
+            border-color: #00C4BC !important;
+            color: #000000 !important;
+        }
+
+        /* BLOCK T: Dwell Time Tracking - card visibility transition */
+        .dwell-tracked {
+            transition: opacity 0.1s ease;
+        }
     </style>
 </head>
 <body class="bg-black text-gray-100 min-h-screen">
+<div id="consent-modal-root"></div>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
     <div id="toast-container" class="fixed top-20 right-4 z-[9001] flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
 
-    <!-- SYNCHRONIZED APP LOGISTICS NAVIGATION HEADER -->
-    <nav class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
+    <!-- UNIFIED NAVIGATION (navigation.js controlled) -->
+    <nav id="unified-nav" class="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/5" role="navigation" aria-label="Main navigation">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-3">
             <a href="/" class="flex items-center gap-2 text-xl font-bold text-white flex-shrink-0" aria-label="FlashStream home">
                 <img src="/icons/icon-192.png" alt="FlashStream logo" width="32" height="32" class="w-8 h-8">
@@ -60,38 +76,25 @@
             </a>
             <div class="flex-1 relative max-w-xl mx-auto" id="nav-search-wrap">
                 <div class="relative">
-                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, shorts..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" aria-label="Search all content directories" autocomplete="off">
+                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                    <input type="search" id="nav-search-input" placeholder="Search movies, TV shows, shorts..." class="w-full bg-gray-900 border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-gray-300 placeholder-gray-500 focus:outline-none focus:border-accent focus:bg-gray-800 transition-all" autocomplete="off">
                 </div>
-                <div id="search-dropdown" hidden role="listbox" aria-label="Search suggestions"></div>
+                <div id="search-dropdown" hidden></div>
             </div>
-            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0">
-                <a href="/discover" class="text-gray-400 hover:text-white transition-colors">Discover</a>
-                <a href="/watchlist" class="text-gray-400 hover:text-white transition-colors">Watchlist</a>
-                <a href="/leaving-soon" class="text-white font-semibold">Leaving Soon</a>
-                <a href="/coming-soon" class="text-gray-400 hover:text-white transition-colors">Coming Soon</a>
-                <a href="/community" class="text-gray-400 hover:text-white transition-colors">Community</a>
-            </div>
+            <div class="hidden md:flex items-center gap-4 text-sm font-medium flex-shrink-0" id="desktop-nav-links"></div>
             <div class="flex items-center gap-2 flex-shrink-0">
-                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors" aria-label="Regional settings">
-                    <span id="region-flag" class="hidden"></span><span id="region-code" class="font-mono text-gray-300">US</span>
+                <a href="/settings" id="region-badge" class="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                    <span id="region-code" class="font-mono text-gray-300">US</span>
                 </a>
                 <button id="theme-toggle" aria-label="Toggle interface theme" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
                 </button>
-                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10" aria-label="Menu" aria-expanded="false">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
             </div>
         </div>
-        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium">
-            <a href="/discover" class="text-gray-300 hover:text-white py-1.5">Discover</a>
-            <a href="/watchlist" class="text-gray-300 hover:text-white py-1.5">Watchlist</a>
-            <a href="/leaving-soon" class="text-white font-semibold py-1.5">Leaving Soon</a>
-            <a href="/coming-soon" class="text-gray-300 hover:text-white py-1.5">Coming Soon</a>
-            <a href="/community" class="text-gray-300 hover:text-white py-1.5">Community</a>
-            <a href="/settings" class="text-gray-300 hover:text-white py-1.5">Settings</a>
-        </div>
+        <div id="mobile-menu" hidden class="md:hidden border-t border-white/5 bg-black/95 px-4 py-3 flex flex-col gap-3 text-sm font-medium"></div>
     </nav>
 
     <main id="main-content" class="max-w-7xl mx-auto px-4 py-8">
@@ -140,6 +143,15 @@
             </div>
         </div>
 
+        <!-- BLOCK P: Content Origin Filter -->
+        <div id="origin-filter-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
+        <!-- BLOCK Q: Subtitle Language Filter -->
+        <div id="subtitle-filter-container" class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/10 w-full"></div>
+
+        <!-- BLOCK R: Trope Filter (Multi-select) -->
+        <div id="trope-filter-container" class="w-full mt-3 pt-3 border-t border-white/10"></div>
+
         <div class="mb-6 px-4 py-3 rounded-xl bg-amber-900/20 border border-amber-700/40 text-xs text-amber-300 flex items-start gap-2 leading-relaxed" role="note">
             <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
             <p>Expiration metrics are aggregated via background cache synchronization frameworks and represent historical estimations provided directly by provider portals. Always check your local streaming app console to confirm title availability limits before your viewing session.</p>
@@ -160,6 +172,27 @@
         </div>
     </main>
 
+    <!-- BLOCK 5: FOOTER with About link and CCPA -->
+    <footer class="border-t border-white/10 bg-black/80 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-wrap justify-between gap-6 text-sm">
+                <div class="flex flex-wrap gap-6">
+                    <a href="/about" class="text-gray-400 hover:text-accent transition-colors">About</a>
+                    <a href="/privacy" class="text-gray-400 hover:text-accent transition-colors">Privacy</a>
+                    <a href="/terms" class="text-gray-400 hover:text-accent transition-colors">Terms</a>
+                    <a href="/help" class="text-gray-400 hover:text-accent transition-colors">Help</a>
+                    <a href="#" id="ccpa-link" class="text-gray-400 hover:text-accent transition-colors hidden" data-ccpa="true">Do Not Sell My Data</a>
+                </div>
+                <div class="text-gray-500 text-xs">
+                    &copy; 2026 FlashStream — Global streaming index
+                </div>
+            </div>
+            <div class="mt-4 text-center text-[11px] text-gray-600">
+                Pull down to refresh content | Data updates every 6 hours
+            </div>
+        </div>
+    </footer>
+
     <script>
         const WORKER_URL = 'https://flashstream-worker.arirweb.workers.dev';
         const TMDB_IMG = 'https://image.tmdb.org/t/p/';
@@ -172,17 +205,276 @@
         let recordsPerPageCount = 24;
         let currentlyRenderedPageLimit = 1;
 
+        // BLOCK P: Content Origin Filter state
+        let currentOriginFilter = 'all';
+        // BLOCK Q: Subtitle Language Filter state
+        let currentSubtitleFilter = 'all';
+        // BLOCK R: Trope Filter state (multi-select)
+        let selectedTropes = [];
+
+        // BLOCK T: Dwell Time Tracking state
+        let dwellTimeTrackers = new Map();
+        let visibleCards = new Map();
+        let dwellObserver = null;
+
+        // BLOCK AE: Discovery Integration state
+        let pageLoadTime = Date.now();
+        let headerClickHistory = [];
+
+        // BLOCK P: Content Origin data
+        const contentOrigins = [
+            { id: 'kr', name: '🇰🇷 K-Drama', platforms: ['Viki', 'Netflix', 'Disney+'] },
+            { id: 'cn', name: '🇨🇳 C-Drama', platforms: ['iQIYI', 'WeTV', 'Youku'] },
+            { id: 'th', name: '🇹🇭 Thai Drama', platforms: ['Viki', 'iQIYI', 'WeTV'] },
+            { id: 'jp', name: '🇯🇵 J-Drama', platforms: ['Netflix', 'Viki', 'Crunchyroll'] }
+        ];
+
+        // BLOCK Q: Subtitle Language data
+        const subtitleLanguages = [
+            { code: 'en', name: 'English' },
+            { code: 'es', name: 'Español' },
+            { code: 'pt', name: 'Português' },
+            { code: 'fr', name: 'Français' },
+            { code: 'de', name: 'Deutsch' },
+            { code: 'id', name: 'Bahasa Indonesia' },
+            { code: 'th', name: 'ไทย' },
+            { code: 'vi', name: 'Tiếng Việt' }
+        ];
+
+        // BLOCK R: Trope Database
+        const tropeDatabase = {
+            kdrama: [
+                { id: 'chaebol', name: 'Chaebol / Rich Heir' },
+                { id: 'contract_marriage', name: 'Contract Marriage' },
+                { id: 'office_romance', name: 'Office Romance' },
+                { id: 'enemies_to_lovers', name: 'Enemies to Lovers' },
+                { id: 'childhood_friends', name: 'Childhood Friends' },
+                { id: 'amnesia', name: 'Amnesia / Memory Loss' }
+            ],
+            cdrama: [
+                { id: 'wuxia', name: 'Wuxia (Martial Arts)' },
+                { id: 'xianxia', name: 'Xianxia (Fantasy)' },
+                { id: 'historical', name: 'Historical / Palace' },
+                { id: 'ceo_romance', name: 'CEO / Boss Romance' },
+                { id: 'cold_male_lead', name: 'Cold Male Lead' },
+                { id: 'revenge_plot', name: 'Revenge Plot' }
+            ],
+            thai: [
+                { id: 'bl', name: 'BL (Boys Love)' },
+                { id: 'gl', name: 'GL (Girls Love)' },
+                { id: 'bg_love', name: 'BG Love' },
+                { id: 'university', name: 'University Setting' },
+                { id: 'high_school', name: 'High School Setting' }
+            ],
+            jdrama: [
+                { id: 'manga_adaptation', name: 'Manga/LN Adaptation' },
+                { id: 'time_travel', name: 'Time Travel' },
+                { id: 'slow_burn', name: 'Slow Burn Romance' },
+                { id: 'psychological', name: 'Psychological Thriller' }
+            ]
+        };
+
+        // ============================================
+        // BLOCK V: Outbound Streaming Buttons (Critical) - MODIFIED: no inline onclick, data attributes
+        // ============================================
+        function getStreamingUrl(platform, title, tmdbId) {
+            const baseUrls = {
+                netflix: 'https://www.netflix.com/search?q=',
+                prime: 'https://www.amazon.com/s?k=',
+                disney: 'https://www.disneyplus.com/search/',
+                viki: 'https://www.viki.com/search?q=',
+                viu: 'https://www.viu.com/search?keyword=',
+                iqiyi: 'https://www.iqiyi.com/search/?q=',
+                zee5: 'https://www.zee5.com/search?q=',
+                sonyliv: 'https://www.sonyliv.com/search/',
+                youtube: 'https://www.youtube.com/results?search_query=',
+                wetv: 'https://wetv.vip/en/search?keyword=',
+                youku: 'https://youku.tv/search?keyword='
+            };
+            const encodedTitle = encodeURIComponent(title);
+            const trackingParams = `utm_source=flashstream&utm_medium=leaving_soon&utm_campaign=expiring&utm_content=${tmdbId}&utm_term=${selectedTropes.join(',')}`;
+            let url = baseUrls[platform] || baseUrls.netflix;
+            url = url + encodedTitle;
+            url += (url.includes('?') ? '&' : '?') + trackingParams;
+            return url;
+        }
+
+        function getWatchButtons(platform, title, tmdbId, daysLeft) {
+            const platformLabels = {
+                netflix: 'Netflix', prime: 'Prime Video', disney: 'Disney+',
+                viki: 'Viki', viu: 'Viu', iqiyi: 'iQIYI',
+                zee5: 'ZEE5', sonyliv: 'SonyLIV', youtube: 'YouTube',
+                wetv: 'WeTV', youku: 'Youku'
+            };
+            const label = platformLabels[platform.toLowerCase()] || platform;
+            return `
+                <button class="watch-btn w-full mt-2 py-1.5 text-[11px] font-semibold rounded-lg bg-accent text-black hover:bg-accent/80 transition-colors"
+                        data-platform="${platform.toLowerCase()}"
+                        data-title="${escapeAttr(title)}"
+                        data-tmdb="${tmdbId}"
+                        data-days="${daysLeft}">
+                    Watch on ${label}
+                </button>`;
+        }
+
+        // ============================================
+        // BLOCK T: Dwell Time Tracking Functions (no tracking)
+        // ============================================
+        function setupDwellTimeTracking() {
+            if (dwellObserver) dwellObserver.disconnect();
+            dwellObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const card = entry.target;
+                    const filmId = card.dataset.filmId;
+                    if (entry.isIntersecting) {
+                        const startTime = Date.now();
+                        dwellTimeTrackers.set(filmId, { startTime, card });
+                        visibleCards.set(filmId, true);
+                    } else if (visibleCards.has(filmId)) {
+                        const tracker = dwellTimeTrackers.get(filmId);
+                        if (tracker) {
+                            dwellTimeTrackers.delete(filmId);
+                            visibleCards.delete(filmId);
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+            document.querySelectorAll('#results-grid article').forEach(card => { dwellObserver.observe(card); });
+        }
+
+        // ============================================
+        // BLOCK AE: Discovery Integration (Profiles, Blocked People, Sync) - using store.js where available
+        // ============================================
+        const DS_STORAGE_KEYS = {
+            ACTIVE_PROFILE: 'active_profile',
+            BLOCKED_PEOPLE: 'blocked_people',
+            TRIGGER_PREFS: 'pref_triggers',
+            USER_REGION: 'user_region',
+            THEME: 'cs-theme'
+        };
+
+        function getProfileStorageKey(baseKey) {
+            let activeProfile = 'Default';
+            if (window.store && typeof window.store.getActiveProfile === 'function') {
+                activeProfile = window.store.getActiveProfile() || 'Default';
+            } else {
+                activeProfile = localStorage.getItem(DS_STORAGE_KEYS.ACTIVE_PROFILE) || 'Default';
+            }
+            return `${baseKey}_profile_${activeProfile.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        }
+
+        function getBlockedPeople() {
+            if (window.store && typeof window.store.getBlockedPeople === 'function') {
+                return window.store.getBlockedPeople();
+            }
+            try { return JSON.parse(localStorage.getItem(DS_STORAGE_KEYS.BLOCKED_PEOPLE) || '[]'); } catch(e) { return []; }
+        }
+
+        function filterByBlockedPeople(items) {
+            const blockedPeople = getBlockedPeople();
+            if (blockedPeople.length === 0) return items;
+            return items.filter(item => {
+                const title = (item.title || '').toLowerCase();
+                return !blockedPeople.some(person => title.includes(person.toLowerCase()));
+            });
+        }
+
+        function syncRegionBadge() {
+            let region = 'US';
+            if (window.store && typeof window.store.getUserRegion === 'function') {
+                region = window.store.getUserRegion();
+            } else {
+                region = localStorage.getItem(DS_STORAGE_KEYS.USER_REGION) || 'US';
+            }
+            const regionCodeElem = document.getElementById('region-code');
+            if (regionCodeElem) regionCodeElem.textContent = region;
+        }
+
+        function syncTheme() {
+            let theme = 'dark';
+            if (window.store && typeof window.store.getTheme === 'function') {
+                theme = window.store.getTheme();
+            } else {
+                theme = localStorage.getItem(DS_STORAGE_KEYS.THEME) || 'dark';
+            }
+            if (theme === 'light') document.documentElement.classList.remove('dark');
+            else document.documentElement.classList.add('dark');
+        }
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === DS_STORAGE_KEYS.USER_REGION) {
+                const regionCodeElem = document.getElementById('region-code');
+                if (regionCodeElem) regionCodeElem.textContent = e.newValue || 'US';
+            }
+            if (e.key === DS_STORAGE_KEYS.THEME) {
+                if (e.newValue === 'light') document.documentElement.classList.remove('dark');
+                else document.documentElement.classList.add('dark');
+            }
+            if (e.key === DS_STORAGE_KEYS.ACTIVE_PROFILE) {
+                showToastNotification(`Switched to "${e.newValue}" profile. Refreshing...`, 'info');
+                setTimeout(() => location.reload(), 500);
+            }
+            if (e.key === DS_STORAGE_KEYS.BLOCKED_PEOPLE && typeof executeExpirationDataFetch !== 'undefined') {
+                executeExpirationDataFetch();
+            }
+        });
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(() => {});
+            }
+        }
+
+        // Watchlist functions using store.js if available, otherwise profile-aware localStorage
+        window.getLocalWatchlist = function() {
+            if (window.store && typeof window.store.getWatchlist === 'function') {
+                return window.store.getWatchlist();
+            }
+            const profileKey = getProfileStorageKey('watchlist');
+            try { return JSON.parse(localStorage.getItem(profileKey) || '[]'); } catch(e) { return []; }
+        };
+        window.saveLocalWatchlist = function(list) {
+            if (window.store && typeof window.store.setWatchlist === 'function') {
+                window.store.setWatchlist(list);
+                return;
+            }
+            const profileKey = getProfileStorageKey('watchlist');
+            localStorage.setItem(profileKey, JSON.stringify(list));
+        };
+
+        function initDiscoveryFeatures() {
+            syncRegionBadge();
+            syncTheme();
+            registerServiceWorker();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initializeUserPreferences();
             setupSearchEngine();
             bindFilterEventHandlers();
+            initOriginFilter();
+            initSubtitleFilter();
+            initTropeFilter();
             executeExpirationDataFetch();
+            initDiscoveryFeatures();
         });
 
         function initializeUserPreferences() {
-            if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
-            else document.documentElement.classList.add('dark');
-            const activeRegion = localStorage.getItem('user_region') || 'US';
+            // Use store if available for theme and region
+            if (window.store && typeof window.store.getTheme === 'function') {
+                const theme = window.store.getTheme();
+                if (theme === 'light') document.documentElement.classList.remove('dark');
+                else document.documentElement.classList.add('dark');
+            } else {
+                if (localStorage.getItem('cs-theme') === 'light') document.documentElement.classList.remove('dark');
+                else document.documentElement.classList.add('dark');
+            }
+            let activeRegion = 'US';
+            if (window.store && typeof window.store.getUserRegion === 'function') {
+                activeRegion = window.store.getUserRegion();
+            } else {
+                activeRegion = localStorage.getItem('user_region') || 'US';
+            }
             const countrySelector = document.getElementById('country-select');
             if (countrySelector) countrySelector.value = activeRegion;
             updateNavigationRegionBadge(activeRegion);
@@ -197,14 +489,24 @@
             document.getElementById('service-select')?.addEventListener('change', runLocalFiltersAndCompile);
             document.getElementById('urgency-filter')?.addEventListener('change', runLocalFiltersAndCompile);
             document.getElementById('country-select')?.addEventListener('change', (e) => {
-                localStorage.setItem('user_region', e.target.value);
-                updateNavigationRegionBadge(e.target.value);
+                const newRegion = e.target.value;
+                if (window.store && typeof window.store.setUserRegion === 'function') {
+                    window.store.setUserRegion(newRegion);
+                } else {
+                    localStorage.setItem('user_region', newRegion);
+                }
+                updateNavigationRegionBadge(newRegion);
                 executeExpirationDataFetch();
             });
             document.getElementById('refresh-btn')?.addEventListener('click', executeExpirationDataFetch);
             document.getElementById('theme-toggle')?.addEventListener('click', () => {
                 const isDark = document.documentElement.classList.toggle('dark');
-                localStorage.setItem('cs-theme', isDark ? 'dark' : 'light');
+                const newTheme = isDark ? 'dark' : 'light';
+                if (window.store && typeof window.store.setTheme === 'function') {
+                    window.store.setTheme(newTheme);
+                } else {
+                    localStorage.setItem('cs-theme', newTheme);
+                }
             });
             window.addEventListener('scroll', () => {
                 if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 600) {
@@ -213,28 +515,127 @@
             });
         }
 
-        function isAnalyticsOptedIn() { return localStorage.getItem('consent_given') === 'true'; }
-        function dispatchInsightsLog(eventType, transactionData = {}) {
-            if (!isAnalyticsOptedIn()) return;
-            try { navigator.sendBeacon(`${WORKER_URL}/api/analytics`, JSON.stringify({ event_type: eventType, client_timestamp: Date.now(), ...transactionData })); } catch(e) {}
+        // BLOCK P: Content Origin Filter functions
+        function initOriginFilter() {
+            const container = document.getElementById('origin-filter-container');
+            if (!container) return;
+            container.innerHTML = `
+                <span class="text-xs text-gray-500 mr-2 self-center">Origin:</span>
+                <button class="chip active" data-origin="all" onclick="setOriginFilter('all')">All</button>
+                ${contentOrigins.map(o => `<button class="chip" data-origin="${o.id}" onclick="setOriginFilter('${o.id}')">${o.name}</button>`).join('')}
+            `;
         }
 
+        function setOriginFilter(originId) {
+            currentOriginFilter = originId;
+            document.querySelectorAll('[data-origin]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.origin === String(originId));
+            });
+            runLocalFiltersAndCompile();
+        }
+
+        // BLOCK 9 MODIFICATION: filterByOrigin uses origin_country field from API
+        function filterByOrigin(items) {
+            if (currentOriginFilter === 'all') return items;
+            return items.filter(item => (item.origin_country === currentOriginFilter) || (item.original_language === currentOriginFilter));
+        }
+
+        // BLOCK Q: Subtitle Language Filter functions
+        function initSubtitleFilter() {
+            const container = document.getElementById('subtitle-filter-container');
+            if (!container) return;
+            container.innerHTML = `
+                <span class="text-xs text-gray-500 mr-2 self-center">Subtitles:</span>
+                <button class="chip active" data-subtitle="all" onclick="setSubtitleFilter('all')">All</button>
+                ${subtitleLanguages.map(s => `<button class="chip" data-subtitle="${s.code}" onclick="setSubtitleFilter('${s.code}')">${s.name}</button>`).join('')}
+                <span class="text-[10px] text-accent ml-2">⭐ Viki offers fan subtitles</span>
+            `;
+        }
+
+        function setSubtitleFilter(subtitleId) {
+            currentSubtitleFilter = subtitleId;
+            document.querySelectorAll('[data-subtitle]').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.subtitle === String(subtitleId));
+            });
+            runLocalFiltersAndCompile();
+        }
+
+        // BLOCK 9 MODIFICATION: filterBySubtitles uses available_subtitles array from API
+        function filterBySubtitles(items) {
+            if (currentSubtitleFilter === 'all') return items;
+            return items.filter(item => (item.available_subtitles || []).includes(currentSubtitleFilter));
+        }
+
+        // BLOCK R: Trope Filter functions (Multi-select)
+        function initTropeFilter() {
+            const container = document.getElementById('trope-filter-container');
+            if (!container) return;
+            
+            let html = `<div class="w-full mb-2"><span class="text-xs text-gray-500">Tropes (select multiple):</span></div>
+                <div class="flex flex-wrap gap-1.5">`;
+            
+            for (const [category, tropes] of Object.entries(tropeDatabase)) {
+                html += `<div class="w-full mt-2"><span class="text-[10px] text-gray-600 uppercase tracking-wider">${category.toUpperCase()}</span></div>`;
+                tropes.forEach(trope => {
+                    const isSelected = selectedTropes.includes(trope.id);
+                    html += `<button class="trope-chip text-xs px-2 py-1 rounded-full border transition-colors ${isSelected ? 'bg-accent text-black border-accent' : 'border-white/10 bg-transparent text-gray-400 hover:border-accent'}" data-trope="${trope.id}" onclick="toggleTrope('${trope.id}')">${trope.name}</button>`;
+                });
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function toggleTrope(tropeId) {
+            const index = selectedTropes.indexOf(tropeId);
+            const btn = document.querySelector(`.trope-chip[data-trope="${tropeId}"]`);
+            
+            if (index > -1) {
+                selectedTropes.splice(index, 1);
+                btn?.classList.remove('bg-accent', 'text-black', 'border-accent');
+                btn?.classList.add('bg-transparent', 'text-gray-400', 'border-white/10');
+            } else {
+                selectedTropes.push(tropeId);
+                btn?.classList.add('bg-accent', 'text-black', 'border-accent');
+                btn?.classList.remove('bg-transparent', 'text-gray-400', 'border-white/10');
+            }
+            runLocalFiltersAndCompile();
+        }
+
+        // BLOCK 9 MODIFICATION: filterByTropes uses trope_ids array from API
+        function filterByTropes(items) {
+            if (selectedTropes.length === 0) return items;
+            return items.filter(item => {
+                const itemTropes = item.trope_ids || [];
+                return selectedTropes.some(trope => itemTropes.includes(trope));
+            });
+        }
+
+        // BLOCK 8 MODIFICATION: executeExpirationDataFetch uses api-client.js if available
         async function executeExpirationDataFetch() {
             const loadingSkeleton = document.getElementById('loading-skeleton');
             const resultsGrid = document.getElementById('results-grid');
             const emptyState = document.getElementById('empty-state');
-            const countryCode = document.getElementById('country-select')?.value || 'US';
+            let countryCode = 'US';
+            if (window.store && typeof window.store.getUserRegion === 'function') {
+                countryCode = window.store.getUserRegion();
+            } else {
+                countryCode = document.getElementById('country-select')?.value || 'US';
+            }
             
             if (loadingSkeleton) loadingSkeleton.hidden = false;
             if (resultsGrid) resultsGrid.innerHTML = '';
             if (emptyState) emptyState.hidden = true;
             
             try {
-                const targetApiRoute = `${WORKER_URL}/api/leaving-soon?country=${countryCode}`;
-                const responseData = await fetch(targetApiRoute).then(res => {
+                let responseData;
+                if (window.apiClient && typeof window.apiClient.getLeavingSoon === 'function') {
+                    responseData = await window.apiClient.getLeavingSoon(countryCode);
+                } else {
+                    const targetApiRoute = `${WORKER_URL}/api/leaving-soon?country=${countryCode}`;
+                    const res = await fetch(targetApiRoute);
                     if (!res.ok) throw new Error(`API error ${res.status}`);
-                    return res.json();
-                });
+                    responseData = await res.json();
+                }
                 
                 masterExpirationsList = responseData.results || [];
                 const timestampLabel = document.getElementById('last-updated-label');
@@ -242,10 +643,8 @@
                     timestampLabel.textContent = `Last synchronized: ${new Date(responseData.updated).toLocaleString()}`;
                 }
                 
-                dispatchInsightsLog('leaving_soon_index_load', { country: countryCode, record_count: masterExpirationsList.length });
                 runLocalFiltersAndCompile();
             } catch (err) {
-                console.error('[Expirations Engine Failure]', err);
                 if (resultsGrid) {
                     resultsGrid.innerHTML = `<p class="text-xs font-mono text-red-400 col-span-full text-center py-10">Data matrix synchronization unavailable. Please check your connection.</p>`;
                 }
@@ -257,11 +656,22 @@
         function runLocalFiltersAndCompile() {
             const platformFilter = document.getElementById('service-select')?.value || 'all';
             const urgencyDeadline = parseInt(document.getElementById('urgency-filter')?.value || '30', 10);
-            filteredExpirationsList = masterExpirationsList.filter(item => {
-                if ((item.days_left || 30) > urgencyDeadline) return false;
-                if (platformFilter !== 'all' && item.platform?.toLowerCase() !== platformFilter.toLowerCase()) return false;
-                return true;
-            });
+            
+            let filtered = [...masterExpirationsList];
+            
+            filtered = filtered.filter(item => (item.days_left || 30) <= urgencyDeadline);
+            if (platformFilter !== 'all') {
+                filtered = filtered.filter(item => item.platform?.toLowerCase() === platformFilter.toLowerCase());
+            }
+            
+            filtered = filterByOrigin(filtered);
+            filtered = filterBySubtitles(filtered);
+            filtered = filterByTropes(filtered);
+            filtered = filterByBlockedPeople(filtered);
+            
+            filtered.sort((a, b) => (a.days_left || 999) - (b.days_left || 999));
+            
+            filteredExpirationsList = filtered;
             currentlyRenderedPageLimit = 1;
             renderWatchlistCanvas(false);
         }
@@ -297,15 +707,15 @@
                 const inWatchlistFlag = verifyLocalWatchlistPresence(id);
                 const urgencyBadgeStyle = remainingDays <= 3 ? 'bg-red-600 badge-pulse text-white' : (remainingDays <= 7 ? 'bg-red-600 text-white' : 'bg-amber-500 text-black');
                 return `
-                    <article class="group bg-gray-900 border border-white/5 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" role="listitem">
+                    <article class="group bg-gray-900 border border-white/5 rounded-xl overflow-hidden shadow-md flex flex-col justify-between" role="listitem" data-film-id="${id}">
                         <div class="relative aspect-[2/3] w-full overflow-hidden bg-gray-950">
                             <span class="absolute top-2 left-2 z-10 px-1.5 py-0.5 rounded text-[10px] font-bold ${urgencyBadgeStyle}">${remainingDays}d left</span>
                             <a href="${targetDetailUrl}">
                                 <img src="${escapeAttr(posterPath)}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="handleImgError(this)">
                             </a>
-                            <button class="absolute top-2 right-2 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
-                                data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}"
-                                onclick="toggleLocalWatchlistEvent(event, this)" aria-label="Toggle Watchlist">
+                            <button class="watchlist-btn absolute top-2 right-2 z-10 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white transition-colors"
+                                    data-id="${id}" data-title="${escapeAttr(title)}" data-type="${type}" data-poster="${escapeAttr(item.poster_path || '')}"
+                                    aria-label="Toggle Watchlist">
                                 <svg class="w-4 h-4" fill="${inWatchlistFlag ? '#00C4BC' : 'none'}" stroke="${inWatchlistFlag ? '#00C4BC' : 'currentColor'}" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
                                 </svg>
@@ -317,49 +727,75 @@
                                 <span>${escapeHtml(platform)}</span>
                                 <span class="uppercase">${type === 'tv' ? 'TV' : 'Movie'}</span>
                             </div>
+                            ${getWatchButtons(platform, title, id, remainingDays)}
                         </div>
                     </article>`;
             }).join('');
             if (appendRecords) canvasGrid.innerHTML += html;
             else canvasGrid.innerHTML = html;
+            setTimeout(() => setupDwellTimeTracking(), 100);
         }
 
-        function getLocalWatchlist() { try { return JSON.parse(localStorage.getItem('watchlist') || '[]'); } catch { return []; } }
-        function saveLocalWatchlist(listData) { localStorage.setItem('watchlist', JSON.stringify(listData)); }
-        function verifyLocalWatchlistPresence(id) { return getLocalWatchlist().some(item => String(item.tmdb_id) === String(id)); }
-
-        function toggleLocalWatchlistEvent(event, elementRef) {
-            event.preventDefault();
-            event.stopPropagation();
-            const watchlist = getLocalWatchlist();
-            const mediaId = elementRef.dataset.id;
-            const idx = watchlist.findIndex(item => String(item.tmdb_id) === String(mediaId));
-            let added = false;
-            if (idx > -1) {
-                watchlist.splice(idx, 1);
-                saveLocalWatchlist(watchlist);
-                showToastNotification('Removed from watchlist indices', 'info');
-            } else {
-                watchlist.unshift({
-                    tmdb_id: String(mediaId),
-                    type: elementRef.dataset.type || 'movie',
-                    title: elementRef.dataset.title,
-                    poster_path: elementRef.dataset.poster || null,
-                    genre_ids: [],
-                    status: 'want_to_watch',
-                    date_added: Date.now()
-                });
-                saveLocalWatchlist(watchlist);
-                showToastNotification('Added to tracking dashboard', 'success');
-                added = true;
-            }
-            const svg = elementRef.querySelector('svg');
-            if (svg) {
-                svg.setAttribute('fill', added ? '#00C4BC' : 'none');
-                svg.setAttribute('stroke', added ? '#00C4BC' : 'currentColor');
-            }
-            dispatchInsightsLog('leaving_soon_watchlist_toggle', { mediaId, added });
+        function verifyLocalWatchlistPresence(id) { 
+            const watchlist = window.getLocalWatchlist();
+            return watchlist.some(item => String(item.tmdb_id) === String(id)); 
         }
+
+        // BLOCK 6 REPLACEMENT: delegated event handler (no inline onclick)
+        document.body.addEventListener('click', (e) => {
+            const watchBtn = e.target.closest('.watch-btn');
+            if (watchBtn) {
+                e.preventDefault();
+                const platform = watchBtn.dataset.platform;
+                const title = watchBtn.dataset.title;
+                const tmdbId = watchBtn.dataset.tmdb;
+                const daysLeft = watchBtn.dataset.days;
+                if (window.apiClient && window.apiClient.trackOutbound) {
+                    window.apiClient.trackOutbound({ platform, title, tmdbId, daysLeft, page: 'leaving_soon' });
+                }
+                const url = getStreamingUrl(platform, title, tmdbId);
+                window.open(url, '_blank');
+                showToastNotification(`Opening ${platform.toUpperCase()}...`, 'info');
+                return;
+            }
+            const wlBtn = e.target.closest('.watchlist-btn');
+            if (wlBtn) {
+                e.preventDefault();
+                const id = wlBtn.dataset.id;
+                const title = wlBtn.dataset.title;
+                const type = wlBtn.dataset.type;
+                const poster = wlBtn.dataset.poster;
+                let watchlist = window.getLocalWatchlist();
+                const idx = watchlist.findIndex(item => String(item.tmdb_id) === String(id));
+                let added = false;
+                if (idx > -1) {
+                    watchlist.splice(idx, 1);
+                    window.saveLocalWatchlist(watchlist);
+                    showToastNotification('Removed from watchlist indices', 'info');
+                } else {
+                    watchlist.unshift({
+                        tmdb_id: String(id),
+                        type: type || 'movie',
+                        title: title,
+                        poster_path: poster || null,
+                        genre_ids: [],
+                        status: 'want_to_watch',
+                        date_added: Date.now()
+                    });
+                    window.saveLocalWatchlist(watchlist);
+                    showToastNotification('Added to tracking dashboard', 'success');
+                    added = true;
+                }
+                const svg = wlBtn.querySelector('svg');
+                if (svg) {
+                    svg.setAttribute('fill', added ? '#00C4BC' : 'none');
+                    svg.setAttribute('stroke', added ? '#00C4BC' : 'currentColor');
+                }
+                if (window.apiClient && window.apiClient.trackWatchlistToggle) {
+                    window.apiClient.trackWatchlistToggle({ mediaId: id, added, source: 'leaving_soon' });
+                }
+            }
+        });
 
         function setupSearchEngine() {
             let debounce = null;
@@ -404,6 +840,18 @@
             container.appendChild(el);
             setTimeout(() => el.remove(), 3000);
         }
+
+        // Expose global functions for remaining inline handlers (origin, subtitle, trope)
+        window.setOriginFilter = setOriginFilter;
+        window.setSubtitleFilter = setSubtitleFilter;
+        window.toggleTrope = toggleTrope;
     </script>
+
+    <!-- BLOCK 7: Required scripts before closing body -->
+    <script src="/js/store.js"></script>
+    <script src="/js/consent.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api-client.js"></script>
+    <script src="/js/navigation.js"></script>
 </body>
 </html>
