@@ -486,11 +486,17 @@
         }
         
         function initTasteProfile() {
-            const existing = store.get('taste_profile');
-            if (!existing || Object.keys(existing).length === 0) {
-                updateTasteProfile();
-            }
-        }
+    let existing;
+    if (typeof Store !== 'undefined' && Store.getItem) {
+        existing = Store.getItem('taste_profile');
+    } else {
+        existing = localStorage.getItem('taste_profile');
+        if (existing) try { existing = JSON.parse(existing); } catch(e) { existing = null; }
+    }
+    if (!existing || Object.keys(existing).length === 0) {
+        updateTasteProfile();
+    }
+}
 
         // Recommendations using apiClient
         async function loadRecs() {
