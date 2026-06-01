@@ -628,13 +628,13 @@
                     <p id="results-count" class="text-sm text-gray-400 font-medium" aria-live="polite">Loading results...</p>
                     <div class="flex items-center gap-2 flex-wrap">
                         <select id="sort-by" onchange="onSortChange()" class="bg-gray-900 border border-white/10 rounded-lg px-3 py-1.5 text-sm text-gray-300 focus:outline-none focus:border-accent" aria-label="Sort catalog items">
-                            <option value="popularity.desc">Most Popular</option>
-                            <option value="vote_average.desc">Highest Rated</option>
-                            <option value="first_air_date.desc">Newest First</option>
-                            <option value="first_air_date.asc">Oldest First</option>
-                            <option value="revenue.desc">Highest Grossing</option>
-                            <option value="original_title.asc">A to Z</option>
-                        </select>
+    <option value="popularity.desc">Most Popular</option>
+    <option value="vote_average.desc">Highest Rated</option>
+    <option value="first_air_date.desc" selected>Newest First</option>
+    <option value="first_air_date.asc">Oldest First</option>
+    <option value="revenue.desc">Highest Grossing</option>
+    <option value="original_title.asc">A to Z</option>
+</select>
                         <button id="view-grid" onclick="setView('grid')" class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white" aria-label="Grid view" aria-pressed="true">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                         </button>
@@ -1604,8 +1604,7 @@
         }
         params.set('watch_region',  region);
 
-        const sortEl = document.getElementById('sort-by');
-        if (sortEl) params.set('sort_by', sortEl.value);
+        const sortValue = document.getElementById('sort-by')?.value;
 
         if (selectedGenres.size) params.set('with_genres', [...selectedGenres].join(','));
 
@@ -1633,6 +1632,18 @@
             if (yMax !== '2026') params.set('primary_release_date.lte', `${yMax}-12-31`);
         }
 
+        // Set sort based on content type (supports both movies and TV shows)
+        if (sortValue === 'first_air_date.desc' || sortValue === 'first_air_date.asc') {
+            if (ct === 'tv') {
+                params.set('sort_by', sortValue);
+            } else {
+                const order = sortValue === 'first_air_date.desc' ? 'desc' : 'asc';
+                params.set('sort_by', `primary_release_date.${order}`);
+            }
+        } else {
+            params.set('sort_by', sortValue || 'popularity.desc');
+        }
+
         const rMin = document.getElementById('runtime-min')?.value;
         const rMax = document.getElementById('runtime-max')?.value;
         if (rMin !== '0')   params.set('with_runtime.gte', rMin);
@@ -1643,7 +1654,6 @@
             const overrideLang = catLangs[currentShortCategory];
             if (overrideLang) params.set('with_original_language', overrideLang);
         }
-
         const tropes = getSelectedTropes();
         if (tropes.length === 1) params.set('with_trope',  tropes[0]);
         if (tropes.length  >  1) params.set('with_tropes', tropes.join(','));
