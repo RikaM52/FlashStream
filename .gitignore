@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cloudflare
+.wrangler/
+.dev.vars
+
+# Temporary files
+*.tmp
+*.temp
+cache/

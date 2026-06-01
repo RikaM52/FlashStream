@@ -6,7 +6,7 @@
 // - Added message handlers for SET_OFFLINE_FIRST and SKIP_WAITING
 // - Added Background Sync for offline event recovery
 // - Expanded SAFE_PRECACHE to include CSS, JS, and offline assets
-// - Versioned cache name (flashstream-v5)
+// - Versioned cache name (flashstream-v20260601171842)
 // - Added Periodic Background Sync (Phase 3 ready)
 //
 // ROOT CAUSE OF ALL PREVIOUS FAILURES, EXPLAINED SIMPLY:
@@ -35,7 +35,7 @@
 //
 // ============================================================
 
-const CACHE_NAME = 'flashstream-v5';
+const CACHE_NAME = 'flashstream-v20260601171842';
 const OFFLINE_FIRST_KEY = 'offline-first-enabled';
 
 // Expanded SAFE_PRECACHE - now includes critical static assets
