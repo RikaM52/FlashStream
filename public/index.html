@@ -448,52 +448,25 @@
                 })), 'leaving-row');
             } catch(e) {}
         }
-
         // Taste profile (uses store)
-       function updateTasteProfile() {
-    let wl = [];
-    try { 
-        if (typeof Store !== 'undefined' && Store.getItem) {
-            wl = Store.getItem('watchlist') || [];
-        } else {
-            wl = JSON.parse(localStorage.getItem('watchlist') || '[]');
-        }
-    } catch(e) { wl = []; }
-    const genreScores = {};
-    wl.forEach(function(item) {
-        if (item.status === 'finished' || item.status === 'favorites' || item.status === 'rewatch') {
-            const weight = item.status === 'favorites' ? 3 : (item.status === 'rewatch' ? 2 : 1);
-            (item.genre_ids || []).forEach(function(g) {
-                genreScores[g] = (genreScores[g] || 0) + weight;
-            });
-        }
-    });
-    
-    const existingTaste = PREFS.getTaste();
-    const vetoedGenres = existingTaste.vetoed_genres || {};
-    
-    const likedGenres = {};
-    Object.entries(genreScores).forEach(function([genreId, score]) {
-        if (score >= 2 && !vetoedGenres[genreId]) {
-            likedGenres[genreId] = score;
-        }
-    });
-    
-    const sortedLiked = Object.entries(likedGenres).sort(function(a,b){ return b[1] - a[1]; }).map(function(entry){ return entry[0]; });
-    
-    const tasteProfile = {
-        liked_genres: sortedLiked,
-        genre_scores: genreScores,
-        vetoed_genres: vetoedGenres,
-        last_updated: Date.now()
-    };
-    if (typeof Store !== 'undefined' && Store.setItem) {
-        Store.setItem('taste_profile', tasteProfile);
-    } else {
-        localStorage.setItem('taste_profile', JSON.stringify(tasteProfile));
-    }
-    return tasteProfile;
-}
+        function updateTasteProfile() {
+            let wl = [];
+            try { 
+                if (typeof Store !== 'undefined' && Store.getItem) {
+                    wl = Store.getItem('watchlist') || [];
+                } else {
+                    wl = JSON.parse(localStorage.getItem('watchlist') || '[]');
+                }
+            } catch(e) { wl = []; }
+            
+            const genreScores = {};
+            wl.forEach(function(item) {
+                if (item.status === 'finished' || item.status === 'favorites' || item.status === 'rewatch') {
+                    const weight = item.status === 'favorites' ? 3 : (item.status === 'rewatch' ? 2 : 1);
+                    (item.genre_ids || []).forEach(function(g) {
+                        genreScores[g] = (genreScores[g] || 0) + weight;
+                    });
+                }
             });
             
             const existingTaste = PREFS.getTaste();
@@ -514,23 +487,29 @@
                 vetoed_genres: vetoedGenres,
                 last_updated: Date.now()
             };
-            store.set('taste_profile', tasteProfile);
+if (typeof Store !== 'undefined' && Store.setItem) {
+    Store.setItem('taste_profile', updatedTaste);
+} else {
+    localStorage.setItem('taste_profile', JSON.stringify(updatedTaste));
+}
             return tasteProfile;
         }
-        
-        function initTasteProfile() {
-    let existing;
-    if (typeof Store !== 'undefined' && Store.getItem) {
-        existing = Store.getItem('taste_profile');
-    } else {
-        existing = localStorage.getItem('taste_profile');
-        if (existing) try { existing = JSON.parse(existing); } catch(e) { existing = null; }
-    }
-    if (!existing || Object.keys(existing).length === 0) {
-        updateTasteProfile();
-    }
-}
 
+        function initTasteProfile() {
+            let existing;
+            if (typeof Store !== 'undefined' && Store.getItem) {
+                existing = Store.getItem('taste_profile');
+            } else {
+                const raw = localStorage.getItem('taste_profile');
+                if (raw) {
+                    try { existing = JSON.parse(raw); } catch(e) { existing = null; }
+                }
+            }
+            if (!existing || Object.keys(existing).length === 0) {
+                updateTasteProfile();
+            }
+        }
+ 
         // Recommendations using apiClient
         async function loadRecs() {
             const wl = await getWL();
