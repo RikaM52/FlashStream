@@ -841,7 +841,7 @@ function isUserLoggedIn() {
         window.isUserLoggedIn = isUserLoggedIn;
         window.handleLogout = handleLogout;
 
-        // Additional taste profile functions (unchanged, but using store)
+        // Additional taste profile functions (using Store)
         function vetoGenre(genreId, genreName) {
             const taste = PREFS.getTaste();
             const vetoed = taste.vetoed_genres || {};
@@ -858,7 +858,11 @@ function isUserLoggedIn() {
                 vetoed_genres: vetoed,
                 last_updated: Date.now()
             };
-            Store.getItem('taste_profile', updatedTaste);
+            if (typeof Store !== 'undefined' && Store.setItem) {
+                Store.setItem('taste_profile', updatedTaste);
+            } else {
+                localStorage.setItem('taste_profile', JSON.stringify(updatedTaste));
+            }
             loadRecs();
             return vetoed[genreId] === undefined;
         }
