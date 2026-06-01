@@ -320,14 +320,29 @@
             return list.some(i => String(i.tmdb_id) === String(id));
         }
 
+        
         async function toggleWL(item) {
             if (!window.apiClient) return false;
+            
+            // Double-check authentication
+            const token = localStorage.getItem('flashstream_auth_token');
+            if (!token) {
+                if (typeof showToast === 'function') {
+                    showToast('Please log in to add to watchlist', 'info');
+                }
+                setTimeout(() => {
+                    window.location.href = '/login?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+                }, 1000);
+                return false;
+            }
+            
             const list = await getWL();
             const idx = list.findIndex(i => String(i.tmdb_id) === String(item.tmdb_id));
             let added = false;
             if (idx > -1) {
                 await apiClient.removeFromWatchlist(String(item.tmdb_id));
                 added = false;
+                if (typeof showToast === 'function') showToast('Removed from watchlist', 'success');
             } else {
                 await apiClient.addToWatchlist({
                     tmdb_id: String(item.tmdb_id),
@@ -337,14 +352,38 @@
                     genre_ids: item.genre_ids || []
                 });
                 added = true;
+                if (typeof showToast === 'function') showToast('Added to watchlist!', 'success');
             }
             watchlistCache = null;
             setTimeout(() => { updateTasteProfile(); loadRecs(); }, 100);
             return added;
         }
-
         async function handleWLBtn(event, btn) {
-            event.preventDefault(); event.stopPropagation();
+            event.preventDefault(); 
+            event.stopPropagation();
+            
+            // Check if user is logged in
+            const token = localStorage.getItem('flashstream_auth_token');
+            if (!token) {
+                // Store current page to redirect back after login
+                sessionStorage.setItem('redirect_after_login', window.location.pathname + window.location.search);
+                
+                // Show toast notification
+                if (typeof showToast === 'function') {
+                    showToast('Please log in to add to watchlist', 'info');
+                } else if (typeof showToastNotification === 'function') {
+                    showToastNotification('Please log in to add to watchlist', 'info');
+                } else {
+                    alert('Please log in to add to watchlist');
+                }
+                
+                // Redirect to login page
+                setTimeout(() => {
+                    window.location.href = '/login?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+                }, 1000);
+                return;
+            }
+            
             let parsedGenres = [];
             try { parsedGenres = JSON.parse(btn.dataset.genres || '[]'); } catch(e) {}
             const added = await toggleWL({ 
@@ -361,7 +400,6 @@
             }
             btn.setAttribute('aria-pressed', String(added));
         }
-
         // Render card with data attributes (no inline tracking)
         function renderCard(item, sectionId = '') {
             const id = item.id;
