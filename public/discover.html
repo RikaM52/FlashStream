@@ -1624,31 +1624,26 @@
 
         const yMin = document.getElementById('year-min')?.value;
         const yMax = document.getElementById('year-max')?.value;
+        const today = new Date().toISOString().split('T')[0];
+        const currentYear = new Date().getFullYear();
+        
         if (ct === 'tv') {
-            if (yMin !== '1950') params.set('first_air_date.gte',  `${yMin}-01-01`);
-            if (yMax !== '2026') params.set('first_air_date.lte',  `${yMax}-12-31`);
-        } else {
-            if (yMin !== '1950') params.set('primary_release_date.gte', `${yMin}-01-01`);
-            if (yMax !== '2026') params.set('primary_release_date.lte', `${yMax}-12-31`);
-        }
-
-        // Set sort based on content type (supports both movies and TV shows)
-        if (sortValue === 'first_air_date.desc' || sortValue === 'first_air_date.asc') {
-            if (ct === 'tv') {
-                params.set('sort_by', sortValue);
-            } else {
-                const order = sortValue === 'first_air_date.desc' ? 'desc' : 'asc';
-                params.set('sort_by', `primary_release_date.${order}`);
+            // Only include released TV shows (first_air_date <= today)
+            params.set('first_air_date.lte', today);
+            if (yMin !== '1950') params.set('first_air_date.gte', `${yMin}-01-01`);
+            // Don't set a max year beyond current year for released content
+            if (yMax !== '2026' && yMax <= currentYear) {
+                params.set('first_air_date.lte', `${yMax}-12-31`);
             }
         } else {
-            params.set('sort_by', sortValue || 'popularity.desc');
+            // Only include released movies (primary_release_date <= today)
+            params.set('primary_release_date.lte', today);
+            if (yMin !== '1950') params.set('primary_release_date.gte', `${yMin}-01-01`);
+            // Don't set a max year beyond current year for released content
+            if (yMax !== '2026' && yMax <= currentYear) {
+                params.set('primary_release_date.lte', `${yMax}-12-31`);
+            }
         }
-
-        const rMin = document.getElementById('runtime-min')?.value;
-        const rMax = document.getElementById('runtime-max')?.value;
-        if (rMin !== '0')   params.set('with_runtime.gte', rMin);
-        if (rMax !== '300') params.set('with_runtime.lte', rMax);
-
         if (ct === 'short' && currentShortCategory) {
             const catLangs = { korean:'ko', japanese:'ja', chinese:'zh', thai:'th' };
             const overrideLang = catLangs[currentShortCategory];
