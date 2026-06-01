@@ -373,7 +373,7 @@
             const href = '/movie-detail?id=' + id + '&type=' + type;
             const inWL = isInWL(id);
             const badge = getLifecycleBadge(item);
-            const hideRatings = store.get('hide_ratings') === 'true';
+            const hideRatings = (typeof Store !== 'undefined' && Store.getItem) ? Store.getItem('hide_ratings') === 'true' : localStorage.getItem('hide_ratings') === 'true';
             return '<article class="flex-shrink-0 w-36 group" data-title="' + escapeAttr(title) + '" data-type="' + type + '" data-id="' + id + '" role="listitem">' +
                 '<div class="relative rounded-xl overflow-hidden bg-gray-800 aspect-[2/3]">' + badge +
                 '<a href="' + href + '" data-outbound-id="' + id + '" data-outbound-type="' + type + '" data-outbound-position="' + (sectionId || 'row') + '">' +
@@ -487,27 +487,12 @@
                 vetoed_genres: vetoedGenres,
                 last_updated: Date.now()
             };
-if (typeof Store !== 'undefined' && Store.setItem) {
-    Store.setItem('taste_profile', updatedTaste);
-} else {
-    localStorage.setItem('taste_profile', JSON.stringify(updatedTaste));
-}
-            return tasteProfile;
-        }
-
-        function initTasteProfile() {
-            let existing;
-            if (typeof Store !== 'undefined' && Store.getItem) {
-                existing = Store.getItem('taste_profile');
+            if (typeof Store !== 'undefined' && Store.setItem) {
+                Store.setItem('taste_profile', tasteProfile);
             } else {
-                const raw = localStorage.getItem('taste_profile');
-                if (raw) {
-                    try { existing = JSON.parse(raw); } catch(e) { existing = null; }
-                }
+                localStorage.setItem('taste_profile', JSON.stringify(tasteProfile));
             }
-            if (!existing || Object.keys(existing).length === 0) {
-                updateTasteProfile();
-            }
+            return tasteProfile;
         }
  
         // Recommendations using apiClient
@@ -873,7 +858,7 @@ function isUserLoggedIn() {
                 vetoed_genres: vetoed,
                 last_updated: Date.now()
             };
-            store.set('taste_profile', updatedTaste);
+            Store.getItem('taste_profile', updatedTaste);
             loadRecs();
             return vetoed[genreId] === undefined;
         }
@@ -894,7 +879,11 @@ function isUserLoggedIn() {
                 vetoed_genres: {},
                 last_updated: Date.now()
             };
-            store.set('taste_profile', updatedTaste);
+            if (typeof Store !== 'undefined' && Store.setItem) {
+                Store.setItem('taste_profile', updatedTaste);
+            } else {
+                localStorage.setItem('taste_profile', JSON.stringify(updatedTaste));
+            }
             showToast('All genre vetoes cleared', 'success');
             loadRecs();
         }
@@ -946,7 +935,11 @@ function isUserLoggedIn() {
                     vetoed_genres: vetoed,
                     last_updated: Date.now()
                 };
-                store.set('taste_profile', updatedTaste);
+                if (typeof Store !== 'undefined' && Store.setItem) {
+                    Store.setItem('taste_profile', updatedTaste);
+                } else {
+                    localStorage.setItem('taste_profile', JSON.stringify(updatedTaste));
+                }
                 showToast(genreName + ' removed from veto list', 'info');
                 loadRecs();
                 const container = document.getElementById('veto-genres-container');
