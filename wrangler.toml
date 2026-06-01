@@ -9,78 +9,37 @@ binding       = "DB"
 database_name = "flashstream-db"
 database_id   = "6da5875a-37c7-4c12-b1d3-6eeaf4ced61c"
 
-# ── KV NAMESPACES ─────────────────────────────────────────
-# Create these via: wrangler kv:namespace create "CACHE"
-# Then paste the returned ID below.
+# ── KV NAMESPACES (temporarily disabled) ──────────────────
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id      = "REPLACE_WITH_CACHE_KV_ID"
 
-[[kv_namespaces]]
-binding = "CACHE"
-id      = "REPLACE_WITH_CACHE_KV_ID"
-# preview_id = "REPLACE_WITH_CACHE_PREVIEW_ID"
+# [[kv_namespaces]]
+# binding = "SESSIONS"
+# id      = "REPLACE_WITH_SESSIONS_KV_ID"
 
-[[kv_namespaces]]
-binding = "SESSIONS"
-id      = "REPLACE_WITH_SESSIONS_KV_ID"
-# preview_id = "REPLACE_WITH_SESSIONS_PREVIEW_ID"
+# [[kv_namespaces]]
+# binding = "RATE_LIMITS"
+# id      = "REPLACE_WITH_RATE_LIMITS_KV_ID"
 
-[[kv_namespaces]]
-binding = "RATE_LIMITS"
-id      = "REPLACE_WITH_RATE_LIMITS_KV_ID"
-# preview_id = "REPLACE_WITH_RATE_LIMITS_PREVIEW_ID"
-
-[[kv_namespaces]]
-binding = "LEAVING_SOON_CACHE"
-id      = "REPLACE_WITH_LEAVING_SOON_KV_ID"
-# preview_id = "REPLACE_WITH_LEAVING_SOON_PREVIEW_ID"
+# [[kv_namespaces]]
+# binding = "LEAVING_SOON_CACHE"
+# id      = "REPLACE_WITH_LEAVING_SOON_KV_ID"
 
 # ── STATIC ENVIRONMENT VARIABLES ──────────────────────────
-# Non-secret config. Secrets go in wrangler secret put SECRET_NAME
-
 [vars]
 ENVIRONMENT          = "production"
 ALLOWED_ORIGIN       = "https://flashstream.pages.dev"
 ALLOWED_ORIGIN_DEV   = "http://localhost:3000"
 CLIENT_HEADER_KEY    = "X-FlashStream-Client"
 CLIENT_HEADER_VALUE  = "web"
-JWT_EXPIRY_SECONDS   = "604800"   # 7 days
-VERIFY_TOKEN_EXPIRY  = "86400"    # 24 hours
-RESET_TOKEN_EXPIRY   = "3600"     # 1 hour
+JWT_EXPIRY_SECONDS   = "604800"
+VERIFY_TOKEN_EXPIRY  = "86400"
+RESET_TOKEN_EXPIRY   = "3600"
 SESSION_COOKIE_NAME  = "fs_session"
 B2B_RATE_LIMIT_DAY   = "1000"
-
-# Honeypot fake IDs — requests to these are flagged as bots
 HONEYPOT_TMDB_IDS    = "999999999,888888888,777777777"
-
-# ── SECRETS (set via: wrangler secret put SECRET_NAME) ────
-# These are listed here for documentation only.
-# Do NOT put actual values here — use wrangler secret put.
-#
-# TMDB_API_KEY            — The Movie Database API key
-# STREAMING_API_KEY       — RapidAPI streaming availability key
-# STREAMING_API_BASE_URL  — RapidAPI base URL
-# JWT_SECRET              — Random 32+ char string for signing JWTs
-# EMAIL_API_KEY           — Resend / SendGrid / Mailgun API key
-# EMAIL_FROM              — no-reply@flashstream.app
-# EMAIL_DOMAIN            — flashstream.app
-# TURNSTILE_SECRET        — Cloudflare Turnstile secret key
-# ADMIN_API_KEY           — Admin endpoints protection key
-# VIKI_API_KEY            — Viki partner API key (when available)
-# IQIYI_API_KEY           — iQIYI API key (when available)
-# WETV_API_KEY            — WeTV API key (when available)
-
-# ── CRON TRIGGERS ─────────────────────────────────────────
-[triggers]
-crons = [
-  "0 */6 * * *",    # Every 6 hours: refresh leaving-soon cache
-  "0 2 * * *",      # Daily at 2am UTC: clean expired sessions & tokens
-  "0 3 * * 1",      # Weekly Monday 3am UTC: aggregate B2B trend reports
-  "*/30 * * * *"    # Every 30 min: warm popular content cache
-]
 
 # ── OBSERVABILITY ─────────────────────────────────────────
 [observability]
 enabled = true
-
-# ── LIMITS (free tier safe) ───────────────────────────────
-[limits]
-cpu_ms = 50

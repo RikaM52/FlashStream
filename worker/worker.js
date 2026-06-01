@@ -34,7 +34,6 @@ const RATE_LIMITS = {
 };
 
 // ── ENTRY POINT ──────────────────────────────────────────────
-
 export default {
   async fetch(request, env, ctx) {
     // OPTIONS pre-flight
@@ -50,6 +49,9 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
+    // Skip cron jobs if no DB (prevents errors)
+    if (!env.DB) return;
+    
     switch (event.cron) {
       case '0 */6 * * *':   await cronRefreshLeavingSoon(env);  break;
       case '0 2 * * *':     await cronCleanup(env);             break;
@@ -104,6 +106,7 @@ async function route(request, env, ctx) {
   if (path === '/api/leaving-soon'     && method === 'GET')    return handleLeavingSoon(request, env);
   if (path === '/api/upcoming'         && method === 'GET')    return handleUpcoming(request, env);
   if (path === '/api/geo'              && method === 'GET')    return handleGeo(request, env);
+  if (path === '/api/discover'         && method === 'GET')    return handleDiscover(request, env);
 
   // Community
   if (path === '/api/tags'             && method === 'GET')    return handleTagsGet(request, env);
@@ -147,14 +150,14 @@ async function route(request, env, ctx) {
 // ── SECURITY MIDDLEWARE ───────────────────────────────────────
 
 async function checkSecurity(request, env, path) {
-  // 1. Client header check (skip B2B — they use API keys instead)
-  if (!path.startsWith('/api/b2b') && !path.startsWith('/api/health')) {
-    const clientHeader = request.headers.get(env.CLIENT_HEADER_KEY);
-    if (clientHeader !== env.CLIENT_HEADER_VALUE) {
-      await logHoneypotHit(env, request, path, 'missing_client_header');
-      return jsonError('Forbidden', 403);
-    }
-  }
+  // 1. Client header check (temporarily disabled for debugging)
+  // if (!path.startsWith('/api/b2b') && !path.startsWith('/api/health')) {
+  //   const clientHeader = request.headers.get(env.CLIENT_HEADER_KEY);
+  //   if (clientHeader !== env.CLIENT_HEADER_VALUE) {
+  //     await logHoneypotHit(env, request, path, 'missing_client_header');
+  //     return jsonError('Forbidden', 403);
+  //   }
+  // }
 
   // 2. Honeypot TMDB ID check (query param)
   const url = new URL(request.url);
@@ -166,20 +169,19 @@ async function checkSecurity(request, env, path) {
       return jsonError('Not found', 404);
     }
   }
+  // 3. Rate limiting (skip if KV not configured)
+  if (env.RATE_LIMITS) {
+    const limitKey  = rateLimitKey(path);
+    const limitConf = RATE_LIMITS[limitKey] || RATE_LIMITS.default;
+    const ipHash    = await hashIP(request, env);
+    const limited   = await checkRateLimit(env, ipHash, limitKey, limitConf);
+    if (limited) return jsonError('Too many requests', 429);
 
-  // 3. Rate limiting
-  const limitKey  = rateLimitKey(path);
-  const limitConf = RATE_LIMITS[limitKey] || RATE_LIMITS.default;
-  const ipHash    = await hashIP(request, env);
-  const limited   = await checkRateLimit(env, ipHash, limitKey, limitConf);
-  if (limited) return jsonError('Too many requests', 429);
-
-  // 4. Banned IP check
-  const banned = await env.RATE_LIMITS.get(`ban:${ipHash}`);
-  if (banned) return jsonError('Forbidden', 403);
-
-  return null;
-}
+    // 4. Banned IP check
+    const banned = await env.RATE_LIMITS.get(`ban:${ipHash}`);
+    if (banned) return jsonError('Forbidden', 403);
+  }
+} 
 
 function rateLimitKey(path) {
   if (path === '/api/auth/register') return 'register';
@@ -190,8 +192,14 @@ function rateLimitKey(path) {
 }
 
 async function checkRateLimit(env, ipHash, endpoint, { max, window: win }) {
+  // Skip rate limiting if KV namespace doesn't exist
+  if (!env.RATE_LIMITS) {
+    return false; // Allow all requests when no KV is configured
+  }
+  
   const key = `rl:${ipHash}:${endpoint}`;
   const now = Math.floor(Date.now() / 1000);
+  
   try {
     const raw = await env.RATE_LIMITS.get(key);
     if (!raw) {
@@ -373,10 +381,12 @@ async function requireAuth(request, env) {
   const payload = await verifyJWT(jwt, env.JWT_SECRET);
   if (!payload) return { user: null, error: jsonError('Unauthorized', 401) };
 
-  // Check session is still alive in KV
-  const sessionKey = `session:${payload.sub}:${payload.jti}`;
-  const sessionAlive = await env.SESSIONS.get(sessionKey);
-  if (!sessionAlive) return { user: null, error: jsonError('Session expired', 401) };
+  // Check session is still alive in KV (if KV exists)
+  if (env.SESSIONS) {
+    const sessionKey = `session:${payload.sub}:${payload.jti}`;
+    const sessionAlive = await env.SESSIONS.get(sessionKey);
+    if (!sessionAlive) return { user: null, error: jsonError('Session expired', 401) };
+  }
 
   return { user: payload, error: null };
 }
@@ -520,12 +530,14 @@ async function handleLogin(request, env) {
 
   const token = await signJWT(payload, env.JWT_SECRET);
 
-  // Store session in KV
-  await env.SESSIONS.put(
-    `session:${user.id}:${jti}`,
-    JSON.stringify({ userId: user.id, createdAt: now }),
-    { expirationTtl: Number(env.JWT_EXPIRY_SECONDS || 604800) }
-  );
+  // Store session in KV 
+  if (env.SESSIONS) {
+    await env.SESSIONS.put(
+      `session:${user.id}:${jti}`,
+      JSON.stringify({ userId: user.id, createdAt: now }),
+      { expirationTtl: Number(env.JWT_EXPIRY_SECONDS || 604800) }
+    );
+  }
 
   await env.DB.prepare(
     `UPDATE users SET last_login = unixepoch() WHERE id = ?`
@@ -543,7 +555,7 @@ async function handleLogin(request, env) {
 
 async function handleLogout(request, env) {
   const { user } = await requireAuth(request, env);
-  if (user) {
+  if (user && env.SESSIONS) {
     await env.SESSIONS.delete(`session:${user.sub}:${user.jti}`);
   }
   return jsonOK(
@@ -865,10 +877,12 @@ async function handleLeavingSoon(request, env) {
   const limit   = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100);
 
   const cacheKey = `leaving_soon:${country}`;
-  try {
-    const cached = await env.LEAVING_SOON_CACHE.get(cacheKey, { type: 'json' });
-    if (cached) return jsonOK(cached);
-  } catch { /* fall through */ }
+  if (env.LEAVING_SOON_CACHE) {
+    try {
+      const cached = await env.LEAVING_SOON_CACHE.get(cacheKey, { type: 'json' });
+      if (cached) return jsonOK(cached);
+    } catch { /* fall through */ }
+  }
 
   const rows = await env.DB.prepare(
     `SELECT tmdb_id, media_type, title, poster_path, platform, leaving_date, urgency
@@ -879,11 +893,40 @@ async function handleLeavingSoon(request, env) {
   ).bind(country, limit).all();
 
   const data = { items: rows.results || [], country, generated_at: Date.now() };
-  env.LEAVING_SOON_CACHE.put(cacheKey, JSON.stringify(data), { expirationTtl: 21600 }).catch(() => {});
+  if (env.LEAVING_SOON_CACHE) {
+    env.LEAVING_SOON_CACHE.put(cacheKey, JSON.stringify(data), { expirationTtl: 21600 }).catch(() => {});
+  }
 
   return jsonOK(data);
 }
+// ── DISCOVER ────────────────────────────────────────────────────
 
+async function handleDiscover(request, env) {
+  const url = new URL(request.url);
+  const params = new URLSearchParams(url.search);
+  
+  // Build TMDB API URL
+  let tmdbUrl = 'https://api.themoviedb.org/3/discover/movie?';
+  
+  // Pass through common filters
+  const filterParams = ['with_genres', 'with_original_language', 'sort_by', 'vote_average.gte', 'vote_count.gte', 'vote_count.lte', 'page', 'region'];
+  for (const param of filterParams) {
+    if (params.has(param)) {
+      tmdbUrl += `${param}=${encodeURIComponent(params.get(param))}&`;
+    }
+  }
+  
+  // Add API key
+  tmdbUrl += `api_key=${env.TMDB_API_KEY}`;
+  
+  try {
+    const response = await fetch(tmdbUrl);
+    const data = await response.json();
+    return jsonOK(data);
+  } catch (error) {
+    return jsonError('Failed to fetch from TMDB', 500);
+  }
+}
 // ── UPCOMING / COMING SOON ────────────────────────────────────
 
 async function handleUpcoming(request, env) {
@@ -892,10 +935,12 @@ async function handleUpcoming(request, env) {
   const limit    = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100);
   const cacheKey = `upcoming:${language}`;
 
-  try {
-    const cached = await env.CACHE.get(cacheKey, { type: 'json' });
-    if (cached) return jsonOK(cached);
-  } catch { /* fall through */ }
+  if (env.CACHE) {
+    try {
+      const cached = await env.CACHE.get(cacheKey, { type: 'json' });
+      if (cached) return jsonOK(cached);
+    } catch { /* fall through */ }
+  }
 
   // Stub: return from TMDB when TMDB_API_KEY present, else empty
   if (env.TMDB_API_KEY) {
@@ -1537,15 +1582,21 @@ async function sendEmail(env, to, subject, html) {
 // ── CRON HANDLERS ─────────────────────────────────────────────
 
 async function cronRefreshLeavingSoon(env) {
-  // Bust leaving-soon KV cache for all countries so next request rebuilds from D1
-  for (const country of VALID_COUNTRIES) {
-    await env.LEAVING_SOON_CACHE.delete(`leaving_soon:${country}`).catch(() => {});
+  // Bust leaving-soon KV cache for all countries (if KV exists)
+  if (env.LEAVING_SOON_CACHE) {
+    for (const country of VALID_COUNTRIES) {
+      await env.LEAVING_SOON_CACHE.delete(`leaving_soon:${country}`).catch(() => {});
+    }
   }
-  // Remove rows where leaving_date has passed
-  await env.DB.prepare(`DELETE FROM leaving_soon WHERE leaving_date < date('now', '-1 day')`).run().catch(() => {});
+  // Remove rows where leaving_date has passed (always do this if DB exists)
+  if (env.DB) {
+    await env.DB.prepare(`DELETE FROM leaving_soon WHERE leaving_date < date('now', '-1 day')`).run().catch(() => {});
+  }
 }
 
 async function cronCleanup(env) {
+  if (!env.DB) return; // Skip if no database
+  
   const now = Math.floor(Date.now() / 1000);
   await env.DB.batch([
     env.DB.prepare(`DELETE FROM user_sessions            WHERE expires_at < ?`).bind(now),
@@ -1559,10 +1610,12 @@ async function cronCleanup(env) {
     env.DB.prepare(`DELETE FROM trailer_playbacks        WHERE timestamp < ?`).bind(now - 90 * 86400),
     env.DB.prepare(`DELETE FROM watchlist_adds           WHERE timestamp < ?`).bind(now - 90 * 86400),
     env.DB.prepare(`DELETE FROM consent_logs             WHERE timestamp < ?`).bind(now - 365 * 86400),
-  ]);
+  ]).catch(() => {});
 }
 
 async function cronAggregateB2B(env) {
+  if (!env.DB) return; // Skip if no database
+  
   // Weekly: consolidate anonymous_trend_logs older than 30 days into content_cache summary
   // This keeps the main table lean while preserving aggregated B2B data
   const cutoff = Math.floor(Date.now() / 1000) - 30 * 86400;
@@ -1570,7 +1623,7 @@ async function cronAggregateB2B(env) {
     `SELECT event_type, user_country, COUNT(*) AS events
      FROM anonymous_trend_logs WHERE timestamp < ?
      GROUP BY event_type, user_country`
-  ).bind(cutoff).all();
+  ).bind(cutoff).all().catch(() => ({ results: [] }));
 
   if (rows.results?.length) {
     const summary   = rows.results;
@@ -1584,7 +1637,9 @@ async function cronAggregateB2B(env) {
 }
 
 async function cronWarmCache(env) {
-  // Pre-warm leaving-soon cache for top 5 markets
+  // Pre-warm leaving-soon cache for top 5 markets (only if KV exists)
+  if (!env.LEAVING_SOON_CACHE || !env.DB) return;
+  
   const topMarkets = ['US','GB','CA','AU','SG'];
   for (const country of topMarkets) {
     const existing = await env.LEAVING_SOON_CACHE.get(`leaving_soon:${country}`).catch(() => null);
