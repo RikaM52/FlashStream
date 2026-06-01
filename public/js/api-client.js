@@ -89,8 +89,9 @@
         const url = `${WORKER_URL}${API_BASE}${endpoint}`;
         const token = getAuthToken();
         
-        const headers = {
+                const headers = {
             'Content-Type': 'application/json',
+            'X-FlashStream-Client': 'web',  // Required by worker security
             ...options.headers
         };
         
