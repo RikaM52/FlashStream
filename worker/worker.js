@@ -20,6 +20,7 @@ const VALID_LANGUAGES = [
   'sv','da','no','fi','cs','sk','ro','hu','el','uk','he','all'
 ];
 
+
 const VALID_MEDIA_TYPES  = ['movie','tv','short'];
 const VALID_STATUSES     = ['want_to_watch','watching','finished','dropped','rewatch','favorites'];
 const VALID_PERSON_TYPES = ['actor','director','writer','studio'];
@@ -32,8 +33,227 @@ const RATE_LIMITS = {
   analytics:    { max: 200,  window: 60  },
   b2b:          { max: 50,   window: 60  },
 };
+// ── HELPER FUNCTIONS ─────────────────────────────────────────
+function normalizeContentDates(results) {
+  if (!results || !Array.isArray(results)) return results;
 
-// ── ENTRY POINT ──────────────────────────────────────────────
+  return results.map(item => {
+    // Create a shallow copy to avoid mutating original
+    const copy = { ...item };
+
+    // Handle MyDramaList items
+    if (copy._source === 'MyDramaList' || copy.source === 'MyDramaList') {
+      if (copy.year) {
+        const yearStr = String(copy.year);
+        if (/^\d{4}$/.test(yearStr)) {
+          const defaultDate = `${yearStr}-07-01`;
+          if (!copy.first_air_date) copy.first_air_date = defaultDate;
+          if (!copy.release_date) copy.release_date = defaultDate;
+          copy.sort_year = parseInt(yearStr);
+        }
+      }
+      if (copy.start_year && !copy.first_air_date) {
+        const yearStr = String(copy.start_year);
+        if (/^\d{4}$/.test(yearStr)) {
+          copy.first_air_date = `${yearStr}-07-01`;
+          copy.sort_year = parseInt(yearStr);
+        }
+      }
+    }
+
+    // Handle Viki items
+    if (copy._source === 'Viki' || copy.source === 'Viki') {
+      if (copy.year && !copy.first_air_date) {
+        copy.first_air_date = `${copy.year}-01-01`;
+      }
+    }
+
+    return copy;
+  });
+}
+// ── ENTRY POINT 
+// ── MYDRAMALIST SCRAPING (UPDATED SELECTORS) ────────────────
+async function fetchMDLBySlug(slug) {
+  const url = `https://mydramalist.com/${slug}`;
+  const response = await fetch(url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+    }
+  });
+  if (!response.ok) return null;
+
+  let drama = {
+    source: 'MyDramaList',
+    source_id: slug,
+    tags: []
+  };
+
+  // Use a state machine to know which box we are in
+  let insideDetailsBox = false;
+
+  const rewriter = new HTMLRewriter()
+    // --- Main Title ---
+    .on('h1.film-title', {
+      text(el) { if (!drama.title) drama.title = el.text.trim(); }
+    })
+    // --- Synopsis ---
+    .on('div.show-synopsis > p', {
+      text(el) { if (!drama.synopsis) drama.synopsis = el.text.trim().replace(' Edit Translation', ''); }
+    })
+    // --- Poster ---
+    .on('div.film-cover img', {
+      element(el) { drama.poster_url = el.getAttribute('src') || el.getAttribute('data-src') || ''; }
+    })
+    // --- Detect start of Details box ---
+    .on('div.content-side .box', {
+      element(el) {
+        const header = el.querySelector('.box-header h3');
+        if (header && header.textContent.trim() === 'Details') {
+          insideDetailsBox = true;
+        } else {
+          // If we leave this box, another .box element will reset state
+          insideDetailsBox = false;
+        }
+      }
+    })
+    // --- Extract rating from Statistics box ---
+    .on('div.content-side .box .hfs b', {
+      text(el) {
+        if (!drama.rating) {
+          const rating = parseFloat(el.text.trim());
+          if (!isNaN(rating)) drama.rating = rating;
+        }
+      }
+    })
+    // --- Process list items only when inside Details box ---
+    .on('li.list-item', {
+      element(el) {
+        if (!insideDetailsBox) return;
+
+        const itemText = el.textContent.trim();
+        if (itemText.includes('Country:')) {
+          const country = itemText.replace('Country:', '').trim();
+          if (country) drama.country = country;
+        } else if (itemText.includes('Episodes:')) {
+          const epMatch = itemText.match(/\d+/);
+          if (epMatch) drama.episode_count = parseInt(epMatch[0]);
+        } else if (itemText.includes('Genres:')) {
+          const genreLinks = el.querySelectorAll('a');
+          genreLinks.forEach(link => {
+            const genre = link.textContent.trim();
+            if (genre) drama.tags.push(genre);
+          });
+        } else if (itemText.includes('Tags:')) {
+          const tagLinks = el.querySelectorAll('a');
+          tagLinks.forEach(link => {
+            const tag = link.textContent.trim();
+            if (tag && tag !== '(Vote tags)') drama.tags.push(tag);
+          });
+        }
+      }
+    });
+
+  await rewriter.transform(response).arrayBuffer();
+
+  // Extract year from title or fallback
+  if (drama.title) {
+    const yearMatch = drama.title.match(/\((\d{4})\)/);
+    if (yearMatch) drama.year = parseInt(yearMatch[1]);
+  }
+
+  // Deduplicate tags
+  if (drama.tags) drama.tags = [...new Set(drama.tags)];
+
+  return drama;
+}
+// ── STORE DRAMA INTO D1 ──────────────────────────────────────
+async function storeDrama(env, drama) {
+  const id = `mdl_${drama.source_id}`;
+  const now = Math.floor(Date.now() / 1000);
+  await env.DB.prepare(`
+    INSERT OR REPLACE INTO content_catalog
+    (id, source, source_id, title, year, country, synopsis, poster_url, rating, episode_count, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    id, drama.source, drama.source_id, drama.title || 'Untitled',
+    drama.year, drama.country, drama.synopsis, drama.poster_url,
+    drama.rating, drama.episode_count, now, now
+  ).run();
+
+  // Store tags
+  if (drama.tags && drama.tags.length) {
+    for (const tagName of drama.tags) {
+      // Insert tag if new (or ignore duplicate)
+      await env.DB.prepare(`
+        INSERT OR IGNORE INTO content_tags (name) VALUES (?)
+      `).bind(tagName).run();
+      // Get tag id
+      const tag = await env.DB.prepare(`
+        SELECT id FROM content_tags WHERE name = ?
+      `).bind(tagName).first();
+      if (tag) {
+        await env.DB.prepare(`
+          INSERT OR IGNORE INTO content_tag_map (drama_id, tag_id) VALUES (?, ?)
+        `).bind(id, tag.id).run();
+      }
+    }
+  }
+}
+async function handleMdlDrama(request, env) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get('slug');
+  if (!slug) return jsonError('Missing slug', 400);
+
+  const dramaId = `mdl_${slug}`;
+
+  // 1. Try D1 cache
+  let drama = await env.DB.prepare(`
+    SELECT * FROM content_catalog WHERE id = ?
+  `).bind(dramaId).first();
+
+  if (!drama) {
+    // 2. Not in DB → scrape MDL
+    const scraped = await fetchMDLBySlug(slug);
+    if (!scraped) return jsonError('Drama not found', 404);
+    await storeDrama(env, scraped);
+    drama = await env.DB.prepare(`
+      SELECT * FROM content_catalog WHERE id = ?
+    `).bind(dramaId).first();
+  }
+
+  // 3. Get tags
+  const tags = await env.DB.prepare(`
+    SELECT t.name FROM content_tags t
+    JOIN content_tag_map m ON m.tag_id = t.id
+    WHERE m.drama_id = ?
+  `).bind(dramaId).all();
+  drama.tags = tags.results.map(row => row.name);
+
+  return jsonOK(drama);
+}
+
+async function debugMDL(request, env) {
+  const url = new URL(request.url);
+  const slug = url.searchParams.get('slug');
+  if (!slug) return jsonError('Missing slug', 400);
+
+  const fetchUrl = `https://mydramalist.com/${slug}`;
+  const response = await fetch(fetchUrl, {
+    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+  });
+  if (!response.ok) return jsonError(`HTTP ${response.status}`, response.status);
+
+  const html = await response.text();
+  return jsonOK({
+    url: fetchUrl,
+    status: response.status,
+    html_sample: html.slice(0, 2000),
+    length: html.length
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     // OPTIONS pre-flight
@@ -62,7 +282,6 @@ export default {
 };
 
 // ── ROUTER ───────────────────────────────────────────────────
-
 async function route(request, env, ctx) {
   const url      = new URL(request.url);
   const path     = url.pathname;
@@ -83,6 +302,7 @@ async function route(request, env, ctx) {
   if (path === '/api/auth/forgot'      && method === 'POST')   return handleForgotPassword(request, env);
   if (path === '/api/auth/reset'       && method === 'POST')   return handleResetPassword(request, env);
   if (path === '/api/auth/me'          && method === 'GET')    return handleMe(request, env);
+if (path === '/api/debug/mdl' && method === 'GET') return debugMDL(request, env);
 
   // Watchlist
   if (path === '/api/watchlist'        && method === 'GET')    return handleWatchlistGet(request, env);
@@ -107,6 +327,9 @@ async function route(request, env, ctx) {
   if (path === '/api/upcoming'         && method === 'GET')    return handleUpcoming(request, env);
   if (path === '/api/geo'              && method === 'GET')    return handleGeo(request, env);
   if (path === '/api/discover'         && method === 'GET')    return handleDiscover(request, env);
+
+  // ── NEW: MyDramaList cache-aside endpoint ──────────────────
+  if (path === '/api/mdl/drama'        && method === 'GET')    return handleMdlDrama(request, env);
 
   // Community
   if (path === '/api/tags'             && method === 'GET')    return handleTagsGet(request, env);
@@ -146,7 +369,6 @@ async function route(request, env, ctx) {
 
   return jsonError('Not found', 404);
 }
-
 // ── SECURITY MIDDLEWARE ───────────────────────────────────────
 
 async function checkSecurity(request, env, path) {
@@ -900,32 +1122,294 @@ async function handleLeavingSoon(request, env) {
   return jsonOK(data);
 }
 // ── DISCOVER ────────────────────────────────────────────────────
-
+// ── DISCOVER ────────────────────────────────────────────────────
 async function handleDiscover(request, env) {
   const url = new URL(request.url);
   const params = new URLSearchParams(url.search);
+  const contentType = params.get('content_type') || 'movie';
+  const page = parseInt(params.get('page')) || 1;
+  const limit = 20;
   
-  // Build TMDB API URL
-  let tmdbUrl = 'https://api.themoviedb.org/3/discover/movie?';
+  // Initialize results array
+  let allResults = [];
+  let sourcesQueried = [];
   
-  // Pass through common filters
-  const filterParams = ['with_genres', 'with_original_language', 'sort_by', 'vote_average.gte', 'vote_count.gte', 'vote_count.lte', 'page', 'region'];
-  for (const param of filterParams) {
-    if (params.has(param)) {
-      tmdbUrl += `${param}=${encodeURIComponent(params.get(param))}&`;
+  // ── 1. TMDB (Western + some Asian content) ─────────────────
+  if (env.TMDB_API_KEY) {
+    try {
+      let tmdbUrl = contentType === 'tv'
+        ? 'https://api.themoviedb.org/3/discover/tv?'
+        : 'https://api.themoviedb.org/3/discover/movie?';
+      
+      // Pass through common filters
+      const filterParams = ['with_genres', 'with_original_language', 'sort_by', 'vote_average.gte', 'vote_count.gte', 'vote_count.lte', 'region'];
+      for (const param of filterParams) {
+        if (params.has(param)) {
+          tmdbUrl += `${param}=${encodeURIComponent(params.get(param))}&`;
+        }
+      }
+      
+      // Add language filter for Asian content
+      const lang = params.get('with_original_language');
+      if (lang && ['ko', 'ja', 'zh', 'th', 'hi', 'vi', 'ms', 'id', 'tl'].includes(lang)) {
+        tmdbUrl += `with_original_language=${lang}&`;
+      }
+      
+      tmdbUrl += `page=${page}&api_key=${env.TMDB_API_KEY}`;
+      
+      const response = await fetch(tmdbUrl);
+      const data = await response.json();
+      
+      if (data.results && Array.isArray(data.results)) {
+        const tmdbItems = data.results.map(item => ({
+          ...item,
+          _source: 'TMDB',
+          first_air_date: item.first_air_date || item.release_date || null,
+          release_date: item.release_date || item.first_air_date || null
+        }));
+        allResults.push(...tmdbItems);
+        sourcesQueried.push('TMDB');
+      }
+    } catch (e) {
+      console.error('TMDB fetch failed:', e);
     }
   }
   
-  // Add API key
-  tmdbUrl += `api_key=${env.TMDB_API_KEY}`;
+  // ── 2. MyDramaList (Korean, Chinese, Japanese, Thai dramas) ──
+  const lang = params.get('with_original_language');
+  const asianLangs = ['ko', 'zh', 'ja', 'th', 'hi', 'vi', 'ms', 'id', 'tl'];
   
-  try {
-    const response = await fetch(tmdbUrl);
-    const data = await response.json();
-    return jsonOK(data);
-  } catch (error) {
-    return jsonError('Failed to fetch from TMDB', 500);
+  if (env.MYDRAMALIST_API_KEY || (!lang || asianLangs.includes(lang))) {
+    try {
+      // Map language to MyDramaList country codes
+      const langToCountry = {
+        'ko': 'korean', 'zh': 'chinese', 'ja': 'japanese', 
+        'th': 'thai', 'hi': 'indian', 'vi': 'vietnamese',
+        'ms': 'malaysian', 'id': 'indonesian', 'tl': 'filipino'
+      };
+      
+      let mdlUrl = 'https://mydramalist.com/api/search/dramas';
+      const queryParams = [];
+      
+      if (lang && langToCountry[lang]) {
+        queryParams.push(`country=${langToCountry[lang]}`);
+      }
+      
+      // Add genre filter
+      const genres = params.get('with_genres');
+      if (genres) {
+        queryParams.push(`genre=${genres}`);
+      }
+      
+      queryParams.push(`page=${page}`);
+      queryParams.push(`limit=${limit}`);
+      
+      if (queryParams.length) {
+        mdlUrl += `?${queryParams.join('&')}`;
+      }
+      
+      const response = await fetch(mdlUrl, {
+        headers: env.MYDRAMALIST_API_KEY ? { 'X-API-Key': env.MYDRAMALIST_API_KEY } : {}
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.results || data.data) {
+          const mdlItems = (data.results || data.data || []).map(item => ({
+            id: item.id,
+            title: item.title,
+            name: item.title,
+            year: item.year,
+            first_air_date: item.year ? `${item.year}-07-01` : null,
+            release_date: item.year ? `${item.year}-07-01` : null,
+            poster_path: item.image || item.poster,
+            vote_average: parseFloat(item.rating) || 0,
+            overview: item.synopsis || item.description,
+            genre_ids: item.genres || [],
+            _source: 'MyDramaList',
+            media_type: contentType === 'tv' ? 'tv' : 'movie'
+          }));
+          allResults.push(...mdlItems);
+          sourcesQueried.push('MyDramaList');
+        }
+      }
+    } catch (e) {
+      console.error('MyDramaList fetch failed:', e);
+    }
   }
+  
+  // ── 3. Viki (Asian dramas with subtitles) ────────────────────
+  if (env.VIKI_API_KEY || (!lang || asianLangs.includes(lang))) {
+    try {
+      let vikiUrl = 'https://api.viki.com/v4/containers.json';
+      const vikiParams = [];
+      
+      if (lang === 'ko') vikiParams.push('q=korean+drama');
+      else if (lang === 'zh') vikiParams.push('q=chinese+drama');
+      else if (lang === 'ja') vikiParams.push('q=japanese+drama');
+      else if (lang === 'th') vikiParams.push('q=thai+drama');
+      else vikiParams.push('q=asian+drama');
+      
+      vikiParams.push(`page=${page}`);
+      vikiParams.push(`per_page=${limit}`);
+      
+      vikiUrl += `?${vikiParams.join('&')}`;
+      
+      const response = await fetch(vikiUrl);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.response && Array.isArray(data.response)) {
+          const vikiItems = data.response.map(item => ({
+            id: item.id,
+            title: item.title,
+            name: item.title,
+            year: item.release_year || new Date().getFullYear(),
+            first_air_date: item.release_year ? `${item.release_year}-01-01` : null,
+            poster_path: item.images?.poster?.url,
+            vote_average: item.rating?.average || 0,
+            overview: item.description,
+            _source: 'Viki',
+            media_type: 'tv'
+          }));
+          allResults.push(...vikiItems);
+          sourcesQueried.push('Viki');
+        }
+      }
+    } catch (e) {
+      console.error('Viki fetch failed:', e);
+    }
+  }
+  
+  // ── 4. iQIYI (Chinese dramas) ────────────────────────────────
+  if (env.IQIYI_API_KEY && (!lang || lang === 'zh')) {
+    try {
+      const iqiyiUrl = `https://api.iq.com/api/v2/contents?platform=web&page=${page}&size=${limit}&type=drama&lang=zh`;
+      const response = await fetch(iqiyiUrl, {
+        headers: { 'Authorization': `Bearer ${env.IQIYI_API_KEY}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && Array.isArray(data.data)) {
+          const iqiyiItems = data.data.map(item => ({
+            id: item.id,
+            title: item.title,
+            name: item.title,
+            year: item.year || parseInt(item.release_date?.slice(0,4)),
+            first_air_date: item.release_date || (item.year ? `${item.year}-06-01` : null),
+            poster_path: item.image,
+            vote_average: item.rating || 0,
+            overview: item.description,
+            _source: 'iQIYI',
+            media_type: 'tv'
+          }));
+          allResults.push(...iqiyiItems);
+          sourcesQueried.push('iQIYI');
+        }
+      }
+    } catch (e) {
+      console.error('iQIYI fetch failed:', e);
+    }
+  }
+  
+  // ── 5. WeTV (Tencent - Chinese, Thai, Indonesian) ───────────
+  if (env.WETV_API_KEY && (!lang || ['zh', 'th', 'id'].includes(lang))) {
+    try {
+      const wetvUrl = `https://api.wetv.vip/api/v2/contents?page=${page}&size=${limit}&area=all&type=drama`;
+      const response = await fetch(wetvUrl, {
+        headers: { 'X-Signature': env.WETV_API_KEY }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && Array.isArray(data.data)) {
+          const wetvItems = data.data.map(item => ({
+            id: item.id,
+            title: item.title,
+            name: item.title,
+            year: item.year || new Date().getFullYear(),
+            first_air_date: item.premiere_date || (item.year ? `${item.year}-01-01` : null),
+            poster_path: item.poster,
+            vote_average: item.score || 0,
+            overview: item.introduction,
+            _source: 'WeTV',
+            media_type: 'tv'
+          }));
+          allResults.push(...wetvItems);
+          sourcesQueried.push('WeTV');
+        }
+      }
+    } catch (e) {
+      console.error('WeTV fetch failed:', e);
+    }
+  }
+  
+  // ── 6. Youku (Chinese content) ───────────────────────────────
+  if (env.YOUKU_API_KEY && (!lang || lang === 'zh')) {
+    try {
+      const youkuUrl = `https://api.youku.com/v2/contents?page=${page}&limit=${limit}&category=drama`;
+      const response = await fetch(youkuUrl, {
+        headers: { 'Authorization': `Bearer ${env.YOUKU_API_KEY}` }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.data && Array.isArray(data.data)) {
+          const youkuItems = data.data.map(item => ({
+            id: item.id,
+            title: item.title,
+            name: item.title,
+            year: item.year,
+            first_air_date: item.pub_date,
+            poster_path: item.thumbnail,
+            vote_average: item.rating || 0,
+            overview: item.description,
+            _source: 'Youku',
+            media_type: 'tv'
+          }));
+          allResults.push(...youkuItems);
+          sourcesQueried.push('Youku');
+        }
+      }
+    } catch (e) {
+      console.error('Youku fetch failed:', e);
+    }
+  }
+  
+  // ── Deduplicate by ID and source ─────────────────────────────
+  const seen = new Set();
+  const uniqueResults = allResults.filter(item => {
+    const key = `${item._source}_${item.id}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  
+  // ── Sort by date (newest first) if specified ─────────────────
+  const sortBy = params.get('sort_by') || 'first_air_date.desc';
+  if (sortBy.includes('date')) {
+    const order = sortBy.endsWith('desc') ? -1 : 1;
+    uniqueResults.sort((a, b) => {
+      const dateA = a.first_air_date || a.release_date || '0000-01-01';
+      const dateB = b.first_air_date || b.release_date || '0000-01-01';
+      return order * dateA.localeCompare(dateB);
+    });
+  }
+  
+  // ── Apply date normalization to all results ──────────────────
+  const normalizedResults = normalizeContentDates(uniqueResults);
+  
+  // ── Paginate results ─────────────────────────────────────────
+  const start = (page - 1) * limit;
+  const paginatedResults = normalizedResults.slice(start, start + limit);
+  
+  return jsonOK({
+    page: page,
+    results: paginatedResults,
+    total_results: normalizedResults.length,
+    total_pages: Math.ceil(normalizedResults.length / limit),
+    sources: sourcesQueried
+  });
 }
 // ── UPCOMING / COMING SOON ────────────────────────────────────
 
